@@ -7,7 +7,7 @@ output: html_document
 
 This gopher stage-structured population model explores the population dynamics of gophers in agricultural areas based on a simple, three-stage model. This represents the initial stages for exploring population growth and expansion of gopher populations and we hope to use this modeling exercise to provide information about how to better target management strategies for pest species.
 
-Parameters and initial population sizes have been taken from literature estimates both of the growth and survival rates of the population and the densities of gopher populations. For this model we used the 'popbio' package in R.
+Parameters and initial population sizes have been taken from literature estimates both of the growth and survival rates of the population and the densities of gopher populations for species Thomomys talpoides. For this model we used the 'popbio' package in R.
 ```{r}
 library(popbio)
 ```
