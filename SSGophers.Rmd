@@ -1,0 +1,104 @@
+---
+title: "Single Species Gopher Population Model"
+author: "Elizabeth Hiroyasu"
+date: "July 18, 2016"
+output: html_document
+---
+
+This gopher stage-structured population model explores the population dynamics of gophers in agricultural areas based on a simple, three-stage model. This represents the initial stages for exploring population growth and expansion of gopher populations and we hope to use this modeling exercise to provide information about how to better target management strategies for pest species.
+
+Parameters and initial population sizes have been taken from literature estimates both of the growth and survival rates of the population and the densities of gopher populations. For this model we used the 'popbio' package in R.
+```{r}
+library(popbio)
+```
+
+##Setting up the matrix
+We directly filled population parameters into a 3x3 matrix, with a juvenile, subadult, and adult stage. 
+
+```{r}
+stages = c("Juvenile", "SubAdult", "Adult")
+```
+
+The initial matrix looks as follows:
+
+ Stage   | Juvenile | SubAdult | Adult
+---------|----------|----------|-------            
+Juvenile | 0        | f2       | f3 
+SubAdult | p1       | 0        | 0
+Adult    | 0        | p2       | p3 
+
+p21: probability of juvenile becoming a sub adult*
+p32: probability of a subadult becoming reproductive adult
+p33: probability of staying adult
+
+f2: birth rate from subadults
+f3: birth rate from reproductive adults
+
+*this term is unknown in gophers so we will use estimates from the vole population
+
+```{r, echo=FALSE}
+p1 =0.69
+p2 = 0.468
+p3 = 0.449
+f2 = 2.535
+f3 = 7.775
+```
+
+
+To build the matrix, we use the following code:
+```{r}
+GopherMatrix = matrix(data=c(0,f2, f3, p1, 0, 0, 0, p2, p3),
+              nrow=3, ncol=3, byrow=TRUE,
+              dimnames=list(stages,stages))
+```
+
+Resulting in a matrix that looks like this:
+
+ Stage | Juvenile | SubAdult | Adult
+-------|----------|----------|-------            
+Juvenile | 0.00 | 2.535 | 7.775
+SubAdult | 0.69 | 0.00 | 0.00
+Adult | 0.00 | 0.468 | 0.449 
+
+##Projecting the population
+Suppose we start with a population of zero juveniles, zero subadults, and seven adults.This is the average density of gophers in an alfalfa field per hectare.
+```{r, echo=FALSE}
+Njuveniles=0
+NSubadults = 0
+NAdults = 7
+N = c(Njuveniles, NSubadults, NAdults)
+```
+
+To project the population to next year, we use matrix multiplication (denoted by the %*%) to multiply the transition matrix by the starting population
+```{r}
+N1 = GopherMatrix %*% N
+```
+
+We can use the popbio package to easily project the population over a 10 year period. The command pop.projection also provides other useful values that will be discussed below
+
+```{r, echo=FALSE}
+gopher_projection = pop.projection(GopherMatrix, N,11)
+stage.vector.plot(gopher_projection$stage.vectors,proportions = FALSE, 
+                  legend.coords="topright", main = "10 Year Projected Gophers/ha")
+```
+
+##Stable stage distribution
+To determine the stable stage distribution, which will tell use the proportion of the population we can expect the population to stabilize around in each class. In other words, the population size may change, but the proportion of individuals in each class will have converged on a single point.
+```{r}
+gopher_projection$stable.stage
+```
+
+To determine the dominant eigenvalue, lambda, we can use the 'lambda' command, it is also given as part of the list of outputs from the pop.projection command. The dominany eigenvalue tells us the population growth rate of a projection matrix. If lambda is greater than one, the population will grow, if it less than one then the population will be declining, and if it is equal to one the population will be neither growing, nor declining.
+```{r}
+gopher_projection$lambda
+```
+
+##Calculating elasticities
+Finally, we can calculate the elasticities of the projection matrix. The largest value will tell us which transition contributes most to the observed population trend.
+```{r}
+elasticity(GopherMatrix)
+```
+
+##Population simulations
+Now, if we want to simulate the population, the popbio package includes a function to carry out stochastic simulations.However, to conduct simulations we would need data for more than one year. Something we can look into later if needed.
+
