@@ -75,7 +75,6 @@ N1 = GopherMatrix %*% N
 ```
 
 We can use the popbio package to easily project the population over a 10 year period. The command pop.projection also provides other useful values that will be discussed below
-
 ```{r, echo=FALSE}
 gopher_projection = pop.projection(GopherMatrix, N,11)
 stage.vector.plot(gopher_projection$stage.vectors,proportions = FALSE, 
@@ -100,5 +99,34 @@ elasticity(GopherMatrix)
 ```
 
 ##Population simulations
-Now, if we want to simulate the population, the popbio package includes a function to carry out stochastic simulations.However, to conduct simulations we would need data for more than one year. Something we can look into later if needed.
+Now, if we want to simulate the population, the popbio package includes a function to carry out stochastic simulations.To conduct simulations, we can randomly draw numbers between the minimum and maximum values seen in the literature, for each matrix element.
 
+```{r}
+#creating vectors of matrix elements
+p1Sim =runif(10, 0.59, 0.80)
+p2Sim = runif(10, 0.357, 0.570)
+p3Sim = runif(10, 0.25, 0.67)
+f2Sim = runif(10, 2.4, 2.67)
+f3Sim = runif(10, 5.35, 10.2)
+
+
+#Creating a 10 matrix array and list for the stoch.projection function
+GopherArray<-array(0, c(3,3,10))
+GopherList<-list(NULL)
+for  (i in 1:10){
+  GopherArray[,,i]<-(matrix(data=c(0,f2Sim[i], f3Sim[i], p1Sim[i], 0, 0, 0, p2Sim[i],
+                    p3Sim[i]), nrow=3,ncol=3, byrow = TRUE, dimnames =list(stages,stages)))
+  GopherList[[i]]<- GopherArray[,,i]
+  }
+
+```
+
+Running the simulations using the stochastic projection function in the popbio package:
+```{r}
+gopher.ens<-stoch.projection(GopherList,N, tmax=10, nreps=1000)
+
+plot(density(gopher.ens[,3]), xlab="Final population size at t=10",
+     main="Number of adults") 
+abline(v=N[3], lty=3)
+
+matplot(0:10, gopher.ens[,1])
