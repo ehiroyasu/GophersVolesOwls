@@ -1,0 +1,98 @@
+---
+title: "Single Species Vole Population Model"
+author: "Elizabeth Hiroyasu"
+date: "July 21, 2016"
+output: html_document
+---
+
+This vole stage-structured population model explores the population dynamics of voles in agricultural areas based on a simple, three-stage model. This represents the initial stages for exploring population growth and expansion of vole populations and we hope to use this modeling exercise to provide information about how to better target management strategies for pest species.
+
+Parameters and initial population sizes have been taken from literature estimates both of the growth and survival rates of the population and the densities of vole populations for species _Microtus californicus_. For this model we used the 'popbio' package in R.
+```{r}
+library(popbio)
+```
+
+##Setting up the matrix
+We directly filled population parameters into a 3x3 matrix, with a juvenile, subadult, and adult stage. 
+
+```{r}
+stages = c("Juvenile", "SubAdult", "Adult")
+```
+
+The initial matrix looks as follows:
+
+ Stage   | Juvenile | SubAdult | Adult
+---------|----------|----------|-------            
+Juvenile | 0        | 0        | f3 
+SubAdult | p1       | 0        | 0
+Adult    | 0        | p2       | p3 
+
+p21: probability of juvenile becoming a sub adult*
+p32: probability of a subadult becoming reproductive adult
+p33: probability of staying adult
+
+f3: birth rate from reproductive adults
+
+```{r, echo=FALSE}
+p1 =0.724
+p2 = 0.662
+p3 = 3.252
+f3 = 2.83
+```
+
+
+To build the matrix, we use the following code:
+```{r}
+VoleMatrix = matrix(data=c(0,0, f3, p1, 0, 0, 0, p2, p3),
+              nrow=3, ncol=3, byrow=TRUE,
+              dimnames=list(stages,stages))
+```
+
+Resulting in a matrix that looks like this:
+
+ Stage | Juvenile | SubAdult | Adult
+-------|----------|----------|-------            
+Juvenile | 0.00 | 0.00 | 2.83
+SubAdult | 0.72 | 0.00 | 0.00
+Adult | 0.00 | 0.66 | 3.25 
+
+##Projecting the population
+Suppose we start with a population of voles at a density of zero juveniles per hectare, 50 subadults per hectare, and 50 adults per hectare.
+
+```{r, echo=FALSE}
+Njuveniles=0
+NSubadults = 50
+NAdults = 50
+N = c(Njuveniles, NSubadults, NAdults)
+```
+
+To project the population to next year, we use matrix multiplication (denoted by the %*%) to multiply the transition matrix by the starting population
+```{r}
+N1 = VoleMatrix %*% N
+```
+
+We can use the popbio package to easily project the population over a 10 year period. The command pop.projection also provides other useful values that will be discussed below
+
+```{r, echo=FALSE}
+vole_projection<-pop.projection(VoleMatrix, N,11)
+vole_projection$stage.vectors
+stage.vector.plot(vole_projection$stage.vectors,proportions = FALSE, 
+                  legend.coords="topleft", main = "10 Year Projected Voles/ha")
+```
+
+##Stable stage distribution
+To determine the stable stage distribution, which will tell use the proportion of the population we can expect the population to stabilize around in each class. In other words, the population size may change, but the proportion of individuals in each class will have converged on a single point.
+```{r, echo=FALSE}
+vole_projection$stable.stage
+```
+
+To determine the dominant eigenvalue, lambda, we can use the 'lambda' command, it is also given as part of the list of outputs from the pop.projection command. The dominany eigenvalue tells us the population growth rate of a projection matrix. If lambda is greater than one, the population will grow, if it less than one then the population will be declining, and if it is equal to one the population will be neither growing, nor declining.
+```{r, echo=FALSE}
+vole_projection$lambda
+```
+
+##Calculating elasticities
+Finally, we can calculate the elasticities of the projection matrix. The largest value will tell us which transition contributes most to the observed population trend.
+```{r, echo=FALSE}
+elasticity(VoleMatrix)
+```
