@@ -75,6 +75,7 @@ N1 = GopherMatrix %*% N
 ```
 
 We can use the popbio package to easily project the population over a 10 year period. The command pop.projection also provides other useful values that will be discussed below
+
 ```{r, echo=FALSE}
 gopher_projection = pop.projection(GopherMatrix, N,11)
 stage.vector.plot(gopher_projection$stage.vectors,proportions = FALSE, 
@@ -129,4 +130,5 @@ plot(density(gopher.ens[,3]), xlab="Final population size at t=10",
      main="Number of adults") 
 abline(v=N[3], lty=3)
 
-matplot(0:10, gopher.ens[,1])
+#matplot(0:10, gopher.ens[,1])
+```
