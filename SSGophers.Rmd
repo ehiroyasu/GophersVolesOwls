@@ -80,6 +80,46 @@ We can use the popbio package to easily project the population over a 10 year pe
 gopher_projection = pop.projection(GopherMatrix, N,11)
 stage.vector.plot(gopher_projection$stage.vectors,proportions = FALSE, 
                   legend.coords="topright", main = "10 Year Projected Gophers/ha")
+
+#making a matrix of N1 vectors (these are ten different vectors of possible starting population sizes)
+N0_mat<-matrix(data=0, nrow=10, ncol=2)
+N0_mat<-cbind(N0_mat, sample(0:10, 10))
+
+gopher_sim<-matrix(data=0, nrow=10, ncol=3)
+gopher_sim_proj<-NULL
+adult_proj<-matrix(data=0, nrow=10, ncol=11)
+subadult_proj<-matrix(data=0, nrow=10, ncol=11)
+juvenile_proj<-matrix(data=0, nrow=10, ncol=11)
+
+for(i in 1:10){
+  gopher_sim[i,]<-GopherMatrix%*%N0_mat[i,]
+  gopher_sim_proj[[i]]<-pop.projection(GopherMatrix, gopher_sim[i,], 11)
+  adult_proj[i,]<-gopher_sim_proj[[i]]$stage.vectors["Adult",]
+  subadult_proj[i,]<-gopher_sim_proj[[i]]$stage.vectors["SubAdult",]
+  juvenile_proj[i,]<-gopher_sim_proj[[i]]$stage.vectors["Juvenile",]
+}
+```
+
+Adult population projection(without density dependence)
+```{r, echo=FALSE}
+adult_proj
+
+year<-1:10
+matplot(year, adult_proj[,-1], type="l", lwd=1.5, col=1:10, main = "Adult gopher population over time", xlab="years", ylab="Density of Adults per ha")
+```
+
+SubAdult population projection(without density dependence)
+```{r, echo=FALSE}
+subadult_proj
+
+matplot(year, adult_proj[,-1], type="l", lwd=1.5, col=1:10, main = "SubAdult gopher population over time", xlab="years", ylab="Density of SubAdults per ha")
+```
+
+Juvenile population projection(without density dependence)
+```{r, echo=FALSE}
+juvenile_proj
+
+matplot(year, juvenile_proj[,-1], type="l", lwd=1.5, col=1:10, main = "Juvenile gopher population over time", xlab="years", ylab="Density of Juveniles per ha")
 ```
 
 ##Stable stage distribution
