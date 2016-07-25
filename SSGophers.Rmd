@@ -74,7 +74,7 @@ To project the population to next year, we use matrix multiplication (denoted by
 N1 = GopherMatrix %*% N
 ```
 
-We can use the popbio package to easily project the population over a 10 year period. The command pop.projection also provides other useful values that will be discussed below
+We can use the popbio package to easily project the population over a 10 year period. The command pop.projection also provides other useful values that will be discussed below. THe code included below also sets up simulations, drawing on a list of randomized N0 vectors, so there are 10 simulations with different starting vectors for each population, then projected out 10 years.
 
 ```{r, echo=FALSE}
 gopher_projection = pop.projection(GopherMatrix, N,11)
