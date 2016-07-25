@@ -24,19 +24,22 @@ pred_prey <- function(t, x, pars){
 #Use the package deSolve to enable the use of ODE solvers to fit parameters
 library(deSolve)
 
-  t = seq(from=2, to=100, by=0.1) #time interval
-  x<-c(3000, 2)
+  t = seq(from=1, to=100, by=1) #time interval
+  x<-c(300, 2)
   #init = c(0.4, 0.2) #inital values
   r = log(3.47) #remember that r=ln(lambda)
-  d = 0.7 #quick number pulled from a google search
+  d = 0.3 #quick number pulled from a google search
   C = 1
   B = 4 #average number of chicks per nest box 
   pars = c(r, C, B, d)
   predprey_output <- ode(x, t, pred_prey, pars)
-  par(mfrow=c(1,2))
-  plot(predprey_output[,'time'], predprey_output[,2], col="blue", lwd=2,xlab="Time", ylab="Prey", main="Prey", type="l")
-  grid()
-  plot(predprey_output[,'time'], predprey_output[,3], col="red", lwd=2,xlab="Time", ylab="Predator", main="Predator",type="l")
-  grid()
+  matplot(predprey_output[,-1], type="l", ylab= "abundance", xlab="time", col=c(1,2), lwd=1.5)
+  legend("topright", c("Prey", "Predator"), lty=c(1,2), col=c(1,2))
+  
+  #par(mfrow=c(1,2))
+  #plot(predprey_output[,'time'], predprey_output[,2], col="blue", lwd=2,xlab="Time", ylab="Prey", main="Prey", type="l")
+  #grid()
+  #plot(predprey_output[,'time'], predprey_output[,3], col="red", lwd=2,xlab="Time", ylab="Predator", main="Predator",type="l")
+  #grid()
   
   
