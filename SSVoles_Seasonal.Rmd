@@ -1,0 +1,87 @@
+---
+title: "Single Species Vole Model with Seasonality"
+author: "Elizabeth Hiroyasu"
+date: "July 25, 2016"
+output: html_document
+---
+The SSVoles.Rmd file contains a single species annual model for vole populations. However, we expect that seasonality may be an important aspect determining vole population growth. This model includes seasonality (summer, winter, spring, and fall) in the matrix model presented previously.
+
+Again, parameters and initial population sizes have been taken from literature estimates both of the growth and survival rates of the population and the densities of vole populations for the species Microtus californicus. For this model we used the 'popbio' package in R.
+```{r}
+library(popbio)
+```
+
+##Setting up the matrix
+We directly filled population parameters into a 3x3 matrix, with a juvenile, subadult, and adult stage, for each season. 
+
+```{r}
+stages = c("Juvenile", "SubAdult", "Adult")
+```
+
+The initial matrix looks as follows, for each season:
+
+ Stage   | Juvenile | SubAdult | Adult
+---------|----------|----------|-------            
+Juvenile | 0        | 0        | f3 
+SubAdult | p1       | 0        | 0
+Adult    | 0        | p2       | p3 
+
+p1: probability of juvenile becoming a sub adult
+p2: probability of a subadult becoming reproductive adult
+p3: probability of staying adult
+
+f3: birth rate from reproductive adults
+
+
+Seasonal Matrices:
+Creating matrices for each season
+```{r}
+SummerMatrix<-matrix(data=c(0, 0, 3.11, 0.75, 0, 0, 0, 0.795, 0.775), nrow=3,
+                     ncol=3, byrow=TRUE,dimnames=list(stages,stages))
+
+FallMatrix<-matrix(data=c(0,0, 3.615, 0.72, 0,0,0,0.83, 0.83), nrow=3,
+                   ncol=3, byrow=TRUE, dimnames=list(stages, stages))
+
+WinterMatrix<-matrix(data=c(0, 2.535, 7.775, 0.69,0,0,0, 0.33, 0.61), 
+                      nrow=3, ncol=3, byrow=TRUE,dimnames = list(stages,
+                      stages))
+
+SpringMatrix<-matrix(data=c(0, 0, 5.52, 0.59, 0, 0, 0, 0.64, 0.805), nrow=3,
+                     ncol=3, byrow=TRUE, dimnames=list(stages, stages))
+
+
+```
+
+
+#Population Projections
+Taking the matrix product to create a matrix starting in fall, projecting to the following fall, we need to multiply each season's matrix. We get the following, note that the % is used to denote matrix multiplication:
+```{r, echo=FALSE}
+FallMatrixProduct<-FallMatrix%*%WinterMatrix%*%SpringMatrix%*%SummerMatrix
+FallMatrixProduct
+```
+
+The matrix product is what we will use to project the population moving forward (from fall to the following fall). Starting with the same initial vector of populations densities, we can project the population forward.
+```{r, echo=FALSE}
+Njuveniles=0
+NSubadults = 50
+NAdults = 50
+N = c(Njuveniles, NSubadults, NAdults)
+```
+
+We project the population in the same way as the single species model without seasonality:
+To project the population to next year, we use matrix multiplication (denoted by the %*%) to multiply the transition matrix by the starting population
+```{r}
+N1_Fall = FallMatrixProduct %*% N
+
+Fall_projection = pop.projection(FallMatrixProduct, N,11)
+stage.vector.plot(Fall_projection$stage.vectors,proportions = FALSE, 
+                  legend.coords="topleft", main = "10 Year Projected
+                  Voles/ha")
+
+```
+
+#Eigenvalue Analysis:
+We can conduct a complete analysis of eigenvalues using the eigen.analysis command from the popbio package
+```{r}
+eigen.analysis(FallMatrixProduct)
+```
