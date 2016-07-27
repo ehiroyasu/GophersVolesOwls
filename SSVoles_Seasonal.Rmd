@@ -7,6 +7,8 @@ output: html_document
 The SSVoles.Rmd file contains a single species annual model for vole populations. However, we expect that seasonality may be an important aspect determining vole population growth. This model includes seasonality (summer, winter, spring, and fall) in the matrix model presented previously.
 
 Again, parameters and initial population sizes have been taken from literature estimates both of the growth and survival rates of the population and the densities of vole populations for the species Microtus californicus. For this model we used the 'popbio' package in R.
+
+
 ```{r}
 library(popbio)
 ```
