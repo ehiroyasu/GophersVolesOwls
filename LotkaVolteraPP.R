@@ -1,45 +1,40 @@
 #lotka Volterra predator prey model
 
-#first create function, containing the derivative equations
-pred_prey <- function(t, x, pars){
-  N <- x[1]
-  P <- x[2]
-  r = pars[1]
-  C = pars[2]
-  B = pars[3]
-  d = pars[4]
-  
-  dprey = r * N - C * P * N
-  dpredator = B * P * N - d * P
-  list(c(dprey, dpredator))
-}
-
-#r = growth rate of prey pop
-#N = starting population of prey
-#C = attack rate of predator
-#P = starting population of predator
-#B = birth rate of predator
-#d = death rate of predator
-
-#Use the package deSolve to enable the use of ODE solvers to fit parameters
 library(deSolve)
 
-  t = seq(from=1, to=100, by=1) #time interval
-  x<-c(300, 2)
-  #init = c(0.4, 0.2) #inital values
-  r = log(3.47) #remember that r=ln(lambda)
-  d = 0.3 #quick number pulled from a google search
-  C = 1
-  B = 4 #average number of chicks per nest box 
-  pars = c(r, C, B, d)
-  predprey_output <- ode(x, t, pred_prey, pars)
-  matplot(predprey_output[,-1], type="l", ylab= "abundance", xlab="time", col=c(1,2), lwd=1.5)
-  legend("topright", c("Prey", "Predator"), lty=c(1,2), col=c(1,2))
+#parameters:
+#r = growth rate of prey pop
+#N = starting population of prey
+#P = starting population of predator
+#K = carrying capacity of prey
+#alpha = attack rate of predator
+#epsilon= birth rate of predator
+#delta = death rate of predator
+
+#vectors of parameters and state variables, this allows us to easily change either of them
+parameters <- c(r = log(3.47), alpha = 1, epsilon = 4, delta = 0.5, K = 25)
+state<-c(N = 10, P = 1)
+times<- seq(0, 100, by = 0.01)
+
+pred_prey <- function(t, state, parameters){
+  with(as.list(c(state, parameters)), {
+    #rate of change
+    #dprey=N*r - alpha * P * N #without density dependence, remember to remove K from vector of parameters
+    dprey= N * (r * (1-(N/K)) - (alpha * P)) #with density dependence in prey
+    dpredator = epsilon * P * N * alpha - delta * P
+    
+    #return rate of change
+    list(c(dprey, dpredator))
+  })
   
-  #par(mfrow=c(1,2))
-  #plot(predprey_output[,'time'], predprey_output[,2], col="blue", lwd=2,xlab="Time", ylab="Prey", main="Prey", type="l")
-  #grid()
-  #plot(predprey_output[,'time'], predprey_output[,3], col="red", lwd=2,xlab="Time", ylab="Predator", main="Predator",type="l")
-  #grid()
-  
-  
+}
+
+
+out<- ode(y=state, times = times, func = pred_prey, parms = parameters)
+
+#plot(out, xlab = "time", ylab = "-") #plots on separate graphs
+matplot(out, xlab="abundance", main = "Predator Prey Model")
+
+#plotting barn gopher pops vs barn owl pops
+#plot(out[,"N"], out[,"P"], pch = ".")
+
