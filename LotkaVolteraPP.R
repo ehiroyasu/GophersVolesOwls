@@ -12,7 +12,7 @@ library(deSolve)
 #delta = death rate of predator
 
 #vectors of parameters and state variables, this allows us to easily change either of them
-parameters <- c(r = log(3.47), alpha = 0.5, epsilon = 4, delta = 0.5, K = 15)
+parameters <- c(r = log(3.47), alpha = 0.5, epsilon = 0.5, delta = 0.5, K = 15)
 state<-c(N = 10, P = 1)
 times<- seq(0, 100, by = 0.01)
 
