@@ -8,11 +8,11 @@ library(deSolve)
 #P = starting population of predator
 #K = carrying capacity of prey
 #alpha = attack rate of predator
-#epsilon= birth rate of predator
+#epsilon= assimilation efficiency (efficiency of turning gophers into chicks)
 #delta = death rate of predator
 
 #vectors of parameters and state variables, this allows us to easily change either of them
-parameters <- c(r = log(3.47), alpha = 1, epsilon = 4, delta = 0.5, K = 25)
+parameters <- c(r = log(3.47), alpha = 0.5, epsilon = 4, delta = 0.5, K = 15)
 state<-c(N = 10, P = 1)
 times<- seq(0, 100, by = 0.01)
 
