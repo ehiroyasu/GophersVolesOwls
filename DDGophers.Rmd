@@ -1,0 +1,111 @@
+---
+title: "Single Species Gopher Model with Density Dependence"
+author: "Elizabeth Hiroyasu"
+date: "August 2, 2016"
+output: html_document
+---
+##Building a single species gopher model with density dependence
+
+This work builds on previous work in the SSGophers.Rmd file. It is a 3-stage, stage-structured population model, modeling population dynamics of gophers in an agricultural setting. This model includes density dependence. This represents the initial stages for exploring population growth and expansion of gopher populations and we hope to use this modeling exercise to provide information about how to better target management strategies for pest species.
+
+Parameters and initial population sizes have been taken from literature estimates both of the growth and survival rates of the population and the densities of gopher populations for species Thomomys talpoides. For this model we used the 'popbio' package in R.
+
+```{r}
+library(popbio)
+```
+
+##Setting up the matrix
+We directly filled population parameters into a 3x3 matrix, with a juvenile, subadult, and adult stage. This is the same as the SSGophers.Rmd file.
+
+```{r}
+stages = c("Juvenile", "SubAdult", "Adult")
+
+p1 =0.69
+p2 = 0.468
+p3 = 0.449
+f2 = 2.535
+f3 = 7.775
+
+GopherMatrix = matrix(data=c(0,f2, f3, p1, 0, 0, 0, p2, p3),
+              nrow=3, ncol=3, byrow=TRUE,
+              dimnames=list(stages,stages))
+```
+
+Resulting in a matrix that looks like this:
+
+ Stage | Juvenile | SubAdult | Adult
+-------|----------|----------|-------            
+Juvenile | 0.00 | 2.535 | 7.775
+SubAdult | 0.69 | 0.00 | 0.00
+Adult | 0.00 | 0.468 | 0.449
+
+
+#Projecting the population:
+Set an initial population vector, and paste it into a matrix, we will write the projection into this matrix:
+
+```{r, echo=FALSE}
+
+Njuveniles=3
+NSubadults = 3
+NAdults = 7
+N = c(Njuveniles, NSubadults, NAdults)
+
+
+Nt<-matrix(0, 11, 3)
+Nt[1,]<-N
+```
+
+Because we are including density dependence, we will need to include a carrying capacity
+```{r, echo=FALSE}
+K=50
+```
+
+To project the population to next year, we use the form:
+Nt+1 = Nt + D(Nt)(M-I)Nt
+
+where M-I is the transition matrix
+D(Nt) = [K-T(Nt)]/K  <- this is the density dependent term (from Miller et al. 2002)
+
+```{r}
+for (i in 1:10){
+  Nt[i+1,]<-Nt[i,]+((K-sum(Nt[i,]))/K)*GopherMatrix%*%Nt[i,]
+}
+
+matplot(0:10, Nt, type='l', xlab="Time", col=1:3, ylab = "Density", main = "Projected gopher populations over time",lty=1:3)
+legend("topright", c("1-yr old", "2-yr old", "3+ yr old"), col=1:3, lty=1:3)
+```
+
+##Population simulations
+Now, if we want to simulate the population, the popbio package includes a function to carry out stochastic simulations.To conduct simulations, we can randomly draw numbers between the minimum and maximum values seen in the literature, for each matrix element.
+
+```{r}
+#creating vectors of matrix elements
+p1Sim =runif(10, 0.59, 0.80)
+p2Sim = runif(10, 0.357, 0.570)
+p3Sim = runif(10, 0.25, 0.67)
+f2Sim = runif(10, 2.4, 2.67)
+f3Sim = runif(10, 5.35, 10.2)
+
+
+#Creating a 10 matrix array and list for the stoch.projection function
+GopherArray<-array(0, c(3,3,10))
+GopherList<-list(NULL)
+for  (i in 1:10){
+  GopherArray[,,i]<-(matrix(data=c(0,f2Sim[i], f3Sim[i], p1Sim[i], 0, 0, 0, p2Sim[i],
+                    p3Sim[i]), nrow=3,ncol=3, byrow = TRUE, dimnames =list(stages,stages)))
+  GopherList[[i]]<- GopherArray[,,i]
+  }
+
+```
+
+Running the simulations using the stochastic projection function in the popbio package, we can include density dependence in these projections by specifying the carrying capacity with nmax:
+```{r}
+gopher.ens<-stoch.projection(GopherList,N, tmax=10, nreps=1000, nmax=K) 
+#nmax adds density dependence to simulation
+
+plot(density(gopher.ens[,3]), xlab="Final population size at t=10",
+     main="Projection of stochastic growth of adult gophers", xlim=c(0,N[3])) 
+
+abline(v=N[3], lty=3)
+
+```
