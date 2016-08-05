@@ -44,7 +44,6 @@ Adult | 0.00 | 0.468 | 0.449
 Set an initial population vector, and paste it into a matrix, we will write the projection into this matrix:
 
 ```{r, echo=FALSE}
-
 Njuveniles=3
 NSubadults = 3
 NAdults = 7
@@ -57,7 +56,8 @@ Nt[1,]<-N
 
 Because we are including density dependence, we will need to include a carrying capacity
 ```{r, echo=FALSE}
-K=50
+K=150
+theta=1
 ```
 
 To project the population to next year, we use the form:
@@ -66,9 +66,13 @@ Nt+1 = Nt + D(Nt)(M-I)Nt
 where M-I is the transition matrix
 D(Nt) = [K-T(Nt)]/K  <- this is the density dependent term (from Miller et al. 2002)
 
+For the theta logistic
+D(Nt) = ([K-T(Nt)]/K)^theta 
+(at theta=1, this is just logistic)
+
 ```{r}
 for (i in 1:10){
-  Nt[i+1,]<-Nt[i,]+((K-sum(Nt[i,]))/K)*GopherMatrix%*%Nt[i,]
+  Nt[i+1,]<-Nt[i,]+(((K-sum(Nt[i,]))/K)^theta)*GopherMatrix%*%Nt[i,]
 }
 
 matplot(0:10, Nt, type='l', xlab="Time", col=1:3, ylab = "Density", main = "Projected gopher populations over time",lty=1:3)
