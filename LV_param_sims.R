@@ -20,7 +20,7 @@ matplot(out, xlab="time", main = "Predator Prey Model")
 
 
 #looping through three different alpha values, the writing to a list
-alpha<-c(0.001, 0.01, 0.1)
+alpha<-c(0.001, 0.01, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3)
 
 out_alpha_sim<-vector("list", length(alpha))
 names(out_alpha_sim)=alpha
@@ -31,6 +31,13 @@ for(i in 1:length(alpha)){
 
 #Plotting different outcomes
 matplot(out_alpha_sim[[1]], lty=1:2, type='l', col=1)
-matplot(out_alpha_sim[[2]], add=TRUE,lty = 1:2, type = 'l', col=3)
-matplot(out_alpha_sim[[3]], add=TRUE, lty=1:2, type='l', col = 5)
+
+#adding extra lines manually
+#matplot(out_alpha_sim[[2]], add=TRUE,lty = 1:2, type = 'l', col=3)
+#matplot(out_alpha_sim[[3]], add=TRUE, lty=1:2, type='l', col = 5)
+
+#adding elements of list with a loop
+for(j in 1:length(alpha)){
+  matplot(out_alpha_sim[[j]], add=TRUE, lty=1:2, type='l', col=c(j))
+}
 
