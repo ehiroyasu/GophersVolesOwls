@@ -15,8 +15,8 @@ library(deSolve)
 #D = half saturation constant (1/(alpha*k_max))
 
 #vectors of parameters and state variables, this allows us to easily change either of them
-parameters <- c(r = log(3.47), alpha = 0.3, beta = 0.5, delta = 0.5, K_prey = 175, k_max=10, D=1/(0.3*5))#, K_pred = 6)
-state<-c(N = 10, P = 6)
+parameters <- c(r = log(3.47), alpha = 0.01, beta = 0.3, delta = 0.6, K_prey = 175, k_max=10, D=1/(0.3*100))#, K_pred = 6)
+state<-c(N = 30, P = 2)
 times<- seq(0, 100, by = 0.01)
 
 pred_prey <- function(t, state, parameters){
@@ -41,9 +41,10 @@ pred_prey <- function(t, state, parameters){
 
 out<- ode(y=state, times = times, func = pred_prey, parms = parameters)
 
-plot(out[,2], xlab = "time", ylab = "gopher density", type='l') #plots on separate graphs
-abline(h=6, col=3)
-#matplot(out, xlab="time", main = "Predator Prey Model")
+plot(out[,1],out[,2], xlab = "Years", ylab = "Gopher Density", type='l', main="Gopher Density Over Time with
+     Six Owls Present, K=50")
+abline(h=state[2], col=3, lty=2)
+matplot(out, xlab="time", main = "Predator Prey Model")
 
 #plotting barn gopher pops vs barn owl pops
 #plot(out[,"N"], out[,"P"], pch = ".")

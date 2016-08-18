@@ -7,7 +7,7 @@ pred_prey <- function(t, state, parameters){
     #rate of change
     #dprey=N*r - alpha * P * N #without density dependence, remember to remove K from vector of parameters
     dprey= N * (r-alpha*P)*(1-(N/K_prey)) #with density dependence in prey
-    dpredator = P*(beta * N * alpha - delta)*(1-(P/K_pred))#with density dependence in predator
+    dpredator = P*(beta * N * alpha - delta)#*(1-(P/K_pred))#with density dependence in predator
     
     #return rate of change
     list(c(dprey, dpredator))
@@ -30,7 +30,7 @@ for(i in 1:length(alpha)){
 }
 
 #Plotting different outcomes
-matplot(out_alpha_sim[[1]], lty=1:2, type='l', col=1)
+matplot(out_alpha_sim[[1]], lty=1:2, type='l', col=1, main="Predator prey dynamics over time")
 
 #adding extra lines manually
 #matplot(out_alpha_sim[[2]], add=TRUE,lty = 1:2, type = 'l', col=3)
