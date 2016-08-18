@@ -1,0 +1,41 @@
+---
+title: "Resampling Transition Matrices to Calculate Lambdas"
+author: "Elizabeth Hiroyasu"
+date: "August 17, 2016"
+output: html_document
+---
+
+The popbio package in R has a function to resample projection matrices using a multinomial distribution for the transitions and log normal distribution for fertilities. This effectively allows us to bootstrap a single transition matrix and come up with a vector of population growth rates, which we can then use in the Lotka-Volterra predator prey model.
+
+```{r}
+library(popbio)
+```
+
+
+Building the proejction matrix
+```{r}
+stages = c("Juvenile", "SubAdult", "Adult")
+
+p1 =0.69
+p2 = 0.468
+p3 = 0.449
+f2 = 2.535
+f3 = 7.775
+
+GopherMatrix = matrix(data=c(0,f2, f3, p1, 0, 0, 0, p2, p3),
+              nrow=3, ncol=3, byrow=TRUE,
+              dimnames=list(stages,stages))
+```
+
+
+Creating a list of 1000 resampled projection matrices and calculating lambda
+```{r, echo=FALSE}
+MatrixResample<-lapply(1:1000, function(x) resample(GopherMatrix, 3))
+GopherLambdas<-sapply(MatrixResample, lambda)
+```
+
+Plotting the distribution of lambdas from the resample:
+```{r, echo=FALSE}
+hist(GopherLambdas, br=30, col="palegreen", xlab="Lambda", main="Gopher growth rates")
+```
+
