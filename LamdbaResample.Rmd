@@ -39,3 +39,77 @@ Plotting the distribution of lambdas from the resample:
 hist(GopherLambdas, br=30, col="palegreen", xlab="Lambda", main="Gopher growth rates")
 ```
 
+Adding seasonality, data from Andersen and MacMahon, 1981:
+```{r, echo=FALSE}
+Summer1976<-matrix(data=c(0,3.75, 3.75, 0.5, 0, 0, 0, 0.09, 0.88),
+              nrow=3, ncol=3, byrow=TRUE,
+              dimnames=list(stages,stages))
+Summer1976
+
+Winter1976<-matrix(data=c(0,3.75, 3.75, 0.5, 0, 0, 0, 0.09, 0.33),
+              nrow=3, ncol=3, byrow=TRUE,
+              dimnames=list(stages,stages))
+Winter1976
+
+Summer1977<-matrix(data=c(0,3.75, 3.75, 0.5, 0, 0, 0, 0.36, 0.56),
+              nrow=3, ncol=3, byrow=TRUE,
+              dimnames=list(stages,stages))
+Summer1977
+
+Winter1977<-matrix(data=c(0,3.75, 3.75, 0.5, 0, 0, 0, 0.36, 0.26),
+              nrow=3, ncol=3, byrow=TRUE,
+              dimnames=list(stages,stages))
+Winter1977
+
+Summer1978<-matrix(data=c(0,3.75, 3.75, 0.5, 0, 0, 0, 0.85, 0.90),
+              nrow=3, ncol=3, byrow=TRUE,
+              dimnames=list(stages,stages))
+Summer1978
+
+Winter1978<-matrix(data=c(0,3.75, 3.75, 0.5, 0, 0, 0, 0.85, 0.78),
+              nrow=3, ncol=3, byrow=TRUE,
+              dimnames=list(stages,stages))
+Winter1978
+
+```
+
+
+Creating a list of 1000 resampled projection matrices and calculating lambda for each year. To preserve the variation seen in each season, I have sampled 1000 matrices from each of the above matrices by season, then multiplied them together to come up with 1000 matrix products for each year.
+```{r, echo=FALSE}
+Summer1976Resample<-lapply(1:1000, function(x) resample(Summer1976, 3)) 
+Winter1976Resample<-lapply(1:1000, function(x) resample(Winter1976, 3)) 
+Summer1977Resample<-lapply(1:1000, function(x) resample(Summer1977, 3)) 
+Winter1977Resample<-lapply(1:1000, function(x) resample(Winter1977, 3)) 
+Summer1978Resample<-lapply(1:1000, function(x) resample(Summer1978, 3)) 
+Winter1978Resample<-lapply(1:1000, function(x) resample(Winter1978, 3)) 
+
+Product1976<-vector("list", length(Summer1976Resample))
+Product1977<-vector("list", length(Summer1976Resample))
+Product1978<-vector("list", length(Summer1976Resample))
+
+for(i in 1:length(Summer1976Resample)){
+  Product1976[[i]]<-Summer1976Resample[[i]]%*%Winter1976Resample[[i]]
+  Product1977[[i]]<-Summer1977Resample[[i]]%*%Winter1977Resample[[i]]
+  Product1978[[i]]<-Summer1978Resample[[i]]%*%Winter1978Resample[[i]]
+}
+```
+
+
+We are interested in the distribution of the population growth rates resampled from here, we can calculate the set of lambdas for each year using the lambda function from the popbio package. We can then plot their distribution in a histogram. We will also save the data from this run into a csv file for later use with the Lotka Volterra simulations
+```{r, echo=FALSE}
+Lambdas1976<-sapply(Product1976, lambda)
+par(mfrow=c(1,3))
+hist(Lambdas1976, br=10, col="palegreen", xlab="Lambda", main="Gopher Population Growth
+     Rates 1976")
+
+Lambdas1977<-sapply(Product1977, lambda)
+hist(Lambdas1977, br=10, col="maroon1", xlab="Lambda", main="Gopher Population Growth
+     Rates 1977")
+
+Lambdas1978<-sapply(Product1978, lambda)
+hist(Lambdas1978, br=10, col="mediumpurple3", xlab="Lambda", main="Gopher Population Growth
+     Rates 1978")
+
+Lambda.df<-data.frame(Lambdas1976, Lambdas1977, Lambdas1978)
+write.table(Lambda.df, "E:/GopherProject/GophersVolesOwls/Lambda.df.txt", sep="\t")
+```
