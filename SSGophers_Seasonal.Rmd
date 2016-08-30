@@ -64,11 +64,18 @@ We project the population in the same way as the single species model without se
 To project the population to next year, we use matrix multiplication (denoted by the %*%) to multiply the transition matrix by the starting population
 ```{r}
 N1_summer = MatrixProduct %*% N_summer
+N1_winter = WinterProduct%*%N_summer
 
 summer_projection = pop.projection(MatrixProduct, N_summer,11)
+winter_projection = pop.projection(WinterProduct, N_summer, 11)
+
 stage.vector.plot(summer_projection$stage.vectors,proportions = FALSE, 
-                  legend.coords="topleft", main = "10 Year Projected
+                  legend.coords="topleft", main = "Summer 10 Year Projected
                   Gophers/ha")
+
+
+stage.vector.plot(winter_projection$stage.vectors, proportion = FALSE,xlim=c(0,5),
+                  legend.coords="topleft", main = "Winter 10 year projected gophers/ha")
 
 ```
 
@@ -76,6 +83,7 @@ stage.vector.plot(summer_projection$stage.vectors,proportions = FALSE,
 We calculate the stable stage distribution and elasticities in the same way. It is important to note that the eigenvalues are extracted from matrix product, not the product of each matrix eigenvalue (eigenvalue(SummerMatrix%times%WinterMatrix), as opposed to eigenvalue(SummerMatrix) times eigenvalue(WinterMatrix))
 ```{r}
 summer_projection$stable.stage
+winter_projection$stable.stage
 ```
 
 To determine the dominant eigenvalue, lambda, we can use the 'lambda' command, it is also given as part of the list of outputs from the pop.projection command. The dominant eigenvalue tells us the population growth rate of a projection matrix. If lambda is greater than one, the population will grow, if it less than one then the population will be declining, and if it is equal to one the population will be neither growing, nor declining.
