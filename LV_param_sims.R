@@ -41,3 +41,25 @@ for(j in 1:length(alpha)){
   matplot(out_alpha_sim[[j]], add=TRUE, lty=1:2, type='l', col=c(j))
 }
 
+
+#looping through three different beta values, the writing to a list
+beta<-c(0.001, 0.01, 0.1)
+
+out_beta_sim<-vector("list", length(beta))
+names(out_beta_sim)=beta
+
+for(i in 1:length(beta)){
+  out_beta_sim[[i]]<- ode(y=state, times = times, func = pred_prey, parms = c(r = log(3.47), alpha=1.68, beta = beta[i], delta = 0.5, K_prey = 175, K_pred = 6))
+}
+
+#Plotting different outcomes
+matplot(out_beta_sim[[1]], lty=1:2, type='l', col=1, main="Predator prey dynamics over time")
+
+#adding extra lines manually
+#matplot(out_alpha_sim[[2]], add=TRUE,lty = 1:2, type = 'l', col=3)
+#matplot(out_alpha_sim[[3]], add=TRUE, lty=1:2, type='l', col = 5)
+
+#adding elements of list with a loop
+for(j in 1:length(beta)){
+  matplot(out_beta_sim[[j]], add=TRUE, lty=1:2, type='l', col=c(j))
+}
