@@ -15,7 +15,6 @@ pred_prey <- function(t, state, parameters){
     list(c(dprey, dpredator))
     
   })
-  
 }
 
 
