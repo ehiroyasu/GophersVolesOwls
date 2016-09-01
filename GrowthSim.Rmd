@@ -1,0 +1,124 @@
+---
+title: "Growth Simulations"
+author: "Elizabeth Hiroyasu"
+date: "August 31, 2016"
+output: html_document
+---
+
+Using the lambda values we generated in the LambdaResample.Rmd file, we can simulate the population dynamics of the gopher and owl populations using a simple Lotka Volterra model. Because we know that gopher populations exhibit density dependent growth, we simulate the gopher (prey) growth with the logistic growth function. We also know that barn owls prey on other species when gopher populations are low, so we use a Type III functional response for the owl (predator) population. The Type III function response is characterized by a sigmoidal curve, showing prey switching when the modeled prey is at low densities.
+
+```{r}
+library(deSolve)
+library(plyr)
+library(purrr)
+```
+
+We can write the Lotka Volterra function as follows, then use an ode solver to solve the derivatives.
+```{r}
+pred_prey <- function(t, state, parameters){
+  with(as.list(c(state, parameters)), {
+    #type III Functional response
+    dprey=(r*N*(1-(N/K_prey)))-((k_max*(N^2))/((N^2)+(D^2)))*P #with density dependence
+    #dprey=(r*N)-((k_max*(N^2))/((N^2)+(D^2)))*P #without density dependence
+    dpredator= beta*P*N - (delta*P)
+    
+    #return rate of change
+    list(c(dprey, dpredator))
+    
+  })
+}
+```
+
+
+The model requires multiple parameters, defined below:
+r = growth rate of prey pop (gophers/season)
+
+K = carrying capacity of prey
+alpha = attack rate of predator (or capture efficiency; the larger alpha is, the more the per capita growth rate of the prey population is depressed by the addition of a single predator)
+beta= assimilation efficiency (efficiency of turning gophers into per capita growth)
+delta = death rate of predator
+k_max = maximum feeding rate (1/handling time)
+D = half saturation constant (1/(alpha*handling time))
+
+State variables:
+N = starting population of prey 
+P = starting population of predator
+
+
+For this model, time is in terms of season (3 months), so each time interval is represented by a season and four seasons are equivalent to one year.
+```{r}
+alpha=1.68
+h=1.39e-4
+k_max=1/h
+D=1/(alpha*h)
+parameters <- c(r = log(3.47), alpha, beta = 0.002, delta = 0.01, K_prey=175, k_max, D)
+state<-c(N = 150, P = 2)
+times<- seq(0, 12, by = 0.1)
+```
+
+We can use the ODE solver from the deSolve package in R to find solutions to the differential equations
+```{r, echo=FALSE}
+out<- ode(y=state, times = times, func = pred_prey, parms = parameters)
+matplot(out, main = "Predator Prey Model", xlab="Season", ylab="Predator and Prey densities")
+```
+
+To plot the functional response of the prey:
+```{r, echo=FALSE}
+func_response<-NULL
+for (i in 1:length(out[,2])){
+  for(j in 1:length(out[,3])){
+    func_response[i]<-((k_max*(out[i,2]^2))/((out[i,2]^2)+(D^2)))*out[j,3]
+  }
+}
+
+
+plot(out[,2], func_response, xlab= "Prey abundance/ha", ylab= "Feeding rate", main = "Functional Response")
+```
+
+
+We can also look at how changes in population growth rates of the prey change the equilibrium population size of both the predator and prey species. We can convert lambda values to r values to use in the Lotka Volterra function by taking log(lambda). Any growth rates that are calculated to be negative are converted to zero.
+```{r, echo=FALSE}
+lambda<-read.table("Lambda.df.txt")
+r<-as.data.frame(apply(lambda, 2, log))
+r<-rename(r, c("Lambdas1976" = "r1976", "Lambdas1977"="r1977", "Lambdas1978" = "r1978"))
+r[r<0]<-0 #replacing negative growth rates with zero
+```
+
+First, let's look at the distribution of r values for each year of simulated data:
+```{r, echo=FALSE}
+hist(r$r1976, breaks=15, col="lightblue", main="1976 r values", xlab="r")
+hist(r$r1977, breaks=15, col="aquamarine2", main="1977 r values", xlab="r")
+hist(r$r1978, breaks=15, col="darkseagreen2", main="1978 r values", xlab="r")
+```
+
+
+```{r}
+alpha=1.68
+h=1.39e-4
+k_max=1/h
+D=1/(alpha*h)
+state<-c(N = 150, P = 2)
+times<- seq(0, 12, by = 1)
+
+r1976_sim<-setNames(vector("list", length(r$r1976)), as.character(r$r1976))
+
+for(i in 1:length(r$r1976)){
+  r1976_sim[[i]]<- ode(y=state, times = times, func = pred_prey, parms = c(r = r$r1976[i], alpha, beta = 0.002, delta = 0.01, K_prey=175, k_max, D))
+}
+```
+
+Since we're looking at 1000 lambda values for each year, it is useful to look at plots for a range of r values.
+#this is not a sensible way to do this, perhaps plotting the mean with the sd makes more sense of a range of r values...
+```{r, echo=FALSE}
+rlessthan0.5<-(r1976_sim[names(r1976_sim)<=0.5])
+
+#Plotting different outcomes
+matplot(r1976_sim[[1]], lty=1:2, type='l', col=1, main="Predator prey dynamics over time")
+
+#adding elements of list with a loop
+for(j in 2:length(rlessthan0.5)){
+  lines(rlessthan0.5[[j]][,2], col=c(j), lty=1)
+  lines(rlessthan0.5[[j]][,3], col=c(j), lty=2)
+  }
+```
+
