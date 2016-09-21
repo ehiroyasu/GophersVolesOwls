@@ -11,6 +11,8 @@ Using the lambda values we generated in the LambdaResample.Rmd file, we can simu
 library(deSolve)
 library(plyr)
 library(purrr)
+library(ggplot2)
+library(reshape)
 ```
 
 We can write the Lotka Volterra function as follows, then use an ode solver to solve the derivatives.
@@ -32,7 +34,6 @@ pred_prey <- function(t, state, parameters){
 
 The model requires multiple parameters, defined below:
 r = growth rate of prey pop (gophers/season)
-
 K = carrying capacity of prey
 alpha = attack rate of predator (or capture efficiency; the larger alpha is, the more the per capita growth rate of the prey population is depressed by the addition of a single predator)
 beta= assimilation efficiency (efficiency of turning gophers into per capita growth)
@@ -59,7 +60,7 @@ times<- seq(0, 12, by = 0.1)
 We can use the ODE solver from the deSolve package in R to find solutions to the differential equations
 ```{r, echo=FALSE}
 out<- ode(y=state, times = times, func = pred_prey, parms = parameters)
-matplot(out, main = "Predator Prey Model", xlab="Season", ylab="Predator and Prey densities")
+matplot(out[,2:3], x=out[,1], main = "Predator Prey Model", xlab="Season", ylab="Predator and Prey densities (number/ha)", type='l')
 ```
 
 To plot the functional response of the prey:
@@ -70,7 +71,6 @@ for (i in 1:length(out[,2])){
     func_response[i]<-((k_max*(out[i,2]^2))/((out[i,2]^2)+(D^2)))*out[j,3]
   }
 }
-
 
 plot(out[,2], func_response, xlab= "Prey abundance/ha", ylab= "Feeding rate", main = "Functional Response")
 ```
@@ -111,14 +111,36 @@ Since we're looking at 1000 lambda values for each year, it is useful to look at
 #this is not a sensible way to do this, perhaps plotting the mean with the sd makes more sense of a range of r values...
 ```{r, echo=FALSE}
 rlessthan0.5<-(r1976_sim[names(r1976_sim)<=0.5])
+mean(as.numeric(names(rlessthan0.5)))
+
+df<-ldply(rlessthan0.5, data.frame)
+
+library(plotly)
+plot_ly(df, x=time, y=.id, z=N, type="scatter3d", group=.id)
+
+#OR
+library(plot3D)
+x<-df$time
+y<-as.numeric(df$.id)
+z<-df$N
+scatter3D(x, y,z, col=1)
+
+plot(y, z, xlab="r value", ylab="Prey Population")
+
+
+r.5to1.5<-r1976_sim[names(r1976_sim)>0.5 & names(r1976_sim)<1.5]
+mean(as.numeric(names(r.5to1.5)))
+
+df1.5<-ldply(r.5to1.5, data.frame)
+plot_ly(df1.5, x=time, y=.id, z=N, type="scatter3d", group=.id)
 
 #Plotting different outcomes
-matplot(r1976_sim[[1]], lty=1:2, type='l', col=1, main="Predator prey dynamics over time")
+#matplot(r1976_sim[[1]], lty=1:2, type='l', col=1, main="Predator prey dynamics over time")
 
 #adding elements of list with a loop
-for(j in 2:length(rlessthan0.5)){
-  lines(rlessthan0.5[[j]][,2], col=c(j), lty=1)
-  lines(rlessthan0.5[[j]][,3], col=c(j), lty=2)
-  }
+#for(j in 2:length(rlessthan0.5)){
+#  lines(rlessthan0.5[[j]][,2], col=c(j), lty=1)
+#  lines(rlessthan0.5[[j]][,3], col=c(j), lty=2)
+#  }
 ```
 
