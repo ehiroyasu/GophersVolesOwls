@@ -61,24 +61,25 @@ times<- seq(0, 20, by = 0.1)
 
 We can use the ODE solver from the deSolve package in R to find solutions to the differential equations
 ```{r, echo=FALSE}
-out<- ode(y=state, times = times, func = pred_prey, parms = parameters)
+out<- as.data.frame(ode(y=state, times = times, func = pred_prey, parms = parameters))
 matplot(out[,2:3], x=out[,1], main = "Predator Prey Model", xlab="Season", ylab="Predator and Prey densities (number/ha)", type='l')
 legend("topright", legend=c("Prey", "Predator"), col=c(1,2), lty=c(1,2))
 ```
 
-To plot the functional response of the prey:
+To examine the functional response of the prey as a function of prey abundance:
 ```{r, echo=FALSE}
-#needs to be adjusted to plot total number of prey consumed vs time
-func_response<-NULL
-for (i in 1:length(out[,2])){
-  #for(j in 1:length(out[,3])){
-    func_response[i]<-((k_max*(out[i,2]^2))/((out[i,2]^2)+(D^2)))#*out[j,3]
-  }
-#}
+out$diff<-0
+for (i in 2:length(out[,2])){
+  out[i, "diff"]<-abs(out[i+1,2]-out[i,2])
+}
 
-plot(times, func_response, xlab= "Prey abundance/ha", ylab= "Feeding rate", main = "Functional Response")
+plot(out[2:200,2], out[2:200,4], xlab="Prey Abundance (individuals/ha)", ylab="Prey Consumed (individuals/ha)", main="Type III functional response of prey consumption")
 ```
 
+To examine the number of prey consumed over time:
+```{r, echo=FALSE}
+plot(out[2:200, 1], out[2:200,4], col=12, xlab="Season", ylab="Prey Consumed (individuals/ha)", main="Prey consumed over time")
+```
 
 We can also look at how changes in population growth rates of the prey change the equilibrium population size of both the predator and prey species. We can convert lambda values to r values to use in the Lotka Volterra function by taking log(lambda). Any growth rates that are calculated to be negative are dropped from the data, so the data is truncated at zero
 ```{r, echo=FALSE}
