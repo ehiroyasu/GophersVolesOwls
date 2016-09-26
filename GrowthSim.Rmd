@@ -96,15 +96,8 @@ hist(r[[2]], breaks=15, col="aquamarine2", main="1977 r values", xlab="r")
 hist(r[[3]], breaks=15, col="darkseagreen2", main="1978 r values", xlab="r")
 ```
 
-We can then run simulations for these various lists of r values.
+We can then run simulations for these various lists of r values. We assume the same parameter values as the above simulation.
 ```{r}
-alpha=1.68
-h=1.39e-4
-k_max=1/h
-D=1/(alpha*h)
-state<-c(N = 150, P = 2)
-times<- seq(0, 20, by = 1)
-
 r1976_sim<-setNames(vector("list", length(r[[1]])), as.character(r[[1]]))
 
 for(i in 1:length(r[[1]])){
@@ -112,18 +105,24 @@ for(i in 1:length(r[[1]])){
 }
 ```
 
-Since we're looking at 1000 lambda values for each year, it is useful to look at plots for a range of r values.
-#this is not a sensible way to do this, perhaps plotting the mean with the sd makes more sense of a range of r values...
+Since we're looking at 1000 lambda values for each year, it is useful to look at plots for a range of r values. I've broken these into r-values 0-0.49 (declining population), 0.5-1.49, and 1.5-2.
 ```{r}
-rlessthan0.5<-(r1976_sim[names(r1976_sim)<=0.5])
-mean(as.numeric(names(rlessthan0.5)))
+r_low<-(r1976_sim[names(r1976_sim)<0.5])
+mean(as.numeric(names(r_low)))
+df_low<-ldply(r_low, data.frame)
 
-df<-ldply(rlessthan0.5, data.frame)
+r_mid<-r1976_sim[names(r1976_sim)>=0.5 & names(r1976_sim)<1.5]
+mean(as.numeric(names(r_mid)))
+df_mid<-ldply(r_mid, data.frame)
+
+r_high<-r1976_sim[names(r1976_sim)>=1.5]
+mean(as.numeric(names(r_high)))
+df_high<-ldply(r_high, data.frame)
 ```
 
 ```{r, echo=FALSE}
-time20<-subset(df, time==20, select=c(.id, N, P))
-plot(time20$.id, time20$N, main="r value versus population density at time 20", xlab="r value", ylab="individuals/ha", col=3, lty=1, ylim=c(0,40))
+time20<-subset(df_low, time==20, select=c(.id, N, P))
+plot(time20$.id, time20$N, main="r value versus population density at time 20", xlab="r value", ylab="individuals/ha", col=3, lty=1, ylim=c(0,75))
 lines(time20$.id, time20$P, col=2, lty=1)
 ```
 
