@@ -100,22 +100,22 @@ hist(r[[3]], breaks=15, col="darkseagreen2", main="1978 r values", xlab="r")
 ```
 
 We can then run simulations for these various lists of r values. We assume the same parameter values as the above simulation.
-```{r}
+```{r, echo=FALSE}
 r1976_sim<-setNames(vector("list", length(r[[1]])), as.character(r[[1]]))
 for(i in 1:length(r[[1]])){
-  r1976_sim[[i]]<- ode(y=state, times = times, func = pred_prey, parms = c(r = r[[1]][i], alpha, beta = 0.002, delta = 0.01, K_prey=175, k_max, D))
+  r1976_sim[[i]]<- ode(y=state, times = times, func = pred_prey, parms = c(r = r[[1]][i], alpha, beta, delta, K_prey, k_max, D))
 }
 
 
 r1977_sim<-setNames(vector("list", length(r[[2]])), as.character(r[[2]]))
 for(i in 1:length(r[[2]])){
-  r1977_sim[[i]]<- ode(y=state, times = times, func = pred_prey, parms = c(r = r[[2]][i], alpha, beta = 0.002, delta = 0.01, K_prey=175, k_max, D))
+  r1977_sim[[i]]<- ode(y=state, times = times, func = pred_prey, parms = c(r = r[[2]][i], alpha, beta, delta, K_prey, k_max, D))
 }
 
 
 r1978_sim<-setNames(vector("list", length(r[[3]])), as.character(r[[3]]))
 for(i in 1:length(r[[3]])){
-  r1978_sim[[i]]<- ode(y=state, times = times, func = pred_prey, parms = c(r = r[[3]][i], alpha, beta = 0.002, delta = 0.01, K_prey=175, k_max, D))
+  r1978_sim[[i]]<- ode(y=state, times = times, func = pred_prey, parms = c(r = r[[3]][i], alpha, beta, delta, K_prey, k_max, D))
 }
 ```
 
