@@ -155,25 +155,25 @@ If we are interested in the sensitivity of the predator and prey populations to 
 ```{r, warning=FALSE}
 r1976_sim<-lapply(r1976_sim, data.frame)
 for(i in 1:length(r1976_sim)){
-  for(j in 1:dim(r1976_sim[[1]])[1]){
+  for(j in 2:dim(r1976_sim[[1]])[1]){
     r1976_sim[[i]]$diff[1]<-0
-    r1976_sim[[i]]$diff[j+1]<-(r1976_sim[[i]][j+1,2]-r1976_sim[[i]][j,2])/r1976_sim[[i]][j,2]
+    r1976_sim[[i]]$diff[j]<-na.exclude((r1976_sim[[i]][j,2]-r1976_sim[[i]][j-1,2])/r1976_sim[[i]][j-1,2])
   }
 }
 
 r1977_sim<-lapply(r1977_sim, data.frame)
 for(i in 1:length(r1977_sim)){
-  for(j in 1:dim(r1977_sim[[1]])[1]){
+  for(j in 2:dim(r1977_sim[[1]])[1]){
     r1977_sim[[i]]$diff[1]<-0
-    r1977_sim[[i]]$diff[j+1]<-(r1977_sim[[i]][j+1,2]-r1977_sim[[i]][j,2])/r1977_sim[[i]][j,2]
+    r1977_sim[[i]]$diff[j]<-(r1977_sim[[i]][j,2]-r1977_sim[[i]][j-1,2])/r1977_sim[[i]][j-1,2]
   }
 }
 
 r1978_sim<-lapply(r1978_sim, data.frame)
 for(i in 1:length(r1978_sim)){
-  for(j in 1:dim(r1978_sim[[1]])[1]){
+  for(j in 2:dim(r1978_sim[[1]])[1]){
     r1978_sim[[i]]$diff[1]<-0
-    r1978_sim[[i]]$diff[j+1]<-(r1978_sim[[i]][j+1,2]-r1978_sim[[i]][j,2])/r1978_sim[[i]][j,2]
+    r1978_sim[[i]]$diff[j]<-(r1978_sim[[i]][j,2]-r1978_sim[[i]][j-1,2])/r1978_sim[[i]][j-1,2]
   }
 }
 ```
