@@ -152,7 +152,7 @@ plot(r1978_t20$P, r1978_t20$N, xlab="Predator Population Density (individuals/ha
 ```
 
 If we are interested in the sensitivity of the predator and prey populations to changes in r values, then we can look at the slope of the curve when we plot the density of the owl population versus the percent change in the prey population.
-```{r, warning=FALSE}
+```{r, echo=FALSE}
 r1976_sim<-lapply(r1976_sim, data.frame)
 for(i in 1:length(r1976_sim)){
   for(j in 2:dim(r1976_sim[[1]])[1]){
@@ -185,16 +185,20 @@ plot(sample1976[[1]]$P[-1], sample1976[[1]]$diff[-1], ylim=c(-0.10, 0.02), type=
 for (k in 2:length(sample1976)){
   lines(sample1976[[k]]$P[-1], sample1976[[k]]$diff[-1], col=k)
 }
+legend("bottomright", legend=names(sample1976), lty=1, col=c(1:10), cex=0.55)
+
 
 sample1977<-sample(r1977_sim, size=10)
 plot(sample1977[[1]]$P[-1], sample1977[[1]]$diff[-1], ylim=c(-0.10, 0.02), type='l', main="Predator abundance vs Percent change in prey", xlab="Predator abundance (individuals/ha)", ylab="Percent change in prey density")
 for (k in 2:length(sample1977)){
   lines(sample1977[[k]]$P[-1], sample1977[[k]]$diff[-1], col=k)
 }
+legend("bottomright", legend=names(sample1976), lty=1, col=c(1:10), cex=0.55)
 
 sample1978<-sample(r1978_sim, size=10)
 plot(sample1978[[1]]$P[-1], sample1978[[1]]$diff[-1], ylim=c(-0.10, 0.02), type='l', main="Predator abundance vs Percent change in prey", xlab="Predator abundance (individuals/ha)", ylab="Percent change in prey density")
 for (k in 2:length(sample1978)){
   lines(sample1978[[k]]$P[-1], sample1978[[k]]$diff[-1], col=k)
 }
+legend("bottomright", legend=names(sample1976), lty=1, col=c(1:10), cex=0.55)
 ```
