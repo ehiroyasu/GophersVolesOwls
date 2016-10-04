@@ -127,19 +127,19 @@ r1976<-ldply(r1976_sim, data.frame)
 r1976_t20<-subset(r1976, time==20, select=c(.id, N, P))
 plot(r1976_t20$.id, r1976_t20$N, xlab="r value", ylab="Population Density (individuals/ha)", ylim=c(0,175), main="1976 r value versus population at time 20", col="blue")
 lines(r1976_t20$.id, r1976_t20$P, col="red")
-legend("topleft", legend=c("Prey", "Predator"), col=c(1,5), lty=c(1,1))
+legend("topleft", legend=c("Prey", "Predator"), col=c("blue", "red"), lty=c(1,1))
 
 r1977<-ldply(r1977_sim, data.frame)
 r1977_t20<-subset(r1977, time==20, select=c(.id, N, P))
 plot(r1977_t20$.id, r1977_t20$N, xlab="r value", ylab="Population Density (individuals/ha)", ylim=c(0,175), main="1977 r value versus population at time 20", col="blue")
 lines(r1977_t20$.id, r1977_t20$P, col="red")
-legend("topleft", legend=c("Prey", "Predator"), col=c(1,5), lty=c(1,1))
+legend("topleft", legend=c("Prey", "Predator"), col=c("blue", "red"), lty=c(1,1))
 
 r1978<-ldply(r1978_sim, data.frame)
 r1978_t20<-subset(r1978, time==20, select=c(.id, N, P))
 plot(r1978_t20$.id, r1978_t20$N, xlab="r value", ylab="Population Density (individuals/ha)", ylim=c(0,175), main="1978 r value versus population at time 20", col="blue")
 lines(r1978_t20$.id, r1978_t20$P, col="red")
-legend("topleft", legend=c("Prey", "Predator"), col=c(1,5), lty=c(1,1))
+legend("topleft", legend=c("Prey", "Predator"), col=c("blue","red"), lty=c(1,1))
 
 ```
 
@@ -147,6 +147,33 @@ Plotting prey abundance as a function of owl abundance at time 20:
 ```{r, echo=FALSE}
 par(mfrow=c(1,1))
 plot(r1976_t20$P, r1976_t20$N, xlab="Predator Population Density (individuals/ha)", ylab="Prey Population Density (individuals/ha)", main="1976 Predator versus Prey Population Densities at time 20", col="lightblue")
-plot(r1977_t20$P, r1977_t20$N, xlab="Predator Population Density (individuals/ha)", ylab="Prey Population Density (individuals/ha)", main="1976 Predator versus Prey Population Densities at time 20",col="aquamarine2")
-plot(r1978_t20$P, r1978_t20$N, xlab="Predator Population Density (individuals/ha)", ylab="Prey Population Density (individuals/ha)", main="1976 Predator versus Prey Population Densities at time 20",col="darkseagreen2")
+plot(r1977_t20$P, r1977_t20$N, xlab="Predator Population Density (individuals/ha)", ylab="Prey Population Density (individuals/ha)", main="1977 Predator versus Prey Population Densities at time 20",col="aquamarine2")
+plot(r1978_t20$P, r1978_t20$N, xlab="Predator Population Density (individuals/ha)", ylab="Prey Population Density (individuals/ha)", main="1978 Predator versus Prey Population Densities at time 20",col="darkseagreen2")
+```
+
+If we are interested in the sensitivity of the predator and prey populations to changes in r values, then we can look at the slope of the curve when we plot the density of the owl population versus the percent change in the prey population.
+```{r, warning=FALSE}
+r1976_sim<-lapply(r1976_sim, data.frame)
+for(i in 1:length(r1976_sim)){
+  for(j in 1:dim(r1976_sim[[1]])[1]){
+    r1976_sim[[i]]$diff[1]<-0
+    r1976_sim[[i]]$diff[j+1]<-(r1976_sim[[i]][j+1,2]-r1976_sim[[i]][j,2])/r1976_sim[[i]][j,2]
+  }
+}
+
+r1977_sim<-lapply(r1977_sim, data.frame)
+for(i in 1:length(r1977_sim)){
+  for(j in 1:dim(r1977_sim[[1]])[1]){
+    r1977_sim[[i]]$diff[1]<-0
+    r1977_sim[[i]]$diff[j+1]<-(r1977_sim[[i]][j+1,2]-r1977_sim[[i]][j,2])/r1977_sim[[i]][j,2]
+  }
+}
+
+r1978_sim<-lapply(r1978_sim, data.frame)
+for(i in 1:length(r1978_sim)){
+  for(j in 1:dim(r1978_sim[[1]])[1]){
+    r1978_sim[[i]]$diff[1]<-0
+    r1978_sim[[i]]$diff[j+1]<-(r1978_sim[[i]][j+1,2]-r1978_sim[[i]][j,2])/r1978_sim[[i]][j,2]
+  }
+}
 ```
