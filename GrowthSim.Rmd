@@ -187,6 +187,17 @@ for (k in 2:length(sample1976)){
 }
 legend("bottomright", legend=names(sample1976), lty=1, col=c(1:10), cex=0.55)
 
+fit1976<-ldply(sample1976, data.frame)
+summary(aov(.id~diff+P, data=fit1976))
+
+
+
+manova1976<-vector("list")
+for (i in 1:length(sample1976)){
+  manova1976[[i]]<-manova(cbind(sample1976[[1]][,3], sample1976[[1]][,4])~sample1976[[1]][,1])
+}
+
+
 
 sample1977<-sample(r1977_sim, size=10)
 plot(sample1977[[1]]$P[-1], sample1977[[1]]$diff[-1], ylim=c(-0.10, 0.02), type='l', main="Predator abundance vs Percent change in prey 1977", xlab="Predator abundance (individuals/ha)", ylab="Percent change in prey density")
