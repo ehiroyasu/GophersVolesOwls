@@ -181,7 +181,7 @@ for(i in 1:length(r1978_sim)){
 We can sample the distribution of r-values for each year and look at the slope and position of the relationship between the predator population versus the percent change in prey population.
 ```{r, echo=FALSE}
 sample1976<-sample(r1976_sim, size=10)
-plot(sample1976[[1]]$P[-1], sample1976[[1]]$diff[-1], ylim=c(-0.10, 0.02), type='l', main="Predator abundance vs Percent change in prey", xlab="Predator abundance (individuals/ha)", ylab="Percent change in prey density")
+plot(sample1976[[1]]$P[-1], sample1976[[1]]$diff[-1], ylim=c(-0.10, 0.0), type='l', main="Predator abundance vs Percent change in prey 1976", xlab="Predator abundance (individuals/ha)", ylab="Percent change in prey density")
 for (k in 2:length(sample1976)){
   lines(sample1976[[k]]$P[-1], sample1976[[k]]$diff[-1], col=k)
 }
@@ -189,14 +189,14 @@ legend("bottomright", legend=names(sample1976), lty=1, col=c(1:10), cex=0.55)
 
 
 sample1977<-sample(r1977_sim, size=10)
-plot(sample1977[[1]]$P[-1], sample1977[[1]]$diff[-1], ylim=c(-0.10, 0.02), type='l', main="Predator abundance vs Percent change in prey", xlab="Predator abundance (individuals/ha)", ylab="Percent change in prey density")
+plot(sample1977[[1]]$P[-1], sample1977[[1]]$diff[-1], ylim=c(-0.10, 0.02), type='l', main="Predator abundance vs Percent change in prey 1977", xlab="Predator abundance (individuals/ha)", ylab="Percent change in prey density")
 for (k in 2:length(sample1977)){
   lines(sample1977[[k]]$P[-1], sample1977[[k]]$diff[-1], col=k)
 }
 legend("bottomright", legend=names(sample1976), lty=1, col=c(1:10), cex=0.55)
 
 sample1978<-sample(r1978_sim, size=10)
-plot(sample1978[[1]]$P[-1], sample1978[[1]]$diff[-1], ylim=c(-0.10, 0.02), type='l', main="Predator abundance vs Percent change in prey", xlab="Predator abundance (individuals/ha)", ylab="Percent change in prey density")
+plot(sample1978[[1]]$P[-1], sample1978[[1]]$diff[-1], ylim=c(-0.10, 0.02), type='l', main="Predator abundance vs Percent change in prey 1978", xlab="Predator abundance (individuals/ha)", ylab="Percent change in prey density")
 for (k in 2:length(sample1978)){
   lines(sample1978[[k]]$P[-1], sample1978[[k]]$diff[-1], col=k)
 }
