@@ -116,6 +116,3 @@ for (i in 2:(dim(sample1976)[1])){
 }
 legend("bottomleft", legend=c(sample1976[,1]), col=c(1:(dim(sample1976)[1])), lty=1, cex=0.55, bty="n")
 ```
-
-```{r, echo=FALSE}
-anova(sample1976)
