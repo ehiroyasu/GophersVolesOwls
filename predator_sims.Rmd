@@ -1,0 +1,118 @@
+---
+title: "Predator Simulations"
+author: "Elizabeth Hiroyasu"
+date: "October 10, 2016"
+output: html_document
+---
+
+Using the lambda values we generated in the LambdaResample.Rmd file, we can simulate the population dynamics of the gopher and owl populations using a simple Lotka Volterra model. Because we know that gopher populations exhibit density dependent growth, we simulate the gopher (prey) growth with the logistic growth function. We also know that barn owls prey on other species when gopher populations are low, so we use a Type III functional response for the owl (predator) population. The Type III function response is characterized by a sigmoidal curve, showing prey switching when the modeled prey is at low densities.
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+library(deSolve)
+library(plyr)
+library(dplyr)
+library(ggplot2)
+library(reshape)
+```
+
+We can write the Lotka Volterra function as follows, then use an ode solver to solve the derivatives.
+```{r}
+pred_prey <- function(t, state, parameters){
+  with(as.list(c(state, parameters)), {
+    #type III Functional response
+    dprey=(r*N*(1-(N/K_prey)))-((k_max*(N^2))/((N^2)+(D^2)))*P #with density dependence
+    #dprey=(r*N)-((k_max*(N^2))/((N^2)+(D^2)))*P #without density dependence
+    dpredator=0 #constant number of predators
+    #dpredator= beta*P*N - (delta*P) #incorporating predator
+    
+    #return rate of change
+    list(c(dprey, dpredator))
+    
+  })
+}
+```
+
+
+The model requires multiple parameters, defined below:
+r = growth rate of prey pop (gophers/season)
+K = carrying capacity of prey
+alpha = attack rate of predator (or capture efficiency; the larger alpha is, the more the per capita growth rate of the prey population is depressed by the addition of a single predator)
+beta= assimilation efficiency (efficiency of turning gophers into per capita growth)
+delta = death rate of predator
+k_max = maximum feeding rate (1/handling time)
+D = half saturation constant (1/(alpha*handling time))
+
+State variables:
+N = starting population of prey 
+P = starting population of predator
+
+
+For this model, time is in terms of season (3 months), so each time interval is represented by a season and four seasons are equivalent to one year.
+```{r}
+alpha=1.68
+beta = 0.002
+delta=0.01
+K_prey=175
+h=1.39e-4
+k_max=1/h
+D=1/(alpha*h)
+parameters <- c(r = log(3.47), alpha, beta, delta, K_prey, k_max, D)
+N=c(150, 150, 150, 150, 150)
+P=c(0.2, 0.4, 0.6, 0.8, 0.95)
+state<-cbind(N, P)
+times<- c(0,20)
+```
+
+We can also look at how changes in population growth rates of the prey change the equilibrium population size of both the predator and prey species. We can convert lambda values to r values to use in the Lotka Volterra function by taking log(lambda). Any growth rates that are calculated to be negative are dropped from the data, so the data is truncated at zero
+```{r, echo=FALSE}
+lambda<-read.table("Lambda.df.txt")
+r<-as.list(as.data.frame(apply(lambda, 2, log)))
+r<-rename(r, c("Lambdas1976" = "r1976", "Lambdas1977"="r1977", "Lambdas1978" = "r1978"))
+r<-lapply(r, function(x) {x[x>=0]}) #removing negative growth rates
+```
+
+
+We can then run simulations for these various lists of r values while varying predator density.
+```{r, echo=FALSE}
+r1976<-r[[1]]
+r1977<-r[[2]]
+r1978<-r[[3]]
+
+r1976_sim<-array(data=NA, dim=c(length(times), 3, length(r1976), length(P)))
+for(i in 1:length(P)){
+  for (k in 1:(length(r1976))){
+      r1976_sim[,,k,i]<- ode(y=state[i,], times = times, func = pred_prey, parms = c(r = r1976[k], alpha, beta, delta, K_prey, k_max, D))
+
+     }
+}
+
+r1976_sim<-setNames(alply(r1976_sim, 3), as.character(r))
+```
+
+
+We can then look at how prey population changes with changes in predator density. We can see from the plots below that as the predator density increases, the percent change in prey population increases (indicated by negative slope on the graph). We can see when the growth rate of the prey population is low, it takes fewer predators to drive the population down. However, when the growth rate of the prey population is very high, even a high predator density (two owls per hectare) only drive down the prey population a small amount.
+```{r, echo=FALSE}
+percent.diff1976<-vector(mode="list", length=(length(r1976_sim)))
+percent.diff1976<-setNames(percent.diff1976, r1976)
+for (i in 1:length(r1976_sim)){
+  for (j in 1:(dim(r1976_sim[[1]])[3])){
+    percent.diff1976[[i]][j]<-((r1976_sim[[i]][,,j][2,2]-r1976_sim[[i]][,,j][1,2])/r1976_sim[[i]][,,j][2,2])*100
+  }
+}
+    
+percent.diff1976<-ldply(percent.diff1976)
+colnames(percent.diff1976)<-c("r", P)
+
+plot(P, percent.diff1976[1, 2:6], ylim=c(-120,20), type='l', col=1, ylab="Percent Change in Prey", xlab="Predator Density per Ha", main="Percent change in Prey by Predator Density")
+for (i in 2:(dim(percent.diff1976)[1])){
+  lines(P, percent.diff1976[i, 2:6], col=i)
+}
+
+
+sample1976<-sample_n(percent.diff1976, 10)
+plot(P, sample1976[1, 2:6], type='l', col=1, ylim=range(min(sample1976[,2:6]), max(sample1976[,2:6])), ylab="Percent Change in Prey", xlab="Predator Density per Ha", main="Percent change in Prey by Predator Density", lwd=2)
+for (i in 2:(dim(sample1976)[1])){
+  lines(P, sample1976[i, 2:6], col=i, lwd=2) 
+}
+legend("bottomleft", legend=c(sample1976[,1]), col=c(1:(dim(sample1976)[1])), lty=1, cex=0.55, bty="n")
+```
