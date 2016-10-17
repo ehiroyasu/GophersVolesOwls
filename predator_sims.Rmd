@@ -90,7 +90,7 @@ r1976_sim<-setNames(alply(r1976_sim, 3), as.character(r))
 ```
 
 
-We can then look at how prey population changes with changes in predator density. We can see from the plots below that as the predator density increases, the percent change in prey population increases (indicated by negative slope on the graph). We can see when the growth rate of the prey population is low, it takes fewer predators to drive the population down. However, when the growth rate of the prey population is very high, even a high predator density (two owls per hectare) only drive down the prey population a small amount.
+We can then look at how prey population changes with changes in predator density. We can see from the plots below that as the predator density increases, the percent change in prey population increases (indicated by negative slope on the graph). We can see when the growth rate of the prey population is low, it takes fewer predators to drive the population down. However, when the growth rate of the prey population is very high, even a high predator density (two owls per hectare) only drive down the prey population a small amount. This highlights the importance of understanding the population dynamics of the prey population prior to introducing a predator biocontrol.
 ```{r, echo=FALSE}
 percent.diff1976<-vector(mode="list", length=(length(r1976_sim)))
 percent.diff1976<-setNames(percent.diff1976, r1976)
@@ -103,16 +103,19 @@ for (i in 1:length(r1976_sim)){
 percent.diff1976<-ldply(percent.diff1976)
 colnames(percent.diff1976)<-c("r", P)
 
-plot(P, percent.diff1976[1, 2:6], ylim=c(-120,20), type='l', col=1, ylab="Percent Change in Prey", xlab="Predator Density per Ha", main="Percent change in Prey by Predator Density")
+plot(P, percent.diff1976[1, 2:6], ylim=c(-120,20), type='l', col=1, ylab="Percent Change in Prey", xlab="Predator Density per Ha", main="1976 Percent change in Prey by Predator Density")
 for (i in 2:(dim(percent.diff1976)[1])){
   lines(P, percent.diff1976[i, 2:6], col=i)
 }
 
 
 sample1976<-sample_n(percent.diff1976, 10)
-plot(P, sample1976[1, 2:6], type='l', col=1, ylim=range(min(sample1976[,2:6]), max(sample1976[,2:6])), ylab="Percent Change in Prey", xlab="Predator Density per Ha", main="Percent change in Prey by Predator Density", lwd=2)
+plot(P, sample1976[1, 2:6], type='l', col=1, ylim=range(min(sample1976[,2:6]), max(sample1976[,2:6])), ylab="Percent Change in Prey", xlab="Predator Density per Ha", main="1976 Percent change in Prey by Predator Density", lwd=2)
 for (i in 2:(dim(sample1976)[1])){
   lines(P, sample1976[i, 2:6], col=i, lwd=2) 
 }
 legend("bottomleft", legend=c(sample1976[,1]), col=c(1:(dim(sample1976)[1])), lty=1, cex=0.55, bty="n")
 ```
+
+```{r, echo=FALSE}
+anova(sample1976)
