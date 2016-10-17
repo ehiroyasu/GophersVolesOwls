@@ -71,6 +71,12 @@ r<-rename(r, c("Lambdas1976" = "r1976", "Lambdas1977"="r1977", "Lambdas1978" = "
 r<-lapply(r, function(x) {x[x>=0]}) #removing negative growth rates
 ```
 
+First, let's look at the distribution of r values for each year of simulated data:
+```{r, echo=FALSE}
+hist(r[[1]], breaks=15, col="lightblue", main="1976 r values", xlab="r")
+hist(r[[2]], breaks=15, col="aquamarine2", main="1977 r values", xlab="r")
+hist(r[[3]], breaks=15, col="darkseagreen2", main="1978 r values", xlab="r")
+```
 
 We can then run simulations for these various lists of r values while varying predator density.
 ```{r, echo=FALSE}
