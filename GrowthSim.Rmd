@@ -58,7 +58,7 @@ h=1.39e-4
 k_max=1/h
 D=1/(alpha*h)
 parameters <- c(r = log(3.47), alpha, beta, delta, K_prey, k_max, D)
-state<-c(N = 150, P = 20)
+state<-c(N = 150, P = 0.95)
 times<- seq(0, 20, by = 0.1)
 ```
 
@@ -125,19 +125,19 @@ par(mfrow=c(1,3))
 
 r1976<-ldply(r1976_sim, data.frame)
 r1976_t20<-subset(r1976, time==20, select=c(.id, N, P))
-plot(r1976_t20$.id, r1976_t20$N, xlab="r value", ylab="Population Density (individuals/ha)", ylim=c(0,175), main="1976 r value versus population at time 20", col="blue")
+plot(r1976_t20$.id, r1976_t20$N, xlab="r value", ylab="Population Density (individuals/ha)", ylim=c(0,100), main="1976 r value versus population at time 20", col="blue")
 lines(r1976_t20$.id, r1976_t20$P, col="red")
 legend("topleft", legend=c("Prey", "Predator"), col=c("blue", "red"), lty=c(1,1))
 
 r1977<-ldply(r1977_sim, data.frame)
 r1977_t20<-subset(r1977, time==20, select=c(.id, N, P))
-plot(r1977_t20$.id, r1977_t20$N, xlab="r value", ylab="Population Density (individuals/ha)", ylim=c(0,175), main="1977 r value versus population at time 20", col="blue")
+plot(r1977_t20$.id, r1977_t20$N, xlab="r value", ylab="Population Density (individuals/ha)", ylim=c(0,100), main="1977 r value versus population at time 20", col="blue")
 lines(r1977_t20$.id, r1977_t20$P, col="red")
 legend("topleft", legend=c("Prey", "Predator"), col=c("blue", "red"), lty=c(1,1))
 
 r1978<-ldply(r1978_sim, data.frame)
 r1978_t20<-subset(r1978, time==20, select=c(.id, N, P))
-plot(r1978_t20$.id, r1978_t20$N, xlab="r value", ylab="Population Density (individuals/ha)", ylim=c(0,175), main="1978 r value versus population at time 20", col="blue")
+plot(r1978_t20$.id, r1978_t20$N, xlab="r value", ylab="Population Density (individuals/ha)", ylim=c(0,100), main="1978 r value versus population at time 20", col="blue")
 lines(r1978_t20$.id, r1978_t20$P, col="red")
 legend("topleft", legend=c("Prey", "Predator"), col=c("blue","red"), lty=c(1,1))
 
@@ -181,35 +181,23 @@ for(i in 1:length(r1978_sim)){
 We can sample the distribution of r-values for each year and look at the slope and position of the relationship between the predator population versus the percent change in prey population.
 ```{r, echo=FALSE}
 sample1976<-sample(r1976_sim, size=10)
-plot(sample1976[[1]]$P[-1], sample1976[[1]]$diff[-1], ylim=c(-0.10, 0.0), type='l', main="Predator abundance vs Percent change in prey 1976", xlab="Predator abundance (individuals/ha)", ylab="Percent change in prey density")
+plot(sample1976[[1]]$P[-1], sample1976[[1]]$diff[-1], ylim=c(-0.01, 0.02), type='l', main="Predator abundance vs Percent change in prey 1976", xlab="Predator abundance (individuals/ha)", ylab="Percent change in prey density")
 for (k in 2:length(sample1976)){
   lines(sample1976[[k]]$P[-1], sample1976[[k]]$diff[-1], col=k)
 }
-legend("bottomright", legend=names(sample1976), lty=1, col=c(1:10), cex=0.55)
-
-fit1976<-ldply(sample1976, data.frame)
-summary(aov(.id~diff+P, data=fit1976))
-
-
-
-manova1976<-vector("list")
-for (i in 1:length(sample1976)){
-  manova1976[[i]]<-manova(cbind(sample1976[[1]][,3], sample1976[[1]][,4])~sample1976[[1]][,1])
-}
-
-
+legend("topright", legend=names(sample1976), lty=1, col=c(1:10), cex=0.55)
 
 sample1977<-sample(r1977_sim, size=10)
-plot(sample1977[[1]]$P[-1], sample1977[[1]]$diff[-1], ylim=c(-0.10, 0.02), type='l', main="Predator abundance vs Percent change in prey 1977", xlab="Predator abundance (individuals/ha)", ylab="Percent change in prey density")
+plot(sample1977[[1]]$P[-1], sample1977[[1]]$diff[-1], ylim=c(-0.02, 0.02), type='l', main="Predator abundance vs Percent change in prey 1977", xlab="Predator abundance (individuals/ha)", ylab="Percent change in prey density")
 for (k in 2:length(sample1977)){
   lines(sample1977[[k]]$P[-1], sample1977[[k]]$diff[-1], col=k)
 }
-legend("bottomright", legend=names(sample1976), lty=1, col=c(1:10), cex=0.55)
+legend("topright", legend=names(sample1976), lty=1, col=c(1:10), cex=0.55)
 
 sample1978<-sample(r1978_sim, size=10)
-plot(sample1978[[1]]$P[-1], sample1978[[1]]$diff[-1], ylim=c(-0.10, 0.02), type='l', main="Predator abundance vs Percent change in prey 1978", xlab="Predator abundance (individuals/ha)", ylab="Percent change in prey density")
+plot(sample1978[[1]]$P[-1], sample1978[[1]]$diff[-1], ylim=c(-0.015, 0.02), type='l', main="Predator abundance vs Percent change in prey 1978", xlab="Predator abundance (individuals/ha)", ylab="Percent change in prey density")
 for (k in 2:length(sample1978)){
   lines(sample1978[[k]]$P[-1], sample1978[[k]]$diff[-1], col=k)
 }
-legend("bottomright", legend=names(sample1976), lty=1, col=c(1:10), cex=0.55)
+legend("topright", legend=names(sample1976), lty=1, col=c(1:10), cex=0.55)
 ```
