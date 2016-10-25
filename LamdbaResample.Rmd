@@ -107,3 +107,25 @@ Lambda.df<-data.frame(Lambdas1976, Lambdas1977, Lambdas1978)
  
 write.table(Lambda.df, "E:/GopherProject/GophersVolesOwls/Lambda.df.txt", sep="\t")
 ```
+
+Now suppose, for management purposes we are interested in what happens when we conduct some kind of control such as burrow fumigation or use rodenticides during a certain season. For illustration purposes, we'll use the 1976 data. Suppose that we conduct burrow fumigation during the winter, so both juvenile and adult survival is reduced. Burrow fumigation is shown to be an effective control technique, so let us suppose that burrow fumigation reduces survival in the adult and juvenile stage by 80%
+```{r, echo=FALSE}
+Summer1976
+
+Winter1976_fum<-matrix(data=c(0,3.75, 3.75, 0.5*0.2, 0, 0, 0, 0.09*0.2, 0.33*0.2),
+              nrow=3, ncol=3, byrow=TRUE,dimnames=list(stages,stages))
+Winter1976_fum
+Winter1976_fumResample<-lapply(1:1000, function(x) resample(Winter1976_fum, 3))
+
+Fum1976Product<-vector("list", length(Summer1976Resample))
+
+for(i in 1:length(Summer1976Resample)){
+  Fum1976Product[[i]]<-Summer1976Resample[[i]]%*%Winter1976_fumResample[[i]]
+}
+
+FumLambdas1976<-sapply(Fum1976Product, lambda)
+
+Fum.df<-data.frame(FumLambdas1976)
+write.table(Fum.df, "F:/GopherProject/GophersVolesOwls/Fum.df.txt", sep="\t")
+```
+
