@@ -58,7 +58,7 @@ k_max=1/h
 D=1/(alpha*h)
 parameters <- c(r = log(3.47), alpha, beta, delta, K_prey, k_max, D)
 N=c(150, 150, 150, 150, 150)
-P=c(0.2, 0.4, 0.6, 0.8, 0.95)
+P=c(0.2, 0.4, 0.6, 0.95, 2.0)
 state<-cbind(N, P)
 times<- c(0,20)
 ```
@@ -121,4 +121,47 @@ for (i in 2:(dim(sample1976)[1])){
   lines(P, sample1976[i, 2:6], col=i, lwd=2) 
 }
 legend("bottomleft", legend=c(sample1976[,1]), col=c(1:(dim(sample1976)[1])), lty=1, cex=0.55, bty="n")
+```
+
+Now suppose we have introduced a fumigation regimine in the winter.
+```{r, echo=FALSE}
+lambda.fum<-read.table("Fum.df.txt")
+r.fum<-(as.data.frame(apply(lambda.fum, 2, log)))
+r.fum<-sapply(r.fum, function(x) {x[x>=0]}) #removing negative growth rates
+
+hist(r.fum, col="lightblue", main="1976 r values with Fumigation", xlab="r")
+
+r1976_fumsim<-array(data=NA, dim=c(length(times), 3, length(r.fum), length(P)))
+for(i in 1:length(P)){
+  for (k in 1:(length(r.fum))){
+      r1976_fumsim[,,k,i]<- ode(y=state[i,], times = times, func = pred_prey, parms = c(r = r.fum[k], alpha, beta, delta, K_prey, k_max, D))
+
+     }
+}
+
+r1976_fumsim<-setNames(alply(r1976_fumsim, 3), as.character(r.fum))
+
+percent.diff.fum<-vector(mode="list", length=(length(r1976_fumsim)))
+percent.diff.fum<-setNames(percent.diff.fum, r.fum)
+for (i in 1:length(r1976_fumsim)){
+  for (j in 1:(dim(r1976_fumsim[[1]])[3])){
+    percent.diff.fum[[i]][j]<-((r1976_fumsim[[i]][,,j][2,2]-r1976_fumsim[[i]][,,j][1,2])/r1976_fumsim[[i]][,,j][2,2])*100
+  }
+}
+    
+percent.diff.fum<-ldply(percent.diff.fum)
+colnames(percent.diff.fum)<-c("r", P)
+
+plot(P, percent.diff.fum[1, 2:6], ylim=c(-120,20), type='l', col=1, ylab="Percent Change in Prey", xlab="Predator Density per Ha", main="1976 Percent change in Prey by Predator Density")
+for (i in 2:(dim(percent.diff.fum)[1])){
+  lines(P, percent.diff.fum[i, 2:6], col=i)
+}
+
+sample.fum<-sample_n(percent.diff.fum, 10)
+plot(P, sample.fum[1, 2:6], type='l', col=1, ylim=range(min(sample.fum[,2:6]), max(sample.fum[,2:6])), ylab="Percent Change in Prey", xlab="Predator Density per Ha", main="1976 Percent change in Prey by Predator Density with Fumigation", lwd=2)
+for (i in 2:(dim(sample.fum)[1])){
+  lines(P, sample.fum[i, 2:6], col=i, lwd=2) 
+}
+legend("bottomleft", legend=c(sample.fum[,1]), col=c(1:(dim(sample.fum)[1])), lty=1, cex=0.55, bty="n")
+
 ```
