@@ -60,7 +60,7 @@ parameters <- c(r = log(3.47), alpha, beta, delta, K_prey, k_max, D)
 N=c(150, 150, 150, 150, 150)
 P=c(0.2, 0.4, 0.6, 0.95, 2.0)
 state<-cbind(N, P)
-times<- c(0,20)
+times<- seq(0, 20, by=0.1)
 ```
 
 We can also look at how changes in population growth rates of the prey change the equilibrium population size of both the predator and prey species. We can convert lambda values to r values to use in the Lotka Volterra function by taking log(lambda). Any growth rates that are calculated to be negative are dropped from the data, so the data is truncated at zero
@@ -73,28 +73,51 @@ r<-lapply(r, function(x) {x[x>=0]}) #removing negative growth rates
 
 First, let's look at the distribution of r values for each year of simulated data:
 ```{r, echo=FALSE}
-hist(r[[1]], breaks=15, col="lightblue", main="1976 r values", xlab="r")
-hist(r[[2]], breaks=15, col="aquamarine2", main="1977 r values", xlab="r")
-hist(r[[3]], breaks=15, col="darkseagreen2", main="1978 r values", xlab="r")
-```
-
-We can then run simulations for these various lists of r values while varying predator density.
-```{r, echo=FALSE}
 r1976<-r[[1]]
 r1977<-r[[2]]
 r1978<-r[[3]]
 
-r1976_sim<-array(data=NA, dim=c(length(times), 3, length(r1976), length(P)))
-for(i in 1:length(P)){
-  for (k in 1:(length(r1976))){
-      r1976_sim[,,k,i]<- ode(y=state[i,], times = times, func = pred_prey, parms = c(r = r1976[k], alpha, beta, delta, K_prey, k_max, D))
-
-     }
-}
-
-r1976_sim<-setNames(alply(r1976_sim, 3), as.character(r))
+hist(r1976, breaks=15, col="lightblue", main="1976 r values", xlab="r")
+hist(r1977, breaks=15, col="aquamarine2", main="1977 r values", xlab="r")
+hist(r1978, breaks=15, col="darkseagreen2", main="1978 r values", xlab="r")
 ```
 
+We can then run simulations for these various lists of r values while varying predator density.
+```{r, echo=FALSE}
+r1976_sim<-rep(list(array(data=NA, dim=c(length(times), 3,length(P)))), length(r1976))
+for(i in 1:length(P)){
+  for (k in 1:(length(r1976))){
+      r1976_sim[[k]][,,i]<- ode(y=state[i,], times = times, func = pred_prey, parms = c(r = r1976[k], alpha, beta, delta, K_prey, k_max, D))
+    }
+}
+
+r1976_sim<-setNames(r1976_sim, as.character(r1976))
+```
+
+We can first look at how the gopher population changes at different owl densities. For the purposes of demonstration, we'll just look at a few runs separately
+```{r, echo=FALSE}
+s1<-as.character(sample(r1976[r1976<0.5], 1))
+s2<-as.character(sample(r1976[r1976>0.9 & r1976<1], 1))
+s3<-as.character(sample(r1976[r1976>1], 1))
+
+matplot(times, r1976_sim[[s1]][,,1][,-1], type='l', lty=c(1,2), col=1, lwd=2, xlab="Season", ylab="Population density individuals/ha", main=paste("Population Density by Season, r=", s1))
+for (i in 2:(dim(r1976_sim[[s1]])[3])){
+  matlines(times, r1976_sim[[s1]][,,i][,-1], type='l', lty=c(1,2), col=i, lwd=2)
+}
+legend(0, 55, legend=P, col=c(1:(dim(r1976_sim[[s1]])[3])), lty=1, lwd=2)
+
+matplot(times, r1976_sim[[s2]][,,1][,-1], type='l', lty=c(1,2), col=1, lwd=2, xlab="Season", ylab="Population density individuals/ha", main=paste("Population Density by Season, r=", s2))
+for (i in 2:(dim(r1976_sim[[s2]])[3])){
+  matlines(times, r1976_sim[[s2]][,,i][,-1], type='l', lty=c(1,2), col=i, lwd=2)
+}
+legend(0, 55, legend=P, col=c(1:(dim(r1976_sim[[s2]])[3])), lty=1, lwd=2)
+
+matplot(times, r1976_sim[[s3]][,,1][,-1], type='l', lty=c(1,2), col=1, lwd=2, xlab="Season", ylab="Population density individuals/ha", main=paste("Population Density by Season, r=", s3))
+for (i in 2:(dim(r1976_sim[[s3]])[3])){
+  matlines(times, r1976_sim[[s3]][,,i][,-1], type='l', lty=c(1,2), col=i, lwd=2)
+}
+legend(0, 55, legend=P, col=c(1:(dim(r1976_sim[[s3]])[3])), lty=1, lwd=2)
+```
 
 We can then look at how prey population changes with changes in predator density. We can see from the plots below that as the predator density increases, the percent change in prey population increases (indicated by negative slope on the graph). We can see when the growth rate of the prey population is low, it takes fewer predators to drive the population down. However, when the growth rate of the prey population is very high, even a high predator density (two owls per hectare) only drive down the prey population a small amount. This highlights the importance of understanding the population dynamics of the prey population prior to introducing a predator biocontrol.
 ```{r, echo=FALSE}
@@ -102,7 +125,7 @@ percent.diff1976<-vector(mode="list", length=(length(r1976_sim)))
 percent.diff1976<-setNames(percent.diff1976, r1976)
 for (i in 1:length(r1976_sim)){
   for (j in 1:(dim(r1976_sim[[1]])[3])){
-    percent.diff1976[[i]][j]<-((r1976_sim[[i]][,,j][2,2]-r1976_sim[[i]][,,j][1,2])/r1976_sim[[i]][,,j][2,2])*100
+    percent.diff1976[[i]][j]<-((r1976_sim[[i]][,,j][201,2]-r1976_sim[[i]][,,j][1,2])/r1976_sim[[i]][,,j][201,2])*100
   }
 }
     
@@ -131,15 +154,37 @@ r.fum<-sapply(r.fum, function(x) {x[x>=0]}) #removing negative growth rates
 
 hist(r.fum, col="lightblue", main="1976 r values with Fumigation", xlab="r")
 
-r1976_fumsim<-array(data=NA, dim=c(length(times), 3, length(r.fum), length(P)))
+r1976_fumsim<-rep(list(array(data=NA, dim=c(length(times), 3,length(P)))), length(r.fum))
 for(i in 1:length(P)){
   for (k in 1:(length(r.fum))){
-      r1976_fumsim[,,k,i]<- ode(y=state[i,], times = times, func = pred_prey, parms = c(r = r.fum[k], alpha, beta, delta, K_prey, k_max, D))
-
-     }
+      r1976_fumsim[[k]][,,i]<- ode(y=state[i,], times = times, func = pred_prey, parms = c(r = r1976[k], alpha, beta, delta, K_prey, k_max, D))
+    }
 }
 
-r1976_fumsim<-setNames(alply(r1976_fumsim, 3), as.character(r.fum))
+r1976_fumsim<-setNames(r1976_fumsim, as.character(r.fum))
+
+fum.s1<-as.character(sample(r.fum[r.fum<0.5], 1))
+fum.s2<-as.character(sample(r.fum[r.fum>0.9 & r.fum<1], 1))
+fum.s3<-as.character(sample(r.fum[r.fum>1], 1))
+
+matplot(times, r1976_fumsim[[fum.s1]][,,1][,-1], type='l', lty=c(1,2), col=1, lwd=2, xlab="Season", ylab="Population density individuals/ha", main=paste("Population Density by Season, r=", fum.s1, "with other Control"))
+for (i in 2:(dim(r1976_fumsim[[fum.s1]])[3])){
+  matlines(times, r1976_fumsim[[fum.s1]][,,i][,-1], type='l', lty=c(1,2), col=i, lwd=2)
+}
+legend(0, 55, legend=P, col=c(1:(dim(r1976_fumsim[[fum.s1]])[3])), lty=1, lwd=2)
+
+matplot(times, r1976_fumsim[[fum.s2]][,,1][,-1], type='l', lty=c(1,2), col=1, lwd=2, xlab="Season", ylab="Population density individuals/ha", main=paste("Population Density by Season, r=", fum.s2,"with other Control"))
+for (i in 2:(dim(r1976_fumsim[[fum.s2]])[3])){
+  matlines(times, r1976_fumsim[[fum.s2]][,,i][,-1], type='l', lty=c(1,2), col=i, lwd=2)
+}
+legend(0, 55, legend=P, col=c(1:(dim(r1976_fumsim[[fum.s2]])[3])), lty=1, lwd=2)
+
+matplot(times, r1976_fumsim[[fum.s3]][,,1][,-1], type='l', lty=c(1,2), col=1, lwd=2, xlab="Season", ylab="Population density individuals/ha", main=paste("Population Density by Season, r=", fum.s3, "with other Control"))
+for (i in 2:(dim(r1976_fumsim[[fum.s3]])[3])){
+  matlines(times, r1976_fumsim[[fum.s3]][,,i][,-1], type='l', lty=c(1,2), col=i, lwd=2)
+}
+legend(0, 55, legend=P, col=c(1:(dim(r1976_fumsim[[fum.s3]])[3])), lty=1, lwd=2)
+
 
 percent.diff.fum<-vector(mode="list", length=(length(r1976_fumsim)))
 percent.diff.fum<-setNames(percent.diff.fum, r.fum)
@@ -152,7 +197,7 @@ for (i in 1:length(r1976_fumsim)){
 percent.diff.fum<-ldply(percent.diff.fum)
 colnames(percent.diff.fum)<-c("r", P)
 
-plot(P, percent.diff.fum[1, 2:6], ylim=c(-120,20), type='l', col=1, ylab="Percent Change in Prey", xlab="Predator Density per Ha", main="1976 Percent change in Prey by Predator Density")
+plot(P, percent.diff.fum[1, 2:6], ylim=c(-1,3), type='l', col=1, ylab="Percent Change in Prey", xlab="Predator Density per Ha", main="1976 Percent change in Prey by Predator Density")
 for (i in 2:(dim(percent.diff.fum)[1])){
   lines(P, percent.diff.fum[i, 2:6], col=i)
 }
