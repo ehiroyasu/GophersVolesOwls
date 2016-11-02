@@ -1,0 +1,13 @@
+Package: owls
+Title: Modeling the predator-prey dynamics of owls as a biocontrol for rodent
+    populations
+Version: 0.0.0.9000
+Authors@R: person("Elizabeth", "Hiroyasu", email = "ehiroyasu@bren.ucsb.edu", role = c("aut", "cre"))
+Description: This package was created to assess the use of barn owls (Tyto alba)
+    to reduce gopher and vole populations in an agricultural setting.
+Depends:
+    R (>= 3.3.1)
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 5.0.1
