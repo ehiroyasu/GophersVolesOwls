@@ -105,7 +105,7 @@ hist(Lambdas1978, br=10, col="mediumpurple3", xlab="Lambda", main="Gopher Popula
 
 Lambda.df<-data.frame(Lambdas1976, Lambdas1977, Lambdas1978)
  
-write.table(Lambda.df, "E:/GopherProject/GophersVolesOwls/Lambda.df.txt", sep="\t")
+write.table(Lambda.df, "Lambda.df.txt", sep="\t")
 ```
 
 Now suppose, for management purposes we are interested in what happens when we conduct some kind of control such as burrow fumigation or use rodenticides during a certain season. For illustration purposes, we'll use the 1976 data. Suppose that we conduct burrow fumigation during the winter, so both juvenile and adult survival is reduced. Burrow fumigation is shown to be an effective control technique, so let us suppose that burrow fumigation reduces survival in the adult and juvenile stage by 80%
@@ -126,6 +126,6 @@ for(i in 1:length(Summer1976Resample)){
 FumLambdas1976<-sapply(Fum1976Product, lambda)
 
 Fum.df<-data.frame(FumLambdas1976)
-write.table(Fum.df, "F:/GopherProject/GophersVolesOwls/Fum.df.txt", sep="\t")
+write.table(Fum.df, "Fum.df.txt", sep="\t")
 ```
 
