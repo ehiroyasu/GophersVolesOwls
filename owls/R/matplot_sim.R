@@ -9,9 +9,9 @@
 #'@author Elizabeth Hiroyasu
 #'
 
-matplot_sim<-function(times, sim, s){
+matplot_sim<-function(times, sim, s, r){
   matplot(times, sim[[s]][,,1][,-1], type='l', lty=c(1,2), col=1, lwd=2, xlab="Season", ylab="Population density individuals/ha", 
-          main=paste("Population Density by Season, r=", s, "with other Control"))
+          main=paste("Population Density by Season, r=", r[s], "with other Control"))
   for (i in 2:(dim(sim[[s]])[3])){
     matlines(times, sim[[s]][,,i][,-1], type='l', lty=c(1,2), col=i, lwd=2)
   }
