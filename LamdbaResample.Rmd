@@ -12,7 +12,7 @@ library(popbio)
 ```
 
 
-Building the proejction matrix
+Building the projection matrix
 ```{r}
 stages = c("Juvenile", "SubAdult", "Adult")
 
