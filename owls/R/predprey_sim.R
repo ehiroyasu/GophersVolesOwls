@@ -19,7 +19,8 @@ predprey_sim<-function(times, state, r){
   
   for(i in 1:(dim(state))[1]){
     for (k in 1:(length(r))){
-      sim[[k]][,,i]<- ode(y=state[i,], times = times, func = pred_prey, parms = c(r = r[k], alpha, beta, delta, K_prey, k_max, D))
+      sim[[k]][,,i]<- as.matrix(ode(y=state[i,], times = times, func = pred_prey, 
+                                    parms = c(r = r[k], alpha, beta, delta, K_prey, k_max, D)))
     }
   }
   

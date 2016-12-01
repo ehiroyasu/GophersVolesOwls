@@ -15,5 +15,8 @@ matplot_sim<-function(times, sim, s, r){
   for (i in 2:(dim(sim[[s]])[3])){
     matlines(times, sim[[s]][,,i][,-1], type='l', lty=c(1,2), col=i, lwd=2)
   }
-  legend(0, 55, legend=P, col=c(1:(dim(sim[[s]])[3])), lty=1, lwd=2)
+  legend(0, 55, legend=P, col=c(1:(dim(sim[[s]])[3])), lty=1, lwd=2, title="Predator Density")
 }
+
+
+

@@ -4,7 +4,7 @@
 \alias{matplot_sim}
 \title{Plotting simulations}
 \usage{
-matplot_sim(times, sim, s)
+matplot_sim(times, sim, s, r)
 }
 \arguments{
 \item{times}{is the time vector to be used for the x axis, this should be the same as the t parameter in the pred_prey function}
