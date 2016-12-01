@@ -15,6 +15,6 @@
 
 plot_n<-function(df, ssubset, r){
   ggplot(data=subset(df, eval(parse(text=ssubset))), aes(x=time, y=N, group=as.factor(P), color=as.factor(P))) + 
-    geom_line(size=1.5)+ ggtitle(paste("r=", r)) + scale_colour_discrete(name="Predator Density") + 
+    geom_line(size=1.5)+ ggtitle(paste("r=", r)) + theme(plot.title=element_text(size=12)) + scale_colour_discrete(name="Predator Density") + 
     theme(legend.background=element_rect(fill="gray90", size=0.5, linetype="solid", colour=1))
 }
