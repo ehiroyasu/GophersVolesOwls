@@ -8,16 +8,15 @@ output: html_document
 Using the lambda values we generated in the LambdaResample.Rmd file, we can simulate the population dynamics of the gopher and owl populations using a simple Lotka Volterra model. Because we know that gopher populations exhibit density dependent growth, we simulate the gopher (prey) growth with the logistic growth function. We also know that barn owls prey on other species when gopher populations are low, so we use a Type III functional response for the owl (predator) population. The Type III function response is characterized by a sigmoidal curve, showing prey switching when the modeled prey is at low densities.
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
-#setwd("./GopherProject/GophersVolesOwls")
-library(roxygen2)
+setwd("../GophersVolesOwls")
 library(devtools)
-install("owls")
+library(roxygen2)
+load_all("owls")
 library(owls)
 
 library(deSolve)
 library(plyr)
 library(dplyr)
-library(ggplot2)
 library(reshape)
 ```
 
