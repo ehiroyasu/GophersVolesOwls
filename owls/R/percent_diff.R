@@ -16,7 +16,7 @@ percent_diff<-function(sim, r){
   
   for (i in 1:length(sim)){
     for (j in 1:(dim(sim[[1]])[3])){
-      diff[[i]][j]<-((sim[[i]][,,j][dim(sim[[1]])[1],2]-r1976_sim[[i]][,,j][1,2])/r1976_sim[[i]][,,j][1,2])*100
+      diff[[i]][j]<-((sim[[i]][,,j][dim(sim[[1]])[1],2]-sim[[i]][,,j][1,2])/sim[[i]][,,j][1,2])*100
     }
   }
   
