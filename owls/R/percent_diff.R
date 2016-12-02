@@ -21,7 +21,7 @@ percent_diff<-function(sim, r){
   }
   
   diff<-ldply(diff)
-  colnames(diff)<-c("r", P)
+  colnames(diff)<-c("r", unique(P))
   
   
   return(diff)
