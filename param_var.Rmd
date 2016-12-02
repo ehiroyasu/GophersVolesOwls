@@ -20,6 +20,8 @@ library(plyr)
 library(dplyr)
 library(reshape)
 library(ggplot2)
+library(gridExtra)
+library(grid)
 library(cowplot)
 ```
 
@@ -72,26 +74,61 @@ We can then run simulations for these various lists of r values while varying pr
 test_sim<-predprey_sim(times=times, state=state, r=r)
 sim.df<-df_sim(sim=test_sim, r=r)
 
-run<-sort(rep(1:80, times=21))
+run<-sort(rep(1:(length(N)*length(r)), times=length(times)))
 sim.df$run<-run
 
-n175<-lsplit(sim=test_sim, n=1:5, r=r)
-n175<-df_sim(sim=n175, r=r)
+n175.sim<-lsplit(sim=test_sim, n=1:5, r=r)
+n175<-df_sim(sim=n175.sim, r=r)
+p1<-plot_n(n175, "r=='0.01'", r=0.01)
+p2<-plot_n(n175, "r==0.75", r=0.75)
+p3<-plot_n(n175, "r==1.00", r=1.00)
+p4<-plot_n(n175, "r==1.90", r=1.90)
+grid_arrange_shared_legend(p1, p2, p3, p4)
 
-#finish writing plot_n function (still doesn't work with subset)
-plot1<-plot_n(n175, r=0.01)
-plot2<-plot_n(n175, r=0.75)
-# plot2<- ggplot(data=subset(n175, r==0.75), aes(x=time, y=N, group=P, colour=P)) + geom_line(size=1.5)+ggtitle("r=0.75")
-# 
-# plot3<- ggplot(data=subset(n175, r==1.00), aes(x=time, y=N, group=P, colour=P)) + geom_line(size=1.5) +ggtitle("r=1.00")
-# 
-# plot4<- ggplot(data=subset(n175, r==1.90), aes(x=time, y=N, group=P, colour=P)) + geom_line(size=1.5) + ggtitle("r=1.90")
 
-grid.arrange(plot1, plot2, plot3, plot4, ncol=2, top=textGrob("Prey Density over Time", gp=gpar(fontsize=20)))
+n100.sim<-lsplit(sim=test_sim, n=6:10, r=r)
+n100<-df_sim(sim=n100.sim, r=r)
+p1<-plot_n(n100, "r=='0.01'", r=0.01)
+p2<-plot_n(n100, "r==0.75", r=0.75)
+p3<-plot_n(n100, "r==1.00", r=1.00)
+p4<-plot_n(n100, "r==1.90", r=1.90)
+grid_arrange_shared_legend(p1, p2, p3, p4)
 
-n100<-lsplit(sim=test_sim, n=6:10, r=r)
-n50<-lsplit(sim=test_sim, n=11:15, r=r)
-n25<-lsplit(sim=test_sim, n=16:20, r=r)
+n50.sim<-lsplit(sim=test_sim, n=11:15, r=r)
+n50<-df_sim(sim=n50.sim, r=r)
+p1<-plot_n(n50, "r=='0.01'", r=0.01)
+p2<-plot_n(n50, "r==0.75", r=0.75)
+p3<-plot_n(n50, "r==1.00", r=1.00)
+p4<-plot_n(n50, "r==1.90", r=1.90)
+grid_arrange_shared_legend(p1, p2, p3, p4)
+
+n25.sim<-lsplit(sim=test_sim, n=16:20, r=r)
+n25<-df_sim(sim=n25.sim, r=r)
+p1<-plot_n(n25, "r=='0.01'", r=0.01)
+p2<-plot_n(n25, "r==0.75", r=0.75)
+p3<-plot_n(n25, "r==1.00", r=1.00)
+p4<-plot_n(n25, "r==1.90", r=1.90)
+grid_arrange_shared_legend(p1, p2, p3, p4)
+
 ```
 
-#plot final N by parameter value
+We can also look at how the final population density of the prey species varies by changes in parameter.
+```{r, echo=FALSE}
+
+diff.175<-percent_diff(n175.sim, r=r)
+p175<-plot_diff(diff=diff.175, N=N, j=1)
+
+diff.100<-percent_diff(n100.sim, r=r)
+p100<-plot_diff(diff.100, N=N, j=2)
+
+diff.50<-percent_diff(n50.sim, r=r)
+p50<-plot_diff(diff=diff.50, N=N, j=3)
+
+diff.25<-percent_diff(n25.sim, r=r)
+p25<-plot_diff(diff=diff.25, N=N, j=4)
+
+grid.arrange(p175, p100, p50, p25)
+
+```
+
+
