@@ -16,7 +16,8 @@ plot_diff<-function(diff, N, j){
   diff<-rename(diff, c("variable"="P", "value"="diff"))
   ggplot(diff, aes(x=P, y=diff, group=r, color=r)) + geom_line(size=1.1) + 
     ggtitle(paste("N=", unique(N)[j])) + 
-    theme(legend.background=element_rect(fill="gray90", size=0.5, linetype="solid", colour=1))+ 
-    ylab("Percent Difference") + xlab("Predator Density")
+    theme(legend.background=element_rect(fill="gray90", size=0.5, linetype="solid", colour=1), 
+          legend.direction="horizontal")+ ylab("Percent Difference") + xlab("Predator Density")
   
 }
+
