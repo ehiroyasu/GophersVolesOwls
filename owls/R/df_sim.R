@@ -3,7 +3,6 @@
 #'Converts the output output list from the predprey_sim function into simulation data into a single dataframe.
 #'
 #'@param sim is the list output of the simulation result from the predprey_sim function
-#'@param r is the r values specified in the parameters 
 #'
 #'@author Elizabeth Hiroyasu
 #'
