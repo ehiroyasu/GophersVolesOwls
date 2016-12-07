@@ -1,12 +1,11 @@
 ---
-title: "Varied Parameter Simulations"
+title: "Simulations Varying Gopher Population Carrying Capacity"
 author: "Elizabeth Hiroyasu"
 date: "November 22, 2016"
 output: html_document
 ---
 
 To look at the sensitivity of the prey population to the model parameters, we can run the model for a variety of different parameters and look how the curve changes. For this simulation, we will set a variety of r values for population runs.
-
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 setwd("../GophersVolesOwls")
@@ -26,8 +25,9 @@ library(grid)
 library(cowplot)
 ```
 
+##Population growth rates
 From the literature, we have obtained estimates of the minimum, maximum, and average population matrices of gopher populations.
-```{r}
+```{r, echo=FALSE}
 stages = c("Juvenile", "SubAdult", "Adult")
 gopher_min<-matrix(data=c(0, 2.40,5.35, 0.5, 0, 0, 0, 0.357, 0.25),  
                    nrow=3, ncol=3, byrow=TRUE,
@@ -53,6 +53,7 @@ r_gopher<-c(r_min, r_avg, r_max)
 ```
 
 
+##Parameters
 We can use the same pred_prey function created in our owls r-package, then use an ode solver to solve the derivatives.
 
 The model requires multiple parameters:
@@ -72,11 +73,12 @@ P = starting population of predator
 For this model, time is in terms of season (3 months), so each time interval is represented by a season and four seasons are equivalent to one year.
 ```{r}
 #Parameters
-alpha=1.68
-beta = 0.002
+##need to tweak these more
+alpha=0.84
+beta = 0.02
 delta=0.01
 K_prey=175
-h=1.39e-4
+h=2.78e-5
 k_max=1/h
 D=1/(alpha*h)
 r=r_gopher
@@ -87,9 +89,13 @@ parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
 N=c(175, 175, 175, 175, 175,
     100, 100, 100, 100, 100,
     50, 50, 50, 50, 50,
-    25, 25, 25, 25, 25)
+    30, 30, 30, 30, 30,
+    10, 10, 10, 10, 10,
+    2, 2, 2, 2, 2)
 
 P=c(0.2, 0.4, 0.6, 0.95, 2.0, 
+    0.2, 0.4, 0.6, 0.95, 2.0,
+    0.2, 0.4, 0.6, 0.95, 2.0,
     0.2, 0.4, 0.6, 0.95, 2.0,
     0.2, 0.4, 0.6, 0.95, 2.0,
     0.2, 0.4, 0.6, 0.95, 2.0)
@@ -97,59 +103,42 @@ state<-cbind(N, P)
 times<- seq(0, 20, by=1)
 ```
 
+##Simulations, K=175
 We can then run simulations for these various lists of r values while varying predator density.
 ```{r, echo=FALSE}
 test_sim<-predprey_sim(times=times, state=state, r=r)
 sim.df<-df_sim(sim=test_sim, r=r)
-
-run<-sort(rep(1:(length(N)*length(r)), times=length(times)))
-sim.df$run<-run
 ```
 
 Then, plotting the prey density over time by each N.
 ```{r, echo=FALSE, warning=FALSE}
 n175.sim<-lsplit(sim=test_sim, n=1:5, r=r)
 n175<-df_sim(sim=n175.sim, r=r)
-
-p1<-plot_n(n175[[1]], r[1])
-p2<-plot_n(n175[[2]], r[2])
-p3<-plot_n(n175[[3]], r[3])
-legend <- get_legend(p1)
-
-grid.arrange(grobs=list(p1+theme(legend.position="none"), p2+theme(legend.position="none"), p3+theme(legend.position="none"),legend), nrow=2, top=textGrob("Prey Density Over Time", gp=gpar(fontface="bold", fontsize=6, cex=3)))
+plot_n_grid(df=n175, r=r, N=N, i=1)
 
 n100.sim<-lsplit(sim=test_sim, n=6:10, r=r)
 n100<-df_sim(sim=n100.sim, r=r)
-p1<-plot_n(n100[[1]], r[1])
-p2<-plot_n(n100[[2]], r[2])
-p3<-plot_n(n100[[3]], r[3])
-legend <- get_legend(p1)
-
-grid.arrange(grobs=list(p1+theme(legend.position="none"), p2+theme(legend.position="none"), p3+theme(legend.position="none"),legend), nrow=2, top=textGrob("Prey Density Over Time", gp=gpar(fontface="bold", fontsize=6, cex=3)))
-
+plot_n_grid(df=n100, r=r, N=N, i=2)
 
 n50.sim<-lsplit(sim=test_sim, n=11:15, r=r)
 n50<-df_sim(sim=n50.sim, r=r)
-p1<-plot_n(n50[[1]], r[1])
-p2<-plot_n(n50[[2]], r[2])
-p3<-plot_n(n50[[3]], r[3])
-legend <- get_legend(p1)
+plot_n_grid(df=n50, r=r, N=N, i=3)
 
-grid.arrange(grobs=list(p1+theme(legend.position="none"), p2+theme(legend.position="none"), p3+theme(legend.position="none"),legend), nrow=2, top=textGrob("Prey Density Over Time", gp=gpar(fontface="bold", fontsize=6, cex=3)))
+n30.sim<-lsplit(sim=test_sim, n=16:20, r=r)
+n30<-df_sim(sim=n30.sim, r=r)
+plot_n_grid(df=n30, r=r, N=N, i=4)
 
-n25.sim<-lsplit(sim=test_sim, n=16:20, r=r)
-n25<-df_sim(sim=n25.sim, r=r)
-p1<-plot_n(n25[[1]], r[1])
-p2<-plot_n(n25[[2]], r[2])
-p3<-plot_n(n25[[3]], r[3])
-legend <- get_legend(p1)
+n10.sim<-lsplit(sim=test_sim, n=21:25, r=r)
+n10<-df_sim(sim=n10.sim, r=r)
+plot_n_grid(df=n10, r=r, N=N, i=5)
 
-grid.arrange(grobs=list(p1+theme(legend.position="none"), p2+theme(legend.position="none"), p3+theme(legend.position="none"),legend), nrow=2, top=textGrob("Prey Density Over Time", gp=gpar(fontface="bold", fontsize=6, cex=3)))
-
+n2.sim<-lsplit(sim=test_sim, n=26:30, r=r)
+n2<-df_sim(sim=n2.sim, r=r)
+plot_n_grid(df=n2, r=r, N=N, i=6)
 ```
 
 We can also look at how the final population density of the prey species varies by changes in parameter.
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
 
 diff.175<-percent_diff(n175.sim, r=r)
 p175<-plot_diff(diff=diff.175, N=N, j=1)
@@ -160,19 +149,225 @@ p100<-plot_diff(diff.100, N=N, j=2)
 diff.50<-percent_diff(n50.sim, r=r)
 p50<-plot_diff(diff=diff.50, N=N, j=3)
 
-diff.25<-percent_diff(n25.sim, r=r)
-p25<-plot_diff(diff=diff.25, N=N, j=4)
+diff.30<-percent_diff(n30.sim, r=r)
+p30<-plot_diff(diff=diff.30, N=N, j=4)
+
+diff.10<-percent_diff(n10.sim, r=r)
+p10<-plot_diff(diff=diff.10, N=N, j=5)
+
+diff.2<-percent_diff(n2.sim, r=r)
+p2.diff<-plot_diff(diff=diff.2, N=N, j=6)
 
 legend<-get_legend(p175)
 
 grid.arrange(grobs=list(p175+theme(legend.position="none"), 
                         p100+theme(legend.position="none"), 
                         p50+theme(legend.position="none"), 
-                        p25+theme(legend.position="none"),
-                        legend), nrow=3, top=textGrob("Percent Change by Predator Density", 
-                                                      gp=gpar(fontface="bold", fontsize=6, cex=3)),
-             layout_matrix = rbind(c(1,2), c(3,4), c(5,5)), heights = c(2.5, 2.5, 0.2))
+                        p30+theme(legend.position="none"),
+                        p10+theme(legend.position="none"),
+                        p2.diff+theme(legend.position="none"),
+                        legend), 
+             nrow=4, top=textGrob("Percent Change by Predator Density", gp=gpar(fontface="bold", fontsize=6, cex=3)),
+             layout_matrix = rbind(c(1,2), c(3,4), c(5,6),c(7,7)), heights = c(4, 4, 4, 0.4))
 
 ```
 
+##Simulations, K=100
+Suppose we want to investigate what happens when the carrying capacity is lower, K=100
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+K_prey=100
+parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
 
+test_sim<-predprey_sim(times=times, state=state, r=r)
+sim.df<-df_sim(sim=test_sim, r=r)
+
+#plotting simulations
+n175.sim<-lsplit(sim=test_sim, n=1:5, r=r)
+n175<-df_sim(sim=n175.sim, r=r)
+plot_n_grid(df=n175, r=r, N=N, i=1)
+
+n100.sim<-lsplit(sim=test_sim, n=6:10, r=r)
+n100<-df_sim(sim=n100.sim, r=r)
+plot_n_grid(df=n100, r=r, N=N, i=2)
+
+n50.sim<-lsplit(sim=test_sim, n=11:15, r=r)
+n50<-df_sim(sim=n50.sim, r=r)
+plot_n_grid(df=n50, r=r, N=N, i=3)
+
+n30.sim<-lsplit(sim=test_sim, n=16:20, r=r)
+n30<-df_sim(sim=n30.sim, r=r)
+plot_n_grid(df=n30, r=r, N=N, i=4)
+
+n10.sim<-lsplit(sim=test_sim, n=21:25, r=r)
+n10<-df_sim(sim=n10.sim, r=r)
+plot_n_grid(df=n10, r=r, N=N, i=5)
+
+n2.sim<-lsplit(sim=test_sim, n=26:30, r=r)
+n2<-df_sim(sim=n2.sim, r=r)
+plot_n_grid(df=n2, r=r, N=N, i=6)
+
+
+#looking at percent change
+diff.175<-percent_diff(n175.sim, r=r)
+p175<-plot_diff(diff=diff.175, N=N, j=1)
+
+diff.100<-percent_diff(n100.sim, r=r)
+p100<-plot_diff(diff.100, N=N, j=2)
+
+diff.50<-percent_diff(n50.sim, r=r)
+p50<-plot_diff(diff=diff.50, N=N, j=3)
+
+diff.30<-percent_diff(n30.sim, r=r)
+p30<-plot_diff(diff=diff.30, N=N, j=4)
+
+diff.10<-percent_diff(n10.sim, r=r)
+p10<-plot_diff(diff=diff.10, N=N, j=5)
+
+diff.2<-percent_diff(n2.sim, r=r)
+p2.diff<-plot_diff(diff=diff.2, N=N, j=6)
+
+legend<-get_legend(p175)
+
+grid.arrange(grobs=list(p175+theme(legend.position="none"), 
+                        p100+theme(legend.position="none"), 
+                        p50+theme(legend.position="none"), 
+                        p30+theme(legend.position="none"),
+                        p10+theme(legend.position="none"),
+                        p2.diff+theme(legend.position="none"),
+                        legend), 
+             nrow=4, top=textGrob("Percent Change by Predator Density", gp=gpar(fontface="bold", fontsize=6, cex=3)),
+             layout_matrix = rbind(c(1,2), c(3,4), c(5,6),c(7,7)), heights = c(4, 4, 4, 0.4))
+```
+
+##Simulations, K=75
+Changing K to 75
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+K_prey=75
+parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
+
+test_sim<-predprey_sim(times=times, state=state, r=r)
+sim.df<-df_sim(sim=test_sim, r=r)
+
+#plotting simulations
+n175.sim<-lsplit(sim=test_sim, n=1:5, r=r)
+n175<-df_sim(sim=n175.sim, r=r)
+plot_n_grid(df=n175, r=r, N=N, i=1)
+
+n100.sim<-lsplit(sim=test_sim, n=6:10, r=r)
+n100<-df_sim(sim=n100.sim, r=r)
+plot_n_grid(df=n100, r=r, N=N, i=2)
+
+n50.sim<-lsplit(sim=test_sim, n=11:15, r=r)
+n50<-df_sim(sim=n50.sim, r=r)
+plot_n_grid(df=n50, r=r, N=N, i=3)
+
+n30.sim<-lsplit(sim=test_sim, n=16:20, r=r)
+n30<-df_sim(sim=n30.sim, r=r)
+plot_n_grid(df=n30, r=r, N=N, i=4)
+
+n10.sim<-lsplit(sim=test_sim, n=21:25, r=r)
+n10<-df_sim(sim=n10.sim, r=r)
+plot_n_grid(df=n10, r=r, N=N, i=5)
+
+n2.sim<-lsplit(sim=test_sim, n=26:30, r=r)
+n2<-df_sim(sim=n2.sim, r=r)
+plot_n_grid(df=n2, r=r, N=N, i=6)
+
+
+#looking at percent change
+diff.175<-percent_diff(n175.sim, r=r)
+p175<-plot_diff(diff=diff.175, N=N, j=1)
+
+diff.100<-percent_diff(n100.sim, r=r)
+p100<-plot_diff(diff.100, N=N, j=2)
+
+diff.50<-percent_diff(n50.sim, r=r)
+p50<-plot_diff(diff=diff.50, N=N, j=3)
+
+diff.30<-percent_diff(n30.sim, r=r)
+p30<-plot_diff(diff=diff.30, N=N, j=4)
+
+diff.10<-percent_diff(n10.sim, r=r)
+p10<-plot_diff(diff=diff.10, N=N, j=5)
+
+diff.2<-percent_diff(n2.sim, r=r)
+p2.diff<-plot_diff(diff=diff.2, N=N, j=6)
+
+legend<-get_legend(p175)
+
+grid.arrange(grobs=list(p175+theme(legend.position="none"), 
+                        p100+theme(legend.position="none"), 
+                        p50+theme(legend.position="none"), 
+                        p30+theme(legend.position="none"),
+                        p10+theme(legend.position="none"),
+                        p2.diff+theme(legend.position="none"),
+                        legend), 
+             nrow=4, top=textGrob("Percent Change by Predator Density", gp=gpar(fontface="bold", fontsize=6, cex=3)),
+             layout_matrix = rbind(c(1,2), c(3,4), c(5,6),c(7,7)), heights = c(4, 4, 4, 0.4))
+```
+
+##Simulations, K=50
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+K_prey=50
+parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
+
+test_sim<-predprey_sim(times=times, state=state, r=r)
+sim.df<-df_sim(sim=test_sim, r=r)
+
+#plotting simulations
+n175.sim<-lsplit(sim=test_sim, n=1:5, r=r)
+n175<-df_sim(sim=n175.sim, r=r)
+plot_n_grid(df=n175, r=r, N=N, i=1)
+
+n100.sim<-lsplit(sim=test_sim, n=6:10, r=r)
+n100<-df_sim(sim=n100.sim, r=r)
+plot_n_grid(df=n100, r=r, N=N, i=2)
+
+n50.sim<-lsplit(sim=test_sim, n=11:15, r=r)
+n50<-df_sim(sim=n50.sim, r=r)
+plot_n_grid(df=n50, r=r, N=N, i=3)
+
+n30.sim<-lsplit(sim=test_sim, n=16:20, r=r)
+n30<-df_sim(sim=n30.sim, r=r)
+plot_n_grid(df=n30, r=r, N=N, i=4)
+
+n10.sim<-lsplit(sim=test_sim, n=21:25, r=r)
+n10<-df_sim(sim=n10.sim, r=r)
+plot_n_grid(df=n10, r=r, N=N, i=5)
+
+n2.sim<-lsplit(sim=test_sim, n=26:30, r=r)
+n2<-df_sim(sim=n2.sim, r=r)
+plot_n_grid(df=n2, r=r, N=N, i=6)
+
+
+#looking at percent change
+diff.175<-percent_diff(n175.sim, r=r)
+p175<-plot_diff(diff=diff.175, N=N, j=1)
+
+diff.100<-percent_diff(n100.sim, r=r)
+p100<-plot_diff(diff.100, N=N, j=2)
+
+diff.50<-percent_diff(n50.sim, r=r)
+p50<-plot_diff(diff=diff.50, N=N, j=3)
+
+diff.30<-percent_diff(n30.sim, r=r)
+p30<-plot_diff(diff=diff.30, N=N, j=4)
+
+diff.10<-percent_diff(n10.sim, r=r)
+p10<-plot_diff(diff=diff.10, N=N, j=5)
+
+diff.2<-percent_diff(n2.sim, r=r)
+p2.diff<-plot_diff(diff=diff.2, N=N, j=6)
+
+legend<-get_legend(p175)
+
+grid.arrange(grobs=list(p175+theme(legend.position="none"), 
+                        p100+theme(legend.position="none"), 
+                        p50+theme(legend.position="none"), 
+                        p30+theme(legend.position="none"),
+                        p10+theme(legend.position="none"),
+                        p2.diff+theme(legend.position="none"),
+                        legend), 
+             nrow=4, top=textGrob("Percent Change by Predator Density", gp=gpar(fontface="bold", fontsize=6, cex=3)),
+             layout_matrix = rbind(c(1,2), c(3,4), c(5,6),c(7,7)), heights = c(4,4,4, 0.4))
+```
