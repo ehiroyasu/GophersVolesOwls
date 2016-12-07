@@ -4,17 +4,17 @@
 \alias{plot_diff}
 \title{Plotting change in populations}
 \usage{
-plot_diff(state, diff)
+plot_diff(diff, N, j)
 }
 \arguments{
-\item{state}{is the state variables N for the prey population and P for the predator population; 
-measured in individuals per ha. For this function, we are usually interested in the response of the prey species to
-varying predator densities.}
-
 \item{diff}{is a matrix of differences by varying state variables; it is the output from the percent_diff function}
+
+\item{N}{is the vector of input N values}
+
+\item{j}{is a number calling which N value is being expressed}
 }
 \description{
-This function can be used to plot the total percent change in populations over time. The x-axis should be predator 
+This function can be used to plot the total percent change in populations over time. The x-axis should be predator density 
 and the y axis is percent change in population of the prey species.
 }
 \author{
