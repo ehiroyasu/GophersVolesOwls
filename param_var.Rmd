@@ -26,7 +26,7 @@ library(cowplot)
 ```
 
 ##Population growth rates
-From the literature, we have obtained estimates of the minimum, maximum, and average population matrices of gopher populations.
+From the literature, we have obtained estimates of the minimum, maximum, and average population matrices of gopher populations. We can use these population matrices to calculate the instantenous growth rate of the population, or the r-value.
 ```{r, echo=FALSE}
 stages = c("Juvenile", "SubAdult", "Adult")
 gopher_min<-matrix(data=c(0, 2.40,5.35, 0.5, 0, 0, 0, 0.357, 0.25),  
@@ -54,16 +54,27 @@ r_gopher<-c(r_min, r_avg, r_max)
 
 
 ##Parameters
-We can use the same pred_prey function created in our owls r-package, then use an ode solver to solve the derivatives.
+We can use the pred_prey function created in our owls r-package, then use an ode solver to solve the derivatives. We will use a type two functional response to model the behavior of the prey population. A type two functional response is the simplest model to use in the wake of low data. The response will capture typical more realistic predator-prey relations. The differental equations are below:
+
+\[\frac{dprey}{dt}=rN(1-\frac{N}{K_{prey}})-\frac{k_{max}N}{N+D}P\]
+\[\frac{dpredator}{dt}= \beta PN - \delta P\]
 
 The model requires multiple parameters:
-r = growth rate of prey pop (gophers/season)
-K_prey = carrying capacity of prey
-alpha = attack rate of predator (or capture efficiency; the larger alpha is, the more the per capita growth rate of the prey population is depressed by the addition of a single predator)
-beta= assimilation efficiency (efficiency of turning gophers into per capita growth)
-delta = death rate of predator
-k_max = maximum feeding rate (1/handling time)
-D = half saturation constant (1/(alpha*handling time))
+r = growth rate of prey pop (gophers/season) This value is extracted from the population matrices using the popbio package to calculate lambda, then r=ln(lambda)
+
+K_prey = carrying capacity of prey (gophers)
+
+alpha = attack rate of predator (or capture efficiency; the larger alpha is, the more the per capita growth rate of the prey population is depressed by the addition of a single predator) (1/season) The attack rate was calculated from Derting and Crawford (1989). They found that, on average, it takes 1.1 attacks/vole. If there are 11 successful attacks per night, then there should be 12.1 total attacks per night. If there is one foraging event per night, and 90 foraging events per season, then we expect 1089 attacks per season. However, this is if there are a significant amount of gophers across the landscape (scaling up from the Derting and Crawford densities, we get over 3000 voles/ha). In sensitivity analysis if the attack rate is less than three, there is coexistence between gopher and owl populations.
+
+h = handling time The amount of time it takes an owl to kill and eat a single gopher (season/gopher)
+
+beta= assimilation efficiency (efficiency of turning gophers into per capita growth) This number is calculated from field data and represents the fractional value of one gopher to an owl producing five chicks.
+
+delta = death rate of predator (#predator/season)
+
+k_max = maximum feeding rate the most gophers an owl can eat in a single time unit(1/handling time) (gophers/season)
+
+D = half saturation constant (1/(alpha*handling time)) The abundance of prey at which the feeding rate is half maximal (gopher)
 
 State variables:
 N = starting population of prey 
@@ -73,12 +84,11 @@ P = starting population of predator
 For this model, time is in terms of season (3 months), so each time interval is represented by a season and four seasons are equivalent to one year.
 ```{r}
 #Parameters
-##need to tweak these more
-alpha=0.84
-beta = 0.02
+alpha=0.924
+beta = 9.42e-4
 delta=0.01
 K_prey=175
-h=2.78e-5
+h=0.001#2.78e-5
 k_max=1/h
 D=1/(alpha*h)
 r=r_gopher
@@ -103,6 +113,8 @@ state<-cbind(N, P)
 times<- seq(0, 20, by=1)
 ```
 
+
+
 ##Simulations, K=175
 We can then run simulations for these various lists of r values while varying predator density.
 ```{r, echo=FALSE}
@@ -123,7 +135,7 @@ plot_n_grid(df=n100, r=r, N=N, i=2)
 n50.sim<-lsplit(sim=test_sim, n=11:15, r=r)
 n50<-df_sim(sim=n50.sim, r=r)
 plot_n_grid(df=n50, r=r, N=N, i=3)
-
+#
 n30.sim<-lsplit(sim=test_sim, n=16:20, r=r)
 n30<-df_sim(sim=n30.sim, r=r)
 plot_n_grid(df=n30, r=r, N=N, i=4)
