@@ -15,9 +15,9 @@
 
 pred_prey <- function(t, state, parameters){
   with(as.list(c(state, parameters)), {
-    #type III Functional response
-    dprey=(r*N*(1-(N/K_prey)))-((k_max*(N^2))/((N^2)+(D^2)))*P #with density dependence
-    #dprey=(r*N)-((k_max*(N^2))/((N^2)+(D^2)))*P #without density dependence
+    #type II Functional response
+    dprey=(r*N*(1-(N/K_prey)))-((k_max*N)/(N+D))*P #with density dependence
+    #dprey=(r*N)-((k_max*N)/(N+D))*P #without density dependence
     dpredator=0 #constant number of predators
     #dpredator= beta*P*N - (delta*P) #incorporating predator
     
