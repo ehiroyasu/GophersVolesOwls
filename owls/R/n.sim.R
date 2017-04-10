@@ -9,12 +9,12 @@
 #'
 
 n.sim<-function(sim, r){
-  n175.sim<-lsplit(sim, n=1:5, r)
-  n100.sim<-lsplit(sim, n=6:10, r)
-  n50.sim<-lsplit(sim, n=11:15, r)
-  n30.sim<-lsplit(sim, n=16:20, r)
-  n10.sim<-lsplit(sim, n=21:25, r)
-  n2.sim<-lsplit(sim, n=26:30, r)
+  n1.sim<-lsplit(sim, n=1:5, r)
+  n2.sim<-lsplit(sim, n=6:10, r)
+  n3.sim<-lsplit(sim, n=11:15, r)
+  n4.sim<-lsplit(sim, n=16:20, r)
+  n5.sim<-lsplit(sim, n=21:25, r)
+  n6.sim<-lsplit(sim, n=26:30, r)
   
-  return(list(n175.sim, n100.sim, n50.sim, n30.sim, n10.sim, n2.sim))
+  return(list(n1.sim, n2.sim, n3.sim, n4.sim, n5.sim, n6.sim))
 }
