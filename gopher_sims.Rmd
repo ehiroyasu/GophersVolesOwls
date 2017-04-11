@@ -226,3 +226,7 @@ for(i in 1:dim(n175rmin)[3]){
   }
 }
 ```
+
+These model simulations show that at the two lowest barn owl densities (0.2 and 0.4/ha), the pocket gopher population is never driven to zero, no matter what the growth rate of the gopher population or carrying capacity. At the lowest barn owl density (0.2 barn owls/ha), the pocket gopher populations are able to grow to carrying capacity. On the opposite end of the spectrum, at the two highest barn owl densities (0.95 and 2/ha) the pocket gopher population is drive to extinction. At the highest barn owl density (2barn owls/ha), this is usually achieved by the middle of the second year.  It is important to note that these simulation exercises do not include prey switching, so barn owls may not be able to drive pocket gopher populations extinct, but instead switch prey species when they become harder to find.
+
+The simulations also show that the presence of barn owls, no matter what the initial density and the initial density, growth rate, and carrying capacity, prevent the prey population from reaching carrying capacity. Depending on the growth rate and initial density, the presence of barn owls can cause the equilibrium pocket gopher population size to be much lower than carrying capacity. Therefore if the carrying capacity of the landscape is low, then barn owls may be effective at driving down pocket gopher populations to a manageable level.
