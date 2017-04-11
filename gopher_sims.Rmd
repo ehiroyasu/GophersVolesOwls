@@ -20,8 +20,8 @@ library(plyr)
 library(dplyr)
 library(reshape)
 library(ggplot2)
-library(gridExtra)
 library(grid)
+library(gridExtra)
 library(cowplot)
 ```
 
