@@ -11,7 +11,7 @@
 #'
 #'
 
-plot_n_grid<-function(df, r, N, i){
+plot_n_grid<-function(df, r, N, K_prey, i){
   p1<-plot_n(df[[1]], r[1])
   p2<-plot_n(df[[2]], r[2])
   p3<-plot_n(df[[3]], r[3])
@@ -23,7 +23,7 @@ plot_n_grid<-function(df, r, N, i){
                           p2+theme(legend.position="none"), 
                           p3+theme(legend.position="none"),
                           legend), nrow=2, 
-               top=textGrob(paste("Prey Density Over Time N=", unique(N)[i]), gp=gpar(fontface="bold", fontsize=6, cex=3)))
+               top=textGrob(paste("Prey Density Over Time N=", unique(N)[i], "and K=", K_prey), gp=gpar(fontface="bold", fontsize=6, cex=3)))
   
 }
 
