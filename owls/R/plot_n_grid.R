@@ -5,6 +5,7 @@
 #'@param df is the dataframe to feed into the plot_n function, it is the subsetted dataframe from the df_sim function in the 'owls' package.
 #'@param r is the r values specified in the parameters, because this function subsets by r value.
 #'@param N is the vector of initial N values set in the state variables.
+#'@param K_prey is the carrying capacity of the population
 #'@param i is the value of N to call to specify the title.
 #'
 #'@author Elizabeth Hiroyasu
@@ -23,7 +24,7 @@ plot_n_grid<-function(df, r, N, K_prey, i){
                           p2+theme(legend.position="none"), 
                           p3+theme(legend.position="none"),
                           legend), nrow=2, 
-               top=textGrob(paste("Prey Density Over Time N=", unique(N)[i], "and K=", K_prey), gp=gpar(fontface="bold", fontsize=6, cex=3)))
+               top=textGrob(paste("Prey Density Over Time, N=", unique(N)[i], "and K=", K_prey), gp=gpar(fontface="bold", fontsize=6, cex=3)))
   
 }
 
