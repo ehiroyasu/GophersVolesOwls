@@ -2,7 +2,9 @@
 title: "Vole Simulations"
 author: "Elizabeth Hiroyasu"
 date: "April 10, 2017"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 To look at the sensitivity of the prey population to the model parameters, we can run the model for a variety of different parameters and look how the curve changes. For this simulation, we will set a variety of r values for population runs for vole populations.
 
@@ -49,6 +51,7 @@ r_avg<-log(lambda(vole_avg))
 r_max<-log(lambda(vole_max))
 
 r_vole<-c(r_min, r_avg, r_max)
+r_vole<-round(r_vole, 2)
 ```
 
 
@@ -63,7 +66,7 @@ r = growth rate of prey pop (voles/season) This value is extracted from the popu
 
 K_prey = carrying capacity of prey (voles)
 
-alpha = attack rate of predator (or capture efficiency; the larger alpha is, the more the per capita growth rate of the prey population is depressed by the addition of a single predator) (units=1/season) The attack rate was calculated from Derting and Crawford (1989). They found that, on average, it takes 1.1 attacks/vole - for this analysis, we assume the attack rate is the same for gophers as for voles. If there are 11 successful attacks per night the average number observed in observations recorded in Bunn et al (1982), then there should be 12.1 total attacks per night. If there is one foraging event per night, and 90 foraging events per season, then we expect 1089 attacks per season. However, this is if there are a significant amount of gophers across the landscape (scaling up from the Derting and Crawford densities, we get over 3000 voles/ha, an unreasonable number). Therefore, we would expect attack rate to decrease with density of the prey population. In sensitivity analysis if the attack rate is less than three, there is coexistence between gopher and owl populations.
+alpha = attack rate of predator (or capture efficiency; the larger alpha is, the more the per capita growth rate of the prey population is depressed by the addition of a single predator) (units=1/season) The attack rate was calculated from Derting and Cranford (1989). They found that, on average, it takes 1.1 attacks/vole - for this analysis, we assume the attack rate is the same for gophers as for voles. If there are 11 successful attacks per night the average number observed in observations recorded in Bunn et al (1982), then there should be 12.1 total attacks per night. If there is one foraging event per night, and 90 foraging events per season, then we expect 1089 attacks per season. However, this is if there are a significant amount of gophers across the landscape (scaling up from the Derting and Cranford densities, we get over 3000 voles/ha, an unreasonable number). Therefore, we would expect attack rate to decrease with density of the prey population. In sensitivity analysis if the attack rate is less than three, there is coexistence between gopher and owl populations.
 
 h = handling time The amount of time it takes an owl to kill and eat a single vole (season/vole)
 
@@ -133,14 +136,10 @@ for(i in 1:length(n.init.sim)){
 names(n.init.df)<-unique(N)
 
 for(i in 1:length(n.init.df)){
-   plot_n_grid(df=n.init.df[[i]], r=r, N=N, i=i)
+   plot_n_grid(df=n.init.df[[i]], r=r, N=N, K_prey=K_prey, i=i)
 }
 ```
 
-We can also look at how the final population density of the prey species varies by changes in parameter.
-```{r, echo=FALSE, warning=FALSE, message=FALSE}
-percent_plot(sim=n.init.sim, r)
-```
 
 #Simulations, K=500
 Suppose we want to investigate what happens when the carrying capacity is lower, K=500
@@ -163,9 +162,6 @@ names(n.init.df)<-unique(N)
 for(i in 1:length(n.init.df)){
    plot_n_grid(df=n.init.df[[i]], r=r, N=N, i=i)
 }
-
-#looking at percent change
-percent_plot(sim=n.init.sim, r)
 ```
 
 #Simulations, K=200
@@ -189,9 +185,6 @@ names(n.init.df)<-unique(N)
 for(i in 1:length(n.init.df)){
    plot_n_grid(df=n.init.df[[i]], r=r, N=N, i=i)
 }
-
-#looking at percent change
-percent_plot(sim=n.init.sim, r)
 ```
 
 #Simulations, K=100
@@ -214,15 +207,4 @@ names(n.init.df)<-unique(N)
 for(i in 1:length(n.init.df)){
    plot_n_grid(df=n.init.df[[i]], r=r, N=N, i=i)
 }
-
-#looking at percent change
-percent_plot(sim=n.init.sim, r)
-
-# n175rmin<-n.init.sim[[1]][[1]]
-# p1<-NULL
-# for(i in 1:dim(n175rmin)[3]){
-#   if(n175rmin[,2,i]<1){
-#     p1<-(n175rmin[1,3,i])
-#   }
-# }
 ```
