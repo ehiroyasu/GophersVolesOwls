@@ -1,0 +1,202 @@
+---
+title: "Vole Simulations"
+author: "Elizabeth Hiroyasu"
+date: "April 10, 2017"
+output:
+  pdf_document: default
+  html_document: default
+---
+To look at the sensitivity of the prey population to the model parameters, we can run the model for a variety of different parameters and look how the curve changes. For this simulation, we will set a variety of r values for population runs for vole populations.
+
+
+
+##Population growth rates
+From the literature review (Sarah this is the average data from the model summary data), we constructed minimum, average, and maximum vole stage structured matrices. It is important to note that survival measurements are from M. townsendii and fertility measurements were from M. californicus because no studies on either species contained both measurements.
+
+```
+##          Juvenile SubAdult Adult
+## Juvenile     0.00     0.00  3.45
+## SubAdult     0.59     0.00  0.00
+## Adult        0.00     0.72  0.80
+```
+
+```
+##          Juvenile SubAdult Adult
+## Juvenile    0.000    0.000  5.02
+## SubAdult    0.695    0.000  0.00
+## Adult       0.000    0.765  0.83
+```
+
+```
+##          Juvenile SubAdult Adult
+## Juvenile      0.0     0.00  6.55
+## SubAdult      0.8     0.00  0.00
+## Adult         0.0     0.81  0.86
+```
+
+
+##Parameters
+We can use the pred_prey function created in our owls r-package, then use an ode solver to solve the derivatives. We will use a type two functional response to model the behavior of the prey population. A type two functional response is the simplest model to use in the wake of low data. The response will capture typical more realistic predator-prey relations. The differental equations are below:
+
+\[\frac{dprey}{dt}=rN(1-\frac{N}{K_{prey}})-\frac{k_{max}N}{N+D}P\]
+\[\frac{dpredator}{dt}= \beta PN - \delta P\]
+
+The model requires multiple parameters:
+r = growth rate of prey pop (voles/season) This value is extracted from the population matrices using the popbio package to calculate lambda, then r=ln(lambda)
+
+K_prey = carrying capacity of prey (voles)
+
+alpha = attack rate of predator (or capture efficiency; the larger alpha is, the more the per capita growth rate of the prey population is depressed by the addition of a single predator) (units=1/season) The attack rate was calculated from Derting and Cranford (1989). They found that, on average, it takes 1.1 attacks/vole - for this analysis, we assume the attack rate is the same for gophers as for voles. If there are 11 successful attacks per night the average number observed in observations recorded in Bunn et al (1982), then there should be 12.1 total attacks per night. If there is one foraging event per night, and 90 foraging events per season, then we expect 1089 attacks per season. However, this is if there are a significant amount of gophers across the landscape (scaling up from the Derting and Cranford densities, we get over 3000 voles/ha, an unreasonable number). Therefore, we would expect attack rate to decrease with density of the prey population. In sensitivity analysis if the attack rate is less than three, there is coexistence between gopher and owl populations.
+
+h = handling time The amount of time it takes an owl to kill and eat a single vole (season/vole)
+
+beta= assimilation efficiency (efficiency of turning voles into per capita growth) This number is calculated from field data and represents the fractional value of one vole to an owl producing five chicks.
+
+delta = death rate of predator (#predator/season)
+
+k_max = maximum feeding rate the most gophers an owl can eat in a single time unit(1/handling time) (voles/season)
+
+D = half saturation constant (1/(alpha*handling time)) The abundance of prey at which the feeding rate is half maximal (gopher)
+
+State variables:
+N = starting population of prey 
+P = starting population of predator
+
+
+For this model, time is in terms of season (3 months), so each time interval is represented by a season and four seasons are equivalent to one year.
+
+```r
+#Parameters
+alpha=0.924
+beta = 0.00054
+delta=0.01
+K_prey=1000
+h=0.001#2.78e-5
+k_max=1/h
+D=1/(alpha*h)
+r=r_vole
+parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
+
+
+#State variables:
+N=c(1000, 1000, 1000, 1000, 1000,
+    500, 500, 500, 500, 500,
+    250, 250, 250, 250, 250,
+    75, 75, 75, 75, 75,
+    10, 10, 10, 10, 10,
+    2,2,2,2,2)
+
+P=c(0.2, 0.4, 0.6, 0.95, 2.0, 
+    0.2, 0.4, 0.6, 0.95, 2.0,
+    0.2, 0.4, 0.6, 0.95, 2.0,
+    0.2, 0.4, 0.6, 0.95, 2.0,
+    0.2, 0.4, 0.6, 0.95, 2.0,
+    0.2, 0.4, 0.6, 0.95, 2.0)
+state<-cbind(N, P)
+times<- seq(0, 20, by=1)
+```
+
+
+
+#Simulations, K=1000
+We can then run simulations for these various lists of r values while varying predator density.
+
+
+Then, plotting the prey density over time by each N.
+
+\begin{flushleft}\includegraphics{vole_sims_files/figure-latex/unnamed-chunk-5-1} \end{flushleft}
+
+
+
+\begin{flushleft}\includegraphics{vole_sims_files/figure-latex/unnamed-chunk-5-2} \end{flushleft}
+
+
+
+\begin{flushleft}\includegraphics{vole_sims_files/figure-latex/unnamed-chunk-5-3} \end{flushleft}
+
+
+
+\begin{flushleft}\includegraphics{vole_sims_files/figure-latex/unnamed-chunk-5-4} \end{flushleft}
+
+
+
+\begin{flushleft}\includegraphics{vole_sims_files/figure-latex/unnamed-chunk-5-5} \end{flushleft}
+
+
+
+\begin{flushleft}\includegraphics{vole_sims_files/figure-latex/unnamed-chunk-5-6} \end{flushleft}
+
+
+#Simulations, K=500
+Suppose we want to investigate what happens when the carrying capacity is lower, K=500
+
+\begin{flushleft}\includegraphics{vole_sims_files/figure-latex/unnamed-chunk-6-1} \end{flushleft}
+
+
+
+\begin{flushleft}\includegraphics{vole_sims_files/figure-latex/unnamed-chunk-6-2} \end{flushleft}
+
+
+
+\begin{flushleft}\includegraphics{vole_sims_files/figure-latex/unnamed-chunk-6-3} \end{flushleft}
+
+
+
+\begin{flushleft}\includegraphics{vole_sims_files/figure-latex/unnamed-chunk-6-4} \end{flushleft}
+
+
+
+\begin{flushleft}\includegraphics{vole_sims_files/figure-latex/unnamed-chunk-6-5} \end{flushleft}
+
+
+
+\begin{flushleft}\includegraphics{vole_sims_files/figure-latex/unnamed-chunk-6-6} \end{flushleft}
+
+#Simulations, K=200
+Changing K to 200
+
+\begin{flushleft}\includegraphics{vole_sims_files/figure-latex/unnamed-chunk-7-1} \end{flushleft}
+
+
+
+\begin{flushleft}\includegraphics{vole_sims_files/figure-latex/unnamed-chunk-7-2} \end{flushleft}
+
+
+
+\begin{flushleft}\includegraphics{vole_sims_files/figure-latex/unnamed-chunk-7-3} \end{flushleft}
+
+
+
+\begin{flushleft}\includegraphics{vole_sims_files/figure-latex/unnamed-chunk-7-4} \end{flushleft}
+
+
+
+\begin{flushleft}\includegraphics{vole_sims_files/figure-latex/unnamed-chunk-7-5} \end{flushleft}
+
+
+
+\begin{flushleft}\includegraphics{vole_sims_files/figure-latex/unnamed-chunk-7-6} \end{flushleft}
+
+#Simulations, K=100
+
+\begin{flushleft}\includegraphics{vole_sims_files/figure-latex/unnamed-chunk-8-1} \end{flushleft}
+
+
+
+\begin{flushleft}\includegraphics{vole_sims_files/figure-latex/unnamed-chunk-8-2} \end{flushleft}
+
+
+
+\begin{flushleft}\includegraphics{vole_sims_files/figure-latex/unnamed-chunk-8-3} \end{flushleft}
+
+
+
+\begin{flushleft}\includegraphics{vole_sims_files/figure-latex/unnamed-chunk-8-4} \end{flushleft}
+
+
+
+\begin{flushleft}\includegraphics{vole_sims_files/figure-latex/unnamed-chunk-8-5} \end{flushleft}
+
+
+
+\begin{flushleft}\includegraphics{vole_sims_files/figure-latex/unnamed-chunk-8-6} \end{flushleft}
