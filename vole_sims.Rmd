@@ -126,7 +126,6 @@ sim.df<-df_sim(sim=test_sim, r=r)
 
 Then, plotting the prey density over time by each N.
 ```{r, echo=FALSE, warning=FALSE, fig.align="left"}
-#note, the n.sim function must be adjusted depending on the number of initial values used. Need to fix this so the function is more general.
 n.init.sim<-n.sim(sim=test_sim, r=r)
 
 n.init.df<-NULL
@@ -160,7 +159,7 @@ for(i in 1:length(n.init.sim)){
 names(n.init.df)<-unique(N)
 
 for(i in 1:length(n.init.df)){
-   plot_n_grid(df=n.init.df[[i]], r=r, N=N, i=i)
+   plot_n_grid(df=n.init.df[[i]], r=r, N=N, K_prey=K_prey, i=i)
 }
 ```
 
@@ -183,7 +182,7 @@ for(i in 1:length(n.init.sim)){
 names(n.init.df)<-unique(N)
 
 for(i in 1:length(n.init.df)){
-   plot_n_grid(df=n.init.df[[i]], r=r, N=N, i=i)
+   plot_n_grid(df=n.init.df[[i]], r=r, N=N, K_prey=K_prey, i=i)
 }
 ```
 
@@ -205,6 +204,6 @@ for(i in 1:length(n.init.sim)){
 names(n.init.df)<-unique(N)
 
 for(i in 1:length(n.init.df)){
-   plot_n_grid(df=n.init.df[[i]], r=r, N=N, i=i)
+   plot_n_grid(df=n.init.df[[i]], r=r, N=N, K_prey=K_prey, i=i)
 }
 ```
