@@ -52,6 +52,7 @@ r_max<-log(lambda(vole_max))
 
 r_vole<-c(r_min, r_avg, r_max)
 r_vole<-round(r_vole, 2)
+#r_vole<-c(0.51, 1.0, 1.5)
 ```
 
 
@@ -74,7 +75,7 @@ beta= assimilation efficiency (efficiency of turning voles into per capita growt
 
 delta = death rate of predator (#predator/season)
 
-k_max = maximum feeding rate the most gophers an owl can eat in a single time unit(1/handling time) (voles/season)
+k_max = maximum feeding rate the most gophers an owl can eat in a single time unit(1/handling time) (voles/season). Calculated from empirical data.
 
 D = half saturation constant (1/(alpha*handling time)) The abundance of prey at which the feeding rate is half maximal (gopher)
 
@@ -90,8 +91,8 @@ alpha=0.924
 beta = 0.00054
 delta=0.01
 K_prey=1000
-h=0.001#2.78e-5
-k_max=1/h
+k_max=654
+h=1/k_max
 D=1/(alpha*h)
 r=r_vole
 parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
@@ -112,7 +113,7 @@ P=c(0.2, 0.4, 0.6, 0.95, 2.0,
     0.2, 0.4, 0.6, 0.95, 2.0,
     0.2, 0.4, 0.6, 0.95, 2.0)
 state<-cbind(N, P)
-times<- seq(0, 20, by=1)
+times<- seq(0, 40, by=1)
 ```
 
 
