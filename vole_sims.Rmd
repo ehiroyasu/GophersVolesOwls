@@ -50,9 +50,9 @@ r_min<-log(lambda(vole_min))
 r_avg<-log(lambda(vole_avg))
 r_max<-log(lambda(vole_max))
 
-r_vole<-c(r_min, r_avg, r_max)
-r_vole<-round(r_vole, 2)
-#r_vole<-c(0.51, 1.0, 1.5)
+#r_vole<-c(r_min, r_avg, r_max)
+#r_vole<-round(r_vole, 2)
+r_vole<-c(0.51, 1.0, 1.5)
 ```
 
 
@@ -69,13 +69,13 @@ K_prey = carrying capacity of prey (voles)
 
 alpha = attack rate of predator (or capture efficiency; the larger alpha is, the more the per capita growth rate of the prey population is depressed by the addition of a single predator) (units=1/season) The attack rate was calculated from Derting and Cranford (1989). They found that, on average, it takes 1.1 attacks/vole - for this analysis, we assume the attack rate is the same for gophers as for voles. If there are 11 successful attacks per night the average number observed in observations recorded in Bunn et al (1982), then there should be 12.1 total attacks per night. If there is one foraging event per night, and 90 foraging events per season, then we expect 1089 attacks per season. However, this is if there are a significant amount of gophers across the landscape (scaling up from the Derting and Cranford densities, we get over 3000 voles/ha, an unreasonable number). Therefore, we would expect attack rate to decrease with density of the prey population. In sensitivity analysis if the attack rate is less than three, there is coexistence between gopher and owl populations.
 
-h = handling time The amount of time it takes an owl to kill and eat a single vole (season/vole)
+h = handling time The amount of time it takes an owl to kill and eat a single vole (1/k_max) (season/vole)
 
 beta= assimilation efficiency (efficiency of turning voles into per capita growth) This number is calculated from field data and represents the fractional value of one vole to an owl producing five chicks.
 
 delta = death rate of predator (#predator/season)
 
-k_max = maximum feeding rate the most gophers an owl can eat in a single time unit(1/handling time) (voles/season). Calculated from empirical data.
+k_max = maximum feeding rate the most gophers an owl can eat in a single time unit (voles/season). Calculated from empirical data.
 
 D = half saturation constant (1/(alpha*handling time)) The abundance of prey at which the feeding rate is half maximal (gopher)
 
