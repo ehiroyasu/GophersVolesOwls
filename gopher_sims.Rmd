@@ -50,6 +50,7 @@ r_avg<-log(lambda(gopher_avg))
 r_max<-log(lambda(gopher_max))
 
 r_gopher<-c(r_min, r_avg, r_max)
+r_gopher<-round(r_gopher, 2)
 ```
 
 
@@ -133,13 +134,13 @@ for(i in 1:length(n.init.sim)){
 names(n.init.df)<-unique(N)
 
 for(i in 1:length(n.init.df)){
-   plot_n_grid(df=n.init.df[[i]], r=r, N=N, i=i)
+   plot_n_grid(df=n.init.df[[i]], r=r, N=N, K_prey=K_prey, i=i)
 }
 ```
 
 We can also look at how the final population density of the prey species varies by changes in parameter.
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
-percent_plot(sim=n.init.sim, r)
+#percent_plot(sim=n.init.sim, r)
 ```
 
 #Simulations, K=100
@@ -161,11 +162,11 @@ for(i in 1:length(n.init.sim)){
 names(n.init.df)<-unique(N)
 
 for(i in 1:length(n.init.df)){
-   plot_n_grid(df=n.init.df[[i]], r=r, N=N, i=i)
+   plot_n_grid(df=n.init.df[[i]], r=r, N=N, K_prey=K_prey, i=i)
 }
 
 #looking at percent change
-percent_plot(sim=n.init.sim, r)
+#percent_plot(sim=n.init.sim, r)
 ```
 
 #Simulations, K=75
@@ -187,11 +188,11 @@ for(i in 1:length(n.init.sim)){
 names(n.init.df)<-unique(N)
 
 for(i in 1:length(n.init.df)){
-   plot_n_grid(df=n.init.df[[i]], r=r, N=N, i=i)
+   plot_n_grid(df=n.init.df[[i]], r=r, N=N, K_prey=K_prey, i=i)
 }
 
 #looking at percent change
-percent_plot(sim=n.init.sim, r)
+#percent_plot(sim=n.init.sim, r)
 ```
 
 #Simulations, K=50
@@ -212,19 +213,19 @@ for(i in 1:length(n.init.sim)){
 names(n.init.df)<-unique(N)
 
 for(i in 1:length(n.init.df)){
-   plot_n_grid(df=n.init.df[[i]], r=r, N=N, i=i)
+   plot_n_grid(df=n.init.df[[i]], r=r, N=N, K_prey=K_prey, i=i)
 }
 
 #looking at percent change
-percent_plot(sim=n.init.sim, r)
-
-n175rmin<-n.init.sim[[1]][[1]]
-p1<-NULL
-for(i in 1:dim(n175rmin)[3]){
-  if(n175rmin[,2,i]<1){
-    p1<-(n175rmin[1,3,i])
-  }
-}
+# percent_plot(sim=n.init.sim, r)
+# 
+# n175rmin<-n.init.sim[[1]][[1]]
+# p1<-NULL
+# for(i in 1:dim(n175rmin)[3]){
+#   if(n175rmin[,2,i]<1){
+#     p1<-(n175rmin[1,3,i])
+#   }
+# }
 ```
 
 These model simulations show that at the two lowest barn owl densities (0.2 and 0.4/ha), the pocket gopher population is never driven to zero, no matter what the growth rate of the gopher population or carrying capacity. At the lowest barn owl density (0.2 barn owls/ha), the pocket gopher populations are able to grow to carrying capacity. On the opposite end of the spectrum, at the two highest barn owl densities (0.95 and 2/ha) the pocket gopher population is drive to extinction. At the highest barn owl density (2barn owls/ha), this is usually achieved by the middle of the second year.  It is important to note that these simulation exercises do not include prey switching, so barn owls may not be able to drive pocket gopher populations extinct, but instead switch prey species when they become harder to find.
