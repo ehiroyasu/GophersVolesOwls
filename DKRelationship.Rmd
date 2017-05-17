@@ -1,0 +1,92 @@
+---
+title: "Relationship between D and K"
+author: "Elizabeth Hiroyasu"
+date: "May 17, 2017"
+output: html_document
+---
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+setwd("../GophersVolesOwls")
+library(devtools)
+library(roxygen2)
+load_all("owls")
+library(owls)
+
+library(popbio)
+library(deSolve)
+library(plyr)
+library(dplyr)
+library(reshape)
+library(ggplot2)
+library(grid)
+library(gridExtra)
+library(cowplot)
+```
+
+##The relationship between parameter D and Carrying Capacity
+
+We explored the feasibility of using barn owls (Tyto alba) as a biocontrol for rodent pest species in an agricultural setting. The use of simple Lotka-Volterra predator-prey models reveals a relationship between the half-saturation constant (D) and carrying capacity (K_prey). The differential equations for the Lotka-Volterra predator-prey model is as follows:
+\[\frac{dprey}{dt}=rN(1-\frac{N}{K_{prey}})-\frac{k_{max}N}{N+D}P\]
+\[\frac{dpredator}{dt}= \beta PN - \delta P\]
+
+When solving for the equilibrium value of N, we obtain the following solution:
+\[N_{eq}=\frac{(K_{prey}-D) \pm \sqrt{(K_{prey}-D)^2 + 4 frac{K_{prey}}{r} (1-k_{max} P)}}{2}\]
+
+#Parameters
+
+The model requires multiple parameters:
+r = growth rate of prey pop (individuals/season). For our purposes we can specify a low, med, and high growth rate of 0.5, 1.0, and 1.5
+
+K_prey = carrying capacity of prey (individuals)
+
+alpha = attack rate of predator (or capture efficiency; the larger alpha is, the more the per capita growth rate of the prey population is depressed by the addition of a single predator) (units=1/season)
+
+h = handling time The amount of time it takes an owl to kill and eat a single vole (1/k_max) (season/individual)
+
+beta= assimilation efficiency (efficiency of turning prey individuals into per capita growth) This number is calculated from field data and represents the fractional value of one vole to an owl producing five chicks.
+
+delta = death rate of predator (#predator/season)
+
+k_max = maximum feeding rate the most gophers an owl can eat in a single time unit (individuals/season). Calculated from empirical data. We have estimates of the amount of biomass required to support a nest of five chicks, we can then take the average size of a prey item and calculate the number of individuals required per season.
+
+D = half saturation constant (1/(alpha*handling time)) The abundance of prey at which the feeding rate is half maximal (individual)
+
+State variables:
+N = starting population of prey 
+P = starting population of predator
+
+
+For this model, time is in terms of season (3 months), so each time interval is represented by a season and four seasons are equivalent to one year.
+
+```{r}
+#Parameters
+#alpha=0.924
+beta = 0.00054
+delta=0.01
+K_prey=1000
+k_max=655
+#h=1/k_max
+D=700
+r=c(0.5, 1.0, 1.5)
+parameters <- c(r, beta, delta, K_prey, k_max, D)
+
+
+#State variables:
+N=c(1000, 1000, 1000, 1000, 1000)
+P=c(0.2, 0.4, 0.6, 0.95, 2.0)
+
+state<-cbind(N, P)
+times<- seq(0, 20, by=1)
+```
+
+#Simulations, K=1000
+We can then run simulations for these various lists of r values while varying predator density.
+```{r, echo=FALSE}
+test_sim<-predprey_sim(times=times, state=state, r=r)
+sim.df<-df_sim(sim=test_sim, r=r)
+```
+
+#Equilibrium simulations
+```{r, echo=FALSE}
+N_eq(state, parameters)
+```
