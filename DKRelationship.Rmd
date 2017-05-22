@@ -63,30 +63,18 @@ For this model, time is in terms of season (3 months), so each time interval is 
 #alpha=0.924
 beta = 0.00054
 delta=0.01
-K_prey=1000
+K_prey=c(1000, 750, 500, 250)
 k_max=655
 #h=1/k_max
-D=700
-r=c(0.5, 1.0, 1.5)
-parameters <- c(r, beta, delta, K_prey, k_max, D)
-
+D=700 #where D is normally 1/alpha*h
+r=c(3, 6, 12)
 
 #State variables:
 N=c(1000, 1000, 1000, 1000, 1000)
 P=c(0.2, 0.4, 0.6, 0.95, 2.0)
-
-state<-cbind(N, P)
-times<- seq(0, 20, by=1)
-```
-
-#Simulations, K=1000
-We can then run simulations for these various lists of r values while varying predator density.
-```{r, echo=FALSE}
-test_sim<-predprey_sim(times=times, state=state, r=r)
-sim.df<-df_sim(sim=test_sim, r=r)
 ```
 
 #Equilibrium simulations
 ```{r, echo=FALSE}
-N_eq(state, parameters)
+eq<-N_eq(P, r, K_prey, D, k_max)
 ```
