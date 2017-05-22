@@ -13,12 +13,14 @@
 
 
 
-N_eq <- function(state, parameters){
-  with(as.list(c(state,parameters)), {
-   N1<-NULL
-     for(i in 1:length(r)){
-      for(j in 1:length(P)){
-        N1<-((K_prey-D)+(((K_prey-D)^2)+4*(K_prey/r[i])*(1-k_max*P[j]))^0.5)/2
+N_eq <- function(P, r, K_prey, D, k_max){
+  N1<-array(data=NA, dim=c(length(P), length(r), length(K_prey)), dimnames=list(c(P), c(r), c(K_prey)))
+     
+    for(i in 1:length(P)){
+      for(j in 1:length(r)){
+        for(k in 1:length(K_prey)){
+          N1[i,j, k]<-((K_prey[k]-D)+((((K_prey[k]-D)^2)+(4*(K_prey[k]/r[j])*(1-k_max*P[i])))^0.5))/2
+        }
       }
     }
    
@@ -29,20 +31,26 @@ N_eq <- function(state, parameters){
         N1[i]<-0
       }
     }
+  
+  
+  N2<-array(data=NA, dim=c(length(P), length(r), length(K_prey)), dimnames=list(c(P), c(r), c(K_prey)))
+  
+    for(i in 1:length(P)){
+      for(j in 1:length(r)){
+        for(k in 1:length(K_prey)){
+          N2[i,j, k]<-((K_prey[k]-D)+((((K_prey[k]-D)^2)+(4*(K_prey[k]/r[j])*(1-k_max*P[i])))^0.5))/2
+      }
+    }
+  }
+  
+  
+  for(i in 1:length(N2)){
+    if(N2[i]=='NaN'){
+      N2[i]<-0
+    } else if (N2[i]<0){
+      N2[i]<-0
+    }
+  }
 
-    for(i in 1:length(r)){
-      for(j in 1:length(P)){
-        N2<-((K_prey-D)-(((K_prey-D)^2)+4*(K_prey/r[i])*(1-k_max*P[j]))^0.5)/2
-      }
-    }
-    
-    for(i in 1:length(N2)){
-      if(N2[i]=='NaN'){
-        N2[i]<-0
-      } else if (N2[i]<0){
-        N2[i]<-0
-      }
-    }
-  })
-  return(list(c(N1, N2)))  
+  return(list(N1, N2))
 }
