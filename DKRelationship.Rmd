@@ -74,7 +74,6 @@ eq<-N_eq(P, r, K_prey, D, k_max)
 N1<-eq[[1]]
 N2<-eq[[2]]
 
-#Plotting
-N1_plot<-
-
+plot_eq(N1)
+plot_eq(N2)
 ```
