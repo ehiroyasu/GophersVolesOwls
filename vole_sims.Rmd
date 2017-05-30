@@ -52,7 +52,7 @@ r_max<-log(lambda(vole_max))
 
 #r_vole<-c(r_min, r_avg, r_max)
 #r_vole<-round(r_vole, 2)
-r_vole<-c(0.51, 1.0, 1.5)
+r_vole<-c(3.0, 6.0, 12.0)
 ```
 
 

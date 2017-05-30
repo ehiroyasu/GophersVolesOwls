@@ -35,7 +35,7 @@ N_eq <- function(P, r, K_prey, D, k_max){
     }
   N1<-melt(N1)
   colnames(N1)<-names
-  
+
   N2<-array(data=NA, dim=c(length(P), length(r), length(K_prey)), dimnames=list(c(P), c(r), c(K_prey)))
      for(i in 1:length(P)){
       for(j in 1:length(r)){
