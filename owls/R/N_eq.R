@@ -14,7 +14,9 @@
 
 
 N_eq <- function(P, r, K_prey, D, k_max){
-  N1<-array(data=NA, dim=c(length(P), length(r), length(K_prey)), dimnames=list(c(P), c(r), c(K_prey)))
+
+  names<- c("P", "r", "K_prey", "Eq")
+    N1<-array(data=NA, dim=c(length(P), length(r), length(K_prey)), dimnames=list(c(P), c(r), c(K_prey)))
      
     for(i in 1:length(P)){
       for(j in 1:length(r)){
@@ -31,14 +33,14 @@ N_eq <- function(P, r, K_prey, D, k_max){
         N1[i]<-0
       }
     }
-  
+  N1<-melt(N1)
+  colnames(N1)<-names
   
   N2<-array(data=NA, dim=c(length(P), length(r), length(K_prey)), dimnames=list(c(P), c(r), c(K_prey)))
-  
-    for(i in 1:length(P)){
+     for(i in 1:length(P)){
       for(j in 1:length(r)){
         for(k in 1:length(K_prey)){
-          N2[i,j, k]<-((K_prey[k]-D)+((((K_prey[k]-D)^2)+(4*(K_prey[k]/r[j])*(1-k_max*P[i])))^0.5))/2
+          N2[i,j, k]<-((K_prey[k]-D)-((((K_prey[k]-D)^2)+(4*(K_prey[k]/r[j])*(1-k_max*P[i])))^0.5))/2
       }
     }
   }
@@ -51,6 +53,9 @@ N_eq <- function(P, r, K_prey, D, k_max){
       N2[i]<-0
     }
   }
+  
+  N2<-melt(N2)
+  colnames(N2)<-names
 
   return(list(N1, N2))
 }
