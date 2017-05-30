@@ -2,7 +2,9 @@
 title: "Relationship between D and K"
 author: "Elizabeth Hiroyasu"
 date: "May 17, 2017"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
@@ -60,7 +62,7 @@ K_prey=c(1000, 750, 500, 250)
 k_max=655
 #h=1/k_max
 D=700 #where D is specified, however can be calculated as 1/alpha*h
-r=c(3, 6, 12)
+r=c(0.5, 1, 1.5, 2)
 
 #State variables:
 N=c(1000, 1000, 1000, 1000, 1000)
@@ -69,7 +71,33 @@ P=c(0.2, 0.4, 0.6, 0.95, 2.0)
 
 #Equilibrium simulations
 Using the quadratic formula, we can calculate the equilibrium densities of the prey population. N1 is the solution to $N_{eq}=\frac{(K_{prey}-D) + \sqrt{(K_{prey}-D)^2 + 4 frac{K_{prey}}{r} (1-k_{max} P)}}{2}$. N2 is the solution to $N_{eq}=\frac{(K_{prey}-D) - \sqrt{(K_{prey}-D)^2 + 4 frac{K_{prey}}{r} (1-k_{max} P)}}{2}$
-```{r, echo=FALSE}
+
+
+```{r, echo=FALSE, fig.align="left"}
+eq<-N_eq(P, r, K_prey, D, k_max)
+N1<-eq[[1]]
+N2<-eq[[2]]
+
+plot_eq(N1)
+plot_eq(N2)
+```
+
+#D=1000
+```{r, echo=FALSE, fig.align="left"}
+D=1000
+
+eq<-N_eq(P, r, K_prey, D, k_max)
+N1<-eq[[1]]
+N2<-eq[[2]]
+
+plot_eq(N1)
+plot_eq(N2)
+```
+
+#D=70
+```{r, echo=FALSE, fig.align="left"}
+D=70
+
 eq<-N_eq(P, r, K_prey, D, k_max)
 N1<-eq[[1]]
 N2<-eq[[2]]
