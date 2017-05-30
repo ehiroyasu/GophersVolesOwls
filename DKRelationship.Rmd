@@ -11,16 +11,9 @@ library(devtools)
 library(roxygen2)
 load_all("owls")
 library(owls)
-
-library(popbio)
 library(deSolve)
-library(plyr)
-library(dplyr)
 library(reshape)
 library(ggplot2)
-library(grid)
-library(gridExtra)
-library(cowplot)
 ```
 
 ##The relationship between parameter D and Carrying Capacity
@@ -66,7 +59,7 @@ delta=0.01
 K_prey=c(1000, 750, 500, 250)
 k_max=655
 #h=1/k_max
-D=700 #where D is normally 1/alpha*h
+D=700 #where D is specified, however can be calculated as 1/alpha*h
 r=c(3, 6, 12)
 
 #State variables:
@@ -75,6 +68,13 @@ P=c(0.2, 0.4, 0.6, 0.95, 2.0)
 ```
 
 #Equilibrium simulations
+Using the quadratic formula, we can calculate the equilibrium densities of the prey population. N1 is the solution to $N_{eq}=\frac{(K_{prey}-D) + \sqrt{(K_{prey}-D)^2 + 4 frac{K_{prey}}{r} (1-k_{max} P)}}{2}$. N2 is the solution to $N_{eq}=\frac{(K_{prey}-D) - \sqrt{(K_{prey}-D)^2 + 4 frac{K_{prey}}{r} (1-k_{max} P)}}{2}$
 ```{r, echo=FALSE}
 eq<-N_eq(P, r, K_prey, D, k_max)
+N1<-eq[[1]]
+N2<-eq[[2]]
+
+#Plotting
+N1_plot<-
+
 ```
