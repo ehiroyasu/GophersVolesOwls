@@ -58,10 +58,10 @@ For this model, time is in terms of season (3 months), so each time interval is 
 #alpha=0.924
 beta = 0.00054
 delta=0.01
-K_prey=c(1000, 750, 500, 250)
+K_prey=c(1000, 750, 500)
 k_max=655
 #h=1/k_max
-D=700 #where D is specified, however can be calculated as 1/alpha*h
+D=c(50, 70, 700, 7000) #where D is specified, however can be calculated as 1/alpha*h
 r=c(0.5, 1, 1.5, 2)
 
 #State variables:
@@ -78,30 +78,14 @@ eq<-N_eq(P, r, K_prey, D, k_max)
 N1<-eq[[1]]
 N2<-eq[[2]]
 
-plot_eq(N1)
-plot_eq(N2)
-```
+N1P_split<-split(N1, P)
+lapply(N1P_split, plot_eq)
 
-#D=1000
-```{r, echo=FALSE, fig.align="left"}
-D=1000
+for(i in 1:length(N1P_split)){
+  plot_eq(N1P_split[[i]])
+}
 
-eq<-N_eq(P, r, K_prey, D, k_max)
-N1<-eq[[1]]
-N2<-eq[[2]]
+N2P_split<-split(N2, P)
+lapply(N2P_split, plot_eq)
 
-plot_eq(N1)
-plot_eq(N2)
-```
-
-#D=70
-```{r, echo=FALSE, fig.align="left"}
-D=70
-
-eq<-N_eq(P, r, K_prey, D, k_max)
-N1<-eq[[1]]
-N2<-eq[[2]]
-
-plot_eq(N1)
-plot_eq(N2)
 ```
