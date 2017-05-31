@@ -10,13 +10,13 @@
 #'
 
 plot_eq<-function(df){
-  ggplot(data=df, aes(x=K_prey, y=Eq, group=as.factor(P), color=as.factor(P))) +
+  ggplot(data=df, aes(x=D, y=Eq, group=as.factor(K_prey), color=as.factor(K_prey))) +
     geom_line(size=1.1)+
-    labs(title="Equilibrium prey density", x="Prey Carrying Capacity (Individuals/ha)",
+    labs(title=paste("Equilibrium prey density, Predator Density=", P), x="D (Individuals/ha)",
                              y="Equilibrium Prey Density (Individuals/ha")+
     theme(plot.title=element_text(size=12))+
     theme(legend.background=element_rect(fill="gray90", size=0.5, linetype="solid", colour=1), 
           legend.direction="vertical") + 
-    scale_colour_discrete(name="Predator Density")+
+    scale_colour_discrete(name="Prey Carrying Capacity")+
     facet_grid(.~r)
 }
