@@ -25,7 +25,7 @@ We explored the feasibility of using barn owls (Tyto alba) as a biocontrol for r
 \[\frac{dpredator}{dt}= \beta PN - \delta P\]
 
 When solving for the equilibrium value of N, we obtain the following solution:
-\[N_{eq}=\frac{(K_{prey}-D) \pm \sqrt{(K_{prey}-D)^2 + 4 frac{K_{prey}}{r} (1-k_{max} P)}}{2}\]
+\[N_{eq}=\frac{(K_{prey}-D) \pm \sqrt{(K_{prey}-D)^2 + 4 \frac{K_{prey}}{r} (rD-k_{max} P)}}{2}\]
 
 #Parameters
 
@@ -61,7 +61,7 @@ delta=0.01
 K_prey=c(1000, 750, 500)
 k_max=655
 #h=1/k_max
-D=c(50, 70, 700, 7000) #where D is specified, however can be calculated as 1/alpha*h
+D=seq(0, 500, by=10)#c(50, 70, 100, 250, 500) #where D is specified, however can be calculated as 1/alpha*h
 r=c(0.5, 1, 1.5, 2)
 
 #State variables:
@@ -70,19 +70,20 @@ P=c(0.2, 0.4, 0.6, 0.95, 2.0)
 ```
 
 #Equilibrium simulations
-Using the quadratic formula, we can calculate the equilibrium densities of the prey population. N1 is the solution to $N_{eq}=\frac{(K_{prey}-D) + \sqrt{(K_{prey}-D)^2 + 4 frac{K_{prey}}{r} (1-k_{max} P)}}{2}$. N2 is the solution to $N_{eq}=\frac{(K_{prey}-D) - \sqrt{(K_{prey}-D)^2 + 4 frac{K_{prey}}{r} (1-k_{max} P)}}{2}$
+Using the quadratic formula, we can calculate the equilibrium densities of the prey population. N1 is the solution to $N_{eq}=\frac{(K_{prey}-D) + \sqrt{(K_{prey}-D)^2 + 4 \frac{K_{prey}}{r} (1-k_{max} P)}}{2}$. N2 is the solution to $N_{eq}=\frac{(K_{prey}-D) - \sqrt{(K_{prey}-D)^2 + 4 \frac{K_{prey}}{r} (1-k_{max} P)}}{2}$
 
 
 ```{r, echo=FALSE, fig.align="left"}
 eq<-N_eq(P, r, K_prey, D, k_max)
-N1<-eq[[1]]
-N2<-eq[[2]]
 
-N1P_split<-split(N1, P)
-lapply(N1P_split, plot_eq)
+P_splitN1<-split(eq[[1]], P)
+P_splitN2<-split(eq[[2]], P)
 
-for(i in 1:length(N1P_split)){
-  plot_eq(N1P_split[[i]])
+plot_eq(P_splitN1[[2]], P_splitN2[[2]], P, i=2)
+
+#plotting in a loop still not working
+for(i in 1:length(P_splitN1)){
+  plot_eq(P_splitN1[[i]], P_splitN2[[i]], P, i=i)
 }
 
 N2P_split<-split(N2, P)
