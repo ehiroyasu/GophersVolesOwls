@@ -60,13 +60,11 @@ N_eq <- function(P, r, K_prey, D, k_max){
   
   N2<-melt(N2)
   colnames(N2)<-names
-# 
-#   eq.df<-N1
-#   names(eq.df)[names(eq.df) == 'Eq'] <- 'N1'
-#   eq.df$N2<-N2[,5]
-#   names(eq.df)[names(eq.df) == 'Eq'] <- 'N2'
-  
-  
-  #return(eq.df)
-  return(list(N1, N2))
-}
+
+  eq.df<- rbind(N1, N2)
+  eq.df$N <- c(rep("N1", nrow(N1)), rep("N2", nrow(N2)))
+  eq.df$K_prey<-as.factor(eq.df$K_prey)
+  eq.df$N<-as.factor(eq.df$N)
+
+  return(eq.df)
+ }
