@@ -3,23 +3,25 @@ D#'plot_eq
 #'Uses ggplot2 package to plot the output data from predprey_sim. Data must be processed into a dataframe using the lsplit
 #'and df_sim functions.
 #'
-#'@param df is the dataframe to feed into ggplot2, it is the subsetted dataframe from the N_eq function in the 'owls' package.
+#'@param df is a dataframe that contains variables P, r, D, K_prey, N, and Eq. Eq is the equilibrium N1 or N2 variable
+#'@param P is a vector of predator densities, this is used in the title of the plots
+#'@param i is an interator to print the title
 #'
 #'@author Elizabeth Hiroyasu
 #'
 #'
 
-plot_eq<-function(N1, N2, P, i){
-  ggplot(mapping=aes(D, Eq, group=as.factor(K_prey), color=as.factor(K_prey)))+
-    geom_line(data=N1, size=1.1, linetype=1)+
-    geom_line(data=N2, size=1.1, linetype=2)+
+plot_eq<-function(df, P, i){
+  ggplot()+
+    geom_line(data=df, aes(D, Eq, linetype=(N), color=(K_prey)),size=1.1)+
     labs(title=paste("Equilibrium prey density, Predator Density=", P[i]), x="D (Individuals/ha)",
          y="Equilibrium Prey Density (Individuals/ha")+
     theme(plot.title=element_text(size=12))+
-    #scale_linetype_identity(name="Equilibria", guide=guide_legend(override.aes = list(linetype=c(1,2))),
-    #                        labels=c("N1", "N2"), breaks=c("solid","dashed"))+
+    scale_linetype_discrete(name="Equilibria")+
     scale_colour_discrete(name="Prey Carrying Capacity")+
     theme(legend.background=element_rect(fill="gray90", size=0.5, linetype="solid", colour=1), 
           legend.direction="vertical") +
     facet_grid(.~r)
+  
 }
+
