@@ -18,7 +18,7 @@ plot_eq<-function(df, P, i){
          y="Equilibrium Prey Density (Individuals/ha")+
     theme(plot.title=element_text(size=12))+
     scale_linetype_discrete(name="Equilibria")+
-    scale_colour_discrete(name="Prey Carrying Capacity")+
+    scale_colour_discrete(name="Prey Carrying \nCapacity")+
     theme(legend.background=element_rect(fill="gray90", size=0.5, linetype="solid", colour=1), 
           legend.direction="vertical") +
     facet_grid(.~r)
