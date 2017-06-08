@@ -76,17 +76,10 @@ Using the quadratic formula, we can calculate the equilibrium densities of the p
 ```{r, echo=FALSE, fig.align="left"}
 eq<-N_eq(P, r, K_prey, D, k_max)
 
-P_splitN1<-split(eq[[1]], P)
-P_splitN2<-split(eq[[2]], P)
+P_split<-split(eq, P)
+#plot_eq(P_split[[1]], P, i=1)
 
-plot_eq(P_splitN1[[2]], P_splitN2[[2]], P, i=2)
-
-#plotting in a loop still not working
-for(i in 1:length(P_splitN1)){
-  plot_eq(P_splitN1[[i]], P_splitN2[[i]], P, i=i)
+for(i in 1:length(P_split)){
+  print(plot_eq(df=P_split[[i]], P=P, i=i))
 }
-
-N2P_split<-split(N2, P)
-lapply(N2P_split, plot_eq)
-
 ```
