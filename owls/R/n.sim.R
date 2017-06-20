@@ -4,17 +4,21 @@
 #' 
 #'@param sim is the output list from the function predprey_sim
 #'@param r is a vector of population growth rates
+#'@param N is a vector of initial prey population densities
+#'@param P is a vector of prey densities
+#'
 #'
 #'@author Elizabeth Hiroyasu
 #'
 
-n.sim<-function(sim, r){
-  n1.sim<-lsplit(sim, n=1:5, r)
-  n2.sim<-lsplit(sim, n=6:10, r)
-  n3.sim<-lsplit(sim, n=11:15, r)
-  n4.sim<-lsplit(sim, n=16:20, r)
-  n5.sim<-lsplit(sim, n=21:25, r)
-  n6.sim<-lsplit(sim, n=26:30, r)
+n.sim<-function(sim, N, P, r){
+  bar<-vector("list", length=length(unique(N)))
+  n.split<-1:length(N)
+  n.split<-split(n.split, rep(1:length(unique(N)), each=length(unique(P))))
   
-  return(list(n1.sim, n2.sim, n3.sim, n4.sim, n5.sim, n6.sim))
+  for(i in 1:length(unique(N))){
+    bar[[i]]<-lsplit(sim, n.split[[i]], r)
+  }
+
+  return(bar)
 }
