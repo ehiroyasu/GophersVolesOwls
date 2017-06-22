@@ -17,7 +17,6 @@ df_sim<-function(sim, r){
     foo[[i]]<-apply(sim[[i]], 3, data.frame)
     foo[[i]]<-ldply(foo[[i]], data.frame)
     foo[[i]]$r<-r[i]
-    foo[[i]]<-rename(foo[[i]], c("X1"="time", "X2"="N", "X3"="P"))
   }
     return(foo)
 }
