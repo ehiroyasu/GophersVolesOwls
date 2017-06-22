@@ -16,7 +16,7 @@ lsplit<-function(sim, n, r){
   nlist<-vector("list", length(r))
   nlist<-setNames(nlist, r)
   for (i in 1:length(r)){
-    nlist[[i]]<-test_sim[[i]][,,n] 
+    nlist[[i]]<-sim[[i]][,,n] 
   }
   return(nlist)
 }
