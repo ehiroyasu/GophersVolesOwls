@@ -13,16 +13,6 @@ library(devtools)
 library(roxygen2)
 load_all("owls")
 library(owls)
-
-library(popbio)
-library(deSolve)
-library(plyr)
-library(dplyr)
-library(reshape)
-library(ggplot2)
-library(grid)
-library(gridExtra)
-library(cowplot)
 ```
 
 ##Population growth rates
@@ -97,19 +87,19 @@ parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
 
 
 #State variables:
-N=c(175, 175, 175, 175, 175,
-    100, 100, 100, 100, 100,
-    50, 50, 50, 50, 50,
-    30, 30, 30, 30, 30,
-    10, 10, 10, 10, 10,
-    2, 2, 2, 2, 2)
+N=c(175, 175, 175, 175,
+    100, 100, 100, 100,
+    50, 50, 50, 50,
+    25, 25, 25, 25,
+    10, 10, 10, 10,
+    2, 2, 2, 2)
 
-P=c(0.2, 0.4, 0.6, 0.95, 2.0, 
-    0.2, 0.4, 0.6, 0.95, 2.0,
-    0.2, 0.4, 0.6, 0.95, 2.0,
-    0.2, 0.4, 0.6, 0.95, 2.0,
-    0.2, 0.4, 0.6, 0.95, 2.0,
-    0.2, 0.4, 0.6, 0.95, 2.0)
+P=c(0.2, 0.6, 1.0, 2.0, 
+    0.2, 0.6, 1.0, 2.0,
+    0.2, 0.6, 1.0, 2.0,
+    0.2, 0.6, 1.0, 2.0,
+    0.2, 0.6, 1.0, 2.0, 
+    0.2, 0.6, 1.0, 2.0)
 state<-cbind(N, P)
 times<- seq(0, 20, by=1)
 ```
@@ -125,23 +115,20 @@ sim.df<-df_sim(sim=test_sim, r=r)
 
 Then, plotting the prey density over time by each N.
 ```{r, echo=FALSE, warning=FALSE, fig.align="left"}
-n.init.sim<-n.sim(sim=test_sim, r=r)
+n.init.sim<-n.sim(test_sim, N, P, r)
+names(n.init.sim)<-unique(N) 
 
 n.init.df<-NULL
 for(i in 1:length(n.init.sim)){
-  n.init.df[[i]]<-n.df(n.init.sim[[i]], r)
+  n.init.df[[i]]<-df_sim(n.init.sim[[i]], r)
+  n.init.df[[i]]<-ldply(n.init.df[[i]])
 }
-names(n.init.df)<-unique(N)
 
 for(i in 1:length(n.init.df)){
-   plot_n_grid(df=n.init.df[[i]], r=r, N=N, K_prey=K_prey, i=i)
+  print(plot_n(n.init.df[[i]], r, N, K_prey, i))
 }
 ```
 
-We can also look at how the final population density of the prey species varies by changes in parameter.
-```{r, echo=FALSE, warning=FALSE, message=FALSE}
-#percent_plot(sim=n.init.sim, r)
-```
 
 #Simulations, K=100
 Suppose we want to investigate what happens when the carrying capacity is lower, K=100
@@ -152,43 +139,17 @@ parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
 test_sim<-predprey_sim(times=times, state=state, r=r)
 sim.df<-df_sim(sim=test_sim, r=r)
 
-#plotting simulations
-n.init.sim<-n.sim(sim=test_sim, r=r)
+n.init.sim<-n.sim(test_sim, N, P, r)
+names(n.init.sim)<-unique(N) 
 
 n.init.df<-NULL
 for(i in 1:length(n.init.sim)){
-  n.init.df[[i]]<-n.df(n.init.sim[[i]], r)
+  n.init.df[[i]]<-df_sim(n.init.sim[[i]], r)
+  n.init.df[[i]]<-ldply(n.init.df[[i]])
 }
-names(n.init.df)<-unique(N)
 
 for(i in 1:length(n.init.df)){
-   plot_n_grid(df=n.init.df[[i]], r=r, N=N, K_prey=K_prey, i=i)
-}
-
-#looking at percent change
-#percent_plot(sim=n.init.sim, r)
-```
-
-#Simulations, K=75
-Changing K to 75
-```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left"}
-K_prey=75
-parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
-
-test_sim<-predprey_sim(times=times, state=state, r=r)
-sim.df<-df_sim(sim=test_sim, r=r)
-
-#plotting simulations
-n.init.sim<-n.sim(sim=test_sim, r=r)
-
-n.init.df<-NULL
-for(i in 1:length(n.init.sim)){
-  n.init.df[[i]]<-n.df(n.init.sim[[i]], r)
-}
-names(n.init.df)<-unique(N)
-
-for(i in 1:length(n.init.df)){
-   plot_n_grid(df=n.init.df[[i]], r=r, N=N, K_prey=K_prey, i=i)
+  print(plot_n(n.init.df[[i]], r, N, K_prey, i))
 }
 
 #looking at percent change
@@ -196,6 +157,7 @@ for(i in 1:length(n.init.df)){
 ```
 
 #Simulations, K=50
+Changing K to 50
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left"}
 K_prey=50
 parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
@@ -203,17 +165,42 @@ parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
 test_sim<-predprey_sim(times=times, state=state, r=r)
 sim.df<-df_sim(sim=test_sim, r=r)
 
-#plotting simulations
-n.init.sim<-n.sim(sim=test_sim, r=r)
+n.init.sim<-n.sim(test_sim, N, P, r)
+names(n.init.sim)<-unique(N) 
 
 n.init.df<-NULL
 for(i in 1:length(n.init.sim)){
-  n.init.df[[i]]<-n.df(n.init.sim[[i]], r)
+  n.init.df[[i]]<-df_sim(n.init.sim[[i]], r)
+  n.init.df[[i]]<-ldply(n.init.df[[i]])
 }
-names(n.init.df)<-unique(N)
 
 for(i in 1:length(n.init.df)){
-   plot_n_grid(df=n.init.df[[i]], r=r, N=N, K_prey=K_prey, i=i)
+  print(plot_n(n.init.df[[i]], r, N, K_prey, i))
+}
+
+#looking at percent change
+#percent_plot(sim=n.init.sim, r)
+```
+
+#Simulations, K=25
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left"}
+K_prey=25
+parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
+
+test_sim<-predprey_sim(times=times, state=state, r=r)
+sim.df<-df_sim(sim=test_sim, r=r)
+
+n.init.sim<-n.sim(test_sim, N, P, r)
+names(n.init.sim)<-unique(N) 
+
+n.init.df<-NULL
+for(i in 1:length(n.init.sim)){
+  n.init.df[[i]]<-df_sim(n.init.sim[[i]], r)
+  n.init.df[[i]]<-ldply(n.init.df[[i]])
+}
+
+for(i in 1:length(n.init.df)){
+  print(plot_n(n.init.df[[i]], r, N, K_prey, i))
 }
 
 #looking at percent change

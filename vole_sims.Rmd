@@ -14,16 +14,6 @@ library(devtools)
 library(roxygen2)
 load_all("owls")
 library(owls)
-
-library(popbio)
-library(deSolve)
-library(plyr)
-library(dplyr)
-library(reshape)
-library(ggplot2)
-library(grid)
-library(gridExtra)
-library(cowplot)
 ```
 
 ##Population growth rates
@@ -36,10 +26,10 @@ vole_min<-matrix(data=c(0, 0, 3.45, 0.59, 0, 0, 0, 0.72, 0.80),
 vole_min
 
 
-vole_avg<-matrix(data=c(0, 0, 5.02, 0.695, 0, 0, 0, 0.765, 0.83),  
-                   nrow=3, ncol=3, byrow=TRUE,
-                   dimnames=list(stages,stages))
-vole_avg
+# vole_avg<-matrix(data=c(0, 0, 5.02, 0.695, 0, 0, 0, 0.765, 0.83),  
+#                    nrow=3, ncol=3, byrow=TRUE,
+#                    dimnames=list(stages,stages))
+# vole_avg
 
 vole_max<-matrix(data=c(0, 0, 6.55, 0.8, 0, 0, 0, 0.81, 0.86),  
                     nrow=3, ncol=3, byrow=TRUE,
@@ -47,12 +37,12 @@ vole_max<-matrix(data=c(0, 0, 6.55, 0.8, 0, 0, 0, 0.81, 0.86),
 vole_max
 
 r_min<-log(lambda(vole_min))
-r_avg<-log(lambda(vole_avg))
+#r_avg<-log(lambda(vole_avg))
 r_max<-log(lambda(vole_max))
 
 #r_vole<-c(r_min, r_avg, r_max)
 #r_vole<-round(r_vole, 2)
-r_vole<-c(3.0, 6.0, 12.0)
+r_vole<-c(round(r_min, 2), round(r_max, 2), 3.0, 6.0)
 ```
 
 
@@ -99,19 +89,19 @@ parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
 
 
 #State variables:
-N=c(1000, 1000, 1000, 1000, 1000,
-    500, 500, 500, 500, 500,
-    250, 250, 250, 250, 250,
-    75, 75, 75, 75, 75,
-    10, 10, 10, 10, 10,
-    2,2,2,2,2)
+N=c(1000, 1000, 1000, 1000, 
+    500, 500, 500, 500,
+    100, 100, 100, 100,
+    50, 50, 50, 50,
+    10, 10, 10, 10, 
+    2,2,2,2)
 
-P=c(0.2, 0.4, 0.6, 0.95, 2.0, 
-    0.2, 0.4, 0.6, 0.95, 2.0,
-    0.2, 0.4, 0.6, 0.95, 2.0,
-    0.2, 0.4, 0.6, 0.95, 2.0,
-    0.2, 0.4, 0.6, 0.95, 2.0,
-    0.2, 0.4, 0.6, 0.95, 2.0)
+P=c(0.2, 0.6, 1.0, 2.0, 
+    0.2, 0.6, 1.0, 2.0,
+    0.2, 0.6, 1.0, 2.0,
+    0.2, 0.6, 1.0, 2.0,
+    0.2, 0.6, 1.0, 2.0,
+    0.2, 0.6, 1.0, 2.0)
 state<-cbind(N, P)
 times<- seq(0, 40, by=1)
 ```
@@ -127,16 +117,17 @@ sim.df<-df_sim(sim=test_sim, r=r)
 
 Then, plotting the prey density over time by each N.
 ```{r, echo=FALSE, warning=FALSE, fig.align="left"}
-n.init.sim<-n.sim(sim=test_sim, r=r)
+n.init.sim<-n.sim(test_sim, N, P, r)
+names(n.init.sim)<-unique(N) 
 
 n.init.df<-NULL
 for(i in 1:length(n.init.sim)){
-  n.init.df[[i]]<-n.df(n.init.sim[[i]], r)
+  n.init.df[[i]]<-df_sim(n.init.sim[[i]], r)
+  n.init.df[[i]]<-ldply(n.init.df[[i]])
 }
-names(n.init.df)<-unique(N)
 
 for(i in 1:length(n.init.df)){
-   plot_n_grid(df=n.init.df[[i]], r=r, N=N, K_prey=K_prey, i=i)
+  print(plot_n(n.init.df[[i]], r, N, K_prey, i))
 }
 ```
 
@@ -151,43 +142,22 @@ test_sim<-predprey_sim(times=times, state=state, r=r)
 sim.df<-df_sim(sim=test_sim, r=r)
 
 #plotting simulations
-n.init.sim<-n.sim(sim=test_sim, r=r)
+n.init.sim<-n.sim(test_sim, N, P, r)
+names(n.init.sim)<-unique(N) 
 
 n.init.df<-NULL
 for(i in 1:length(n.init.sim)){
-  n.init.df[[i]]<-n.df(n.init.sim[[i]], r)
+  n.init.df[[i]]<-df_sim(n.init.sim[[i]], r)
+  n.init.df[[i]]<-ldply(n.init.df[[i]])
 }
-names(n.init.df)<-unique(N)
 
 for(i in 1:length(n.init.df)){
-   plot_n_grid(df=n.init.df[[i]], r=r, N=N, K_prey=K_prey, i=i)
-}
-```
-
-#Simulations, K=200
-Changing K to 200
-```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left"}
-K_prey=200
-parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
-
-test_sim<-predprey_sim(times=times, state=state, r=r)
-sim.df<-df_sim(sim=test_sim, r=r)
-
-#plotting simulations
-n.init.sim<-n.sim(sim=test_sim, r=r)
-
-n.init.df<-NULL
-for(i in 1:length(n.init.sim)){
-  n.init.df[[i]]<-n.df(n.init.sim[[i]], r)
-}
-names(n.init.df)<-unique(N)
-
-for(i in 1:length(n.init.df)){
-   plot_n_grid(df=n.init.df[[i]], r=r, N=N, K_prey=K_prey, i=i)
+  print(plot_n(n.init.df[[i]], r, N, K_prey, i))
 }
 ```
 
 #Simulations, K=100
+Changing K to 100
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left"}
 K_prey=100
 parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
@@ -196,15 +166,39 @@ test_sim<-predprey_sim(times=times, state=state, r=r)
 sim.df<-df_sim(sim=test_sim, r=r)
 
 #plotting simulations
-n.init.sim<-n.sim(sim=test_sim, r=r)
+n.init.sim<-n.sim(test_sim, N, P, r)
+names(n.init.sim)<-unique(N) 
 
 n.init.df<-NULL
 for(i in 1:length(n.init.sim)){
-  n.init.df[[i]]<-n.df(n.init.sim[[i]], r)
+  n.init.df[[i]]<-df_sim(n.init.sim[[i]], r)
+  n.init.df[[i]]<-ldply(n.init.df[[i]])
 }
-names(n.init.df)<-unique(N)
 
 for(i in 1:length(n.init.df)){
-   plot_n_grid(df=n.init.df[[i]], r=r, N=N, K_prey=K_prey, i=i)
+  print(plot_n(n.init.df[[i]], r, N, K_prey, i))
+}
+```
+
+#Simulations, K=50
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left"}
+K_prey=50
+parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
+
+test_sim<-predprey_sim(times=times, state=state, r=r)
+sim.df<-df_sim(sim=test_sim, r=r)
+
+#plotting simulations
+n.init.sim<-n.sim(test_sim, N, P, r)
+names(n.init.sim)<-unique(N) 
+
+n.init.df<-NULL
+for(i in 1:length(n.init.sim)){
+  n.init.df[[i]]<-df_sim(n.init.sim[[i]], r)
+  n.init.df[[i]]<-ldply(n.init.df[[i]])
+}
+
+for(i in 1:length(n.init.df)){
+  print(plot_n(n.init.df[[i]], r, N, K_prey, i))
 }
 ```
