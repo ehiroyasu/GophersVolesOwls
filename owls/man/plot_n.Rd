@@ -4,12 +4,18 @@
 \alias{plot_n}
 \title{plot_n}
 \usage{
-plot_n(df, r)
+plot_n(df, r, N, K_prey, i)
 }
 \arguments{
+\item{df}{is the dataframe to feed into ggplot2, it is the subsetted dataframe from the df_sim function in the 'owls' package.}
+
 \item{r}{is the r values specified in the parameters, because this function subsets by r value.}
 
-\item{foo}{is the dataframe to feed into ggplot2, it is the subsetted dataframe from the df_sim function in the 'owls' package.}
+\item{N}{is a vector of initial prey density values, in this function it is used in the title to indicate the starting value plotted}
+
+\item{K_prey}{is the carrying capacity of the prey population.}
+
+\item{i}{is the iterator used to cycle through the initial N values to be pasted into the title.}
 }
 \description{
 Uses ggplot2 package to plot the output data from predprey_sim. Data must be processed into a dataframe using the lsplit
