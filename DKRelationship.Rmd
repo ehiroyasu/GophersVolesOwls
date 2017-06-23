@@ -13,9 +13,6 @@ library(devtools)
 library(roxygen2)
 load_all("owls")
 library(owls)
-library(deSolve)
-library(reshape)
-library(ggplot2)
 ```
 
 ##The relationship between parameter D and Carrying Capacity
@@ -66,7 +63,7 @@ r=c(0.5, 1, 1.5, 2)
 
 #State variables:
 N=c(1000, 1000, 1000, 1000, 1000)
-P=c(0.2, 0.4, 0.6, 0.95, 2.0)
+P=c(0.2, 0.4, 0.6, 1.0, 2.0)
 ```
 
 #Equilibrium simulations
