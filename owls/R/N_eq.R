@@ -28,13 +28,13 @@ N_eq <- function(P, r, K_prey, D, k_max){
       }
     }
    
-    for(i in 1:length(N1)){
-      if(N1[i]=='NaN'){
-        N1[i]<-0
-      } else if (N1[i]<0){
-        N1[i]<-0
-      }
-    }
+    # for(i in 1:length(N1)){
+    #   if(N1[i]=='NaN'){
+    #     N1[i]<-0
+    #   } else if (N1[i]<0){
+    #     N1[i]<-0
+    #   }
+    # }
   N1<-melt(N1)
   colnames(N1)<-names
 
@@ -49,14 +49,14 @@ N_eq <- function(P, r, K_prey, D, k_max){
       }
     }
   
-  
-  for(i in 1:length(N2)){
-    if(N2[i]=='NaN'){
-      N2[i]<-0
-    } else if (N2[i]<0){
-      N2[i]<-0
-    }
-  }
+  # 
+  # for(i in 1:length(N2)){
+  #   if(N2[i]=='NaN'){
+  #     N2[i]<-0
+  #   } else if (N2[i]<0){
+  #     N2[i]<-0
+  #   }
+  # }
   
   N2<-melt(N2)
   colnames(N2)<-names
