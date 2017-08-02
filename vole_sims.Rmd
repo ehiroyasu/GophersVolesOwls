@@ -61,7 +61,7 @@ alpha = attack rate of predator (or capture efficiency; the larger alpha is, the
 
 h = handling time The amount of time it takes an owl to kill and eat a single vole (1/k_max) (season/vole)
 
-beta= assimilation efficiency (efficiency of turning voles into per capita growth) This number is calculated from field data and represents the fractional value of one vole to an owl producing five chicks.
+beta= assimilation efficiency (efficiency of turning voles into per capita growth) This number is calculated from field data and represents the fractional value of one vole to an owl producing 4.33 chicks.
 
 delta = death rate of predator (#predator/season)
 
@@ -78,7 +78,7 @@ For this model, time is in terms of season (3 months), so each time interval is 
 ```{r}
 #Parameters
 alpha=0.924
-beta = 0.00054
+beta = 5.85e-4
 delta=0.01
 K_prey=1000
 k_max=654
@@ -127,8 +127,16 @@ for(i in 1:length(n.init.sim)){
 }
 
 for(i in 1:length(n.init.df)){
-  print(plot_n(n.init.df[[i]], r, N, K_prey, i))
+  plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
+  print(plots)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/K=1000")
 }
+
+for(i in 1:length(n.init.df)){
+  plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/BW/K=1000")
+}
+
 ```
 
 
@@ -152,7 +160,14 @@ for(i in 1:length(n.init.sim)){
 }
 
 for(i in 1:length(n.init.df)){
-  print(plot_n(n.init.df[[i]], r, N, K_prey, i))
+  plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
+  print(plots)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/K=500")
+}
+
+for(i in 1:length(n.init.df)){
+  plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/BW/K=500")
 }
 ```
 
@@ -176,7 +191,14 @@ for(i in 1:length(n.init.sim)){
 }
 
 for(i in 1:length(n.init.df)){
-  print(plot_n(n.init.df[[i]], r, N, K_prey, i))
+  plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
+  print(plots)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/K=100")
+}
+
+for(i in 1:length(n.init.df)){
+  plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/BW/K=100")
 }
 ```
 
@@ -199,6 +221,14 @@ for(i in 1:length(n.init.sim)){
 }
 
 for(i in 1:length(n.init.df)){
-  print(plot_n(n.init.df[[i]], r, N, K_prey, i))
+  plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
+  print(plots)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/K=50")
 }
+
+for(i in 1:length(n.init.df)){
+  plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/BW/K=50")
+}
+
 ```
