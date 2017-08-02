@@ -131,6 +131,12 @@ for(i in 1:length(n.init.df)){
   ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Gopher/K=175")
 }
 
+
+for(i in 1:length(n.init.df)){
+  plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/K=175")
+}
+
 ```
 
 
@@ -156,6 +162,11 @@ for(i in 1:length(n.init.df)){
   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
   print(plots)
   ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Gopher/K=100")
+}
+
+for(i in 1:length(n.init.df)){
+  plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/K=100")
 }
 
 #looking at percent change
@@ -185,6 +196,11 @@ for(i in 1:length(n.init.df)){
   print(plots)
   ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Gopher/K=50")
 }
+
+for(i in 1:length(n.init.df)){
+  plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/K=50")
+}
 #looking at percent change
 #percent_plot(sim=n.init.sim, r)
 ```
@@ -210,6 +226,11 @@ for(i in 1:length(n.init.df)){
   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
   print(plots)
   ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Gopher/K=25")
+}
+
+for(i in 1:length(n.init.df)){
+  plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/K=25")
 }
 
 #looking at percent change
