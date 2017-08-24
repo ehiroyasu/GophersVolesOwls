@@ -21,4 +21,3 @@ Each element contains a simulation for varying state variables (usually Predator
 \author{
 Elizabeth Hiroyasu
 }
-

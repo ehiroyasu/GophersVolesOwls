@@ -21,4 +21,3 @@ Creates a list of the simulation output by different initial N values. Each elem
 \author{
 Elizabeth Hiroyasu
 }
-

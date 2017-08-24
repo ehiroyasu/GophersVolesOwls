@@ -19,4 +19,3 @@ to calculate populations of both predator and prey populations over a period of 
 \author{
 Elizabeth Hiroyasu
 }
-

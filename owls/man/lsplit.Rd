@@ -20,4 +20,3 @@ of the prey population
 \author{
 Elizabeth Hiroyasu
 }
-
