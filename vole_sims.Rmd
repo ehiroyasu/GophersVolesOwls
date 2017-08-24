@@ -116,7 +116,7 @@ sim.df<-df_sim(sim=test_sim, r=r)
 ```
 
 Then, plotting the prey density over time by each N.
-```{r, echo=FALSE, warning=FALSE, fig.align="left"}
+```{r, echo=FALSE, warning=FALSE, fig.align="left", results="asis"}
 n.init.sim<-n.sim(test_sim, N, P, r)
 names(n.init.sim)<-unique(N) 
 
@@ -126,15 +126,22 @@ for(i in 1:length(n.init.sim)){
   n.init.df[[i]]<-ldply(n.init.df[[i]])
 }
 
+n.final<-NULL
+for(i in 1:length(n.init.df)){
+      n.final[[i]]<-subset(n.init.df[[i]], time==max(times))
+      n.final[[i]]$K<-K_prey
+      print(kable(n.final[[i]], caption=paste("N init=", unique(N)[i]), row.names = FALSE))
+}
+
 for(i in 1:length(n.init.df)){
   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
   print(plots)
-  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/K=1000")
+  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/K=1000")
 }
 
 for(i in 1:length(n.init.df)){
   plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
-  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/BW/K=1000")
+  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/BW/K=1000")
 }
 
 ```
@@ -142,7 +149,7 @@ for(i in 1:length(n.init.df)){
 
 #Simulations, K=500
 Suppose we want to investigate what happens when the carrying capacity is lower, K=500
-```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left"}
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
 K_prey=500
 parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
 
@@ -159,21 +166,28 @@ for(i in 1:length(n.init.sim)){
   n.init.df[[i]]<-ldply(n.init.df[[i]])
 }
 
+n.final<-NULL
+for(i in 1:length(n.init.df)){
+      n.final[[i]]<-subset(n.init.df[[i]], time==max(times))
+      n.final[[i]]$K<-K_prey
+      print(kable(n.final[[i]], caption=paste("N init=", unique(N)[i]), row.names = FALSE))
+}
+
 for(i in 1:length(n.init.df)){
   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
   print(plots)
-  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/K=500")
+  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/K=500")
 }
 
 for(i in 1:length(n.init.df)){
   plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
-  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/BW/K=500")
+  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/BW/K=500")
 }
 ```
 
 #Simulations, K=100
 Changing K to 100
-```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left"}
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
 K_prey=100
 parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
 
@@ -190,20 +204,27 @@ for(i in 1:length(n.init.sim)){
   n.init.df[[i]]<-ldply(n.init.df[[i]])
 }
 
+n.final<-NULL
+for(i in 1:length(n.init.df)){
+      n.final[[i]]<-subset(n.init.df[[i]], time==max(times))
+      n.final[[i]]$K<-K_prey
+      print(kable(n.final[[i]], caption=paste("N init=", unique(N)[i]), row.names = FALSE))
+}
+
 for(i in 1:length(n.init.df)){
   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
   print(plots)
-  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/K=100")
+  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/K=100")
 }
 
 for(i in 1:length(n.init.df)){
   plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
-  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/BW/K=100")
+  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/BW/K=100")
 }
 ```
 
 #Simulations, K=50
-```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left"}
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
 K_prey=50
 parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
 
@@ -220,15 +241,22 @@ for(i in 1:length(n.init.sim)){
   n.init.df[[i]]<-ldply(n.init.df[[i]])
 }
 
+n.final<-NULL
+for(i in 1:length(n.init.df)){
+      n.final[[i]]<-subset(n.init.df[[i]], time==max(times))
+      n.final[[i]]$K<-K_prey
+      print(kable(n.final[[i]], caption=paste("N init=", unique(N)[i]), row.names = FALSE))
+}
+
 for(i in 1:length(n.init.df)){
   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
   print(plots)
-  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/K=50")
+  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/K=50")
 }
 
 for(i in 1:length(n.init.df)){
   plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
-  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/BW/K=50")
+  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/BW/K=50")
 }
 
 ```
