@@ -135,13 +135,14 @@ for(i in 1:length(n.init.df)){
 
 for(i in 1:length(n.init.df)){
   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
-  print(plots)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/K=1000")
+  #print(plots)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="F:/GopherProject/GophersVolesOwls/Figures/Vole/adjustedY/K=1000")
 }
 
 for(i in 1:length(n.init.df)){
   plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/BW/K=1000")
+  #print(plots_bw)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="F:/GopherProject/GophersVolesOwls/Figures/Vole/BW/adjustedY/K=1000")
 }
 
 ```
@@ -175,13 +176,13 @@ for(i in 1:length(n.init.df)){
 
 for(i in 1:length(n.init.df)){
   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
-  print(plots)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/K=500")
+  #print(plots)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="F:/GopherProject/GophersVolesOwls/Figures/Vole/adjustedY/K=500")
 }
 
 for(i in 1:length(n.init.df)){
   plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/BW/K=500")
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="F:/GopherProject/GophersVolesOwls/Figures/Vole/BW/adjustedY/K=500")
 }
 ```
 
@@ -213,13 +214,13 @@ for(i in 1:length(n.init.df)){
 
 for(i in 1:length(n.init.df)){
   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
-  print(plots)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/K=100")
+  #print(plots)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="F:/GopherProject/GophersVolesOwls/Figures/Vole/adjustedY/K=100")
 }
 
 for(i in 1:length(n.init.df)){
   plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/BW/K=100")
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="F:/GopherProject/GophersVolesOwls/Figures/Vole/BW/adjustedY/K=100")
 }
 ```
 
@@ -250,13 +251,13 @@ for(i in 1:length(n.init.df)){
 
 for(i in 1:length(n.init.df)){
   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
-  print(plots)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/K=50")
+  #print(plots)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="F:/GopherProject/GophersVolesOwls/Figures/Vole/adjustedY/K=50")
 }
 
 for(i in 1:length(n.init.df)){
   plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/BW/K=50")
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="F:/GopherProject/GophersVolesOwls/Figures/Vole/BW/adjustedY/K=50")
 }
 
 ```
