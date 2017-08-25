@@ -14,13 +14,15 @@
 #'
 
 
-plot_n<-function(df, r, N, K_prey, i){
+plot_n<-function(df, r, N, K_prey, i, j){
 
   ggplot(data=df, aes(x=time, y=N, group=as.factor(P), color=as.factor(P))) + 
     geom_line(size=1.1)+ ggtitle(paste("N=", unique(N)[i], ", K=", K_prey)) + theme(plot.title=element_text(size=12)) + 
     theme(legend.background=element_rect(fill="gray90", size=0.5, linetype="solid", colour=1),  
           legend.direction="vertical")+ scale_colour_discrete(name="Predator Density") +
-    facet_grid(.~r, labeller=label_both) + geom_hline(yintercept=K_prey, linetype="dashed") + ylim(0, max(N))
-}
+    facet_grid(.~r, labeller=label_both) + geom_hline(yintercept=K_prey, linetype="dashed") + 
+    scale_y_continuous(expand = c(0, 0), limits = c(0, K_prey+5))
+                       
+  }
 
 
