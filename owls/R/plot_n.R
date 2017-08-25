@@ -14,7 +14,7 @@
 #'
 
 
-plot_n<-function(df, r, N, K_prey, i, j){
+plot_n<-function(df, r, N, K_prey, i){
 
   ggplot(data=df, aes(x=time, y=N, group=as.factor(P), color=as.factor(P))) + 
     geom_line(size=1.1)+ ggtitle(paste("N=", unique(N)[i], ", K=", K_prey)) + theme(plot.title=element_text(size=12)) + 
