@@ -19,18 +19,18 @@ library(owls)
 From literature review, we have constructed estimates of the minimum, maximum, and average population matrices of gopher populations. We can use these population matrices to calculate the instantenous growth rate of the population, or the r-value.
 ```{r, echo=FALSE}
 stages = c("Juvenile", "SubAdult", "Adult")
-gopher_min<-matrix(data=c(0, 2.40,5.35, 0.5, 0, 0, 0, 0.357, 0.25),  
+gopher_min<-matrix(data=c(0, 2.40*0.357, 5.35*0.25, 0.5, 0, 0, 0, 0.357, 0.25),  
                    nrow=3, ncol=3, byrow=TRUE,
                    dimnames=list(stages,stages))
 gopher_min
 
 
-gopher_avg<-matrix(data=c(0, 2.53, 7.78, 0.5, 0, 0, 0, 0.468, 0.449),  
+gopher_avg<-matrix(data=c(0, 2.53*0.468, 7.78*0.449, 0.5, 0, 0, 0, 0.468, 0.449),  
                    nrow=3, ncol=3, byrow=TRUE,
                    dimnames=list(stages,stages))
 gopher_avg
 
-gopher_max<-matrix(data=c(0, 2.67, 10.2, 0.5, 0, 0, 0, 0.570, 0.67),  
+gopher_max<-matrix(data=c(0, 2.67*0.570, 10.2*0.67, 0.5, 0, 0, 0, 0.570, 0.67),  
                     nrow=3, ncol=3, byrow=TRUE,
                     dimnames=list(stages,stages))
 gopher_max
@@ -134,14 +134,14 @@ for(i in 1:length(n.init.df)){
 for(i in 1:length(n.init.df)){
   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
   print(plots)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Gopher/K=175")
+  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", #path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/adjustedY/K=175")
 }
 
 
 
 for(i in 1:length(n.init.df)){
   plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/K=175")
+  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/adjustedY/K=175")
 }
 
 ```
@@ -174,13 +174,13 @@ for(i in 1:length(n.init.df)){
 
 for(i in 1:length(n.init.df)){
   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
-  print(plots)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Gopher/K=100")
+  #print(plots)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/adjustedY/K=100")
 }
 
 for(i in 1:length(n.init.df)){
   plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/K=100")
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/adjustedY/K=100")
 }
 
 #looking at percent change
@@ -214,13 +214,13 @@ for(i in 1:length(n.init.df)){
 
 for(i in 1:length(n.init.df)){
   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
-  print(plots)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Gopher/K=50")
+  #print(plots)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/adjustedY/K=50")
 }
 
 for(i in 1:length(n.init.df)){
   plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/K=50")
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/adjustedY/K=50")
 }
 #looking at percent change
 #percent_plot(sim=n.init.sim, r)
@@ -252,13 +252,13 @@ for(i in 1:length(n.init.df)){
 
 for(i in 1:length(n.init.df)){
   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
-  print(plots)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Gopher/K=25")
+  #print(plots)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/adjustedY/K=25")
 }
 
 for(i in 1:length(n.init.df)){
   plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/K=25")
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/adjustedY/K=25")
 }
 
 #looking at percent change
