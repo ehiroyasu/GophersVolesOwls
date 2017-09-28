@@ -17,32 +17,40 @@ library(owls)
 ```
 
 ##Population growth rates
-From the literature review (Sarah this is the average data from the model summary data), we constructed minimum, average, and maximum vole stage structured matrices. It is important to note that survival measurements are from M. townsendii and fertility measurements were from M. californicus because no studies on either species contained both measurements.
+From the literature review (Sarah this is the average data from the model summary data), we constructed minimum, average, and maximum vole stage structured matrices. It is important to note that survival measurements are from M. townsendii and fertility measurements were from M. californicus because no studies on either species contained both measurements. 
 ```{r, echo=FALSE}
-stages = c("Juvenile", "SubAdult", "Adult")
-vole_min<-matrix(data=c(0, 0, 3.45, 0.59, 0, 0, 0, 0.72, 0.80),  
-                   nrow=3, ncol=3, byrow=TRUE,
+stages = c("Juvenile", "Adult")
+vole_min<-matrix(data=c(0, 3.45*0.023, 0.20, 0.023),  
+                   nrow=2, ncol=2, byrow=TRUE,
                    dimnames=list(stages,stages))
 vole_min
 
 
-# vole_avg<-matrix(data=c(0, 0, 5.02, 0.695, 0, 0, 0, 0.765, 0.83),  
-#                    nrow=3, ncol=3, byrow=TRUE,
-#                    dimnames=list(stages,stages))
-# vole_avg
+vole_avg<-matrix(data=c(0, 5.02*0.35, 0.28, 0.35),
+                   nrow=2, ncol=2, byrow=TRUE,
+                   dimnames=list(stages,stages))
+vole_avg
 
-vole_max<-matrix(data=c(0, 0, 6.55, 0.8, 0, 0, 0, 0.81, 0.86),  
-                    nrow=3, ncol=3, byrow=TRUE,
+vole_max<-matrix(data=c(0, 6.56*0.51, 0.41, 0.51),  
+                    nrow=2, ncol=2, byrow=TRUE,
                     dimnames=list(stages,stages))
 vole_max
 
 r_min<-log(lambda(vole_min))
-#r_avg<-log(lambda(vole_avg))
+r_avg<-log(lambda(vole_avg))
 r_max<-log(lambda(vole_max))
 
-#r_vole<-c(r_min, r_avg, r_max)
-#r_vole<-round(r_vole, 2)
-r_vole<-c(round(r_min, 2), round(r_max, 2), 3.0, 6.0)
+r_vole<-c(r_min, r_avg, r_max)
+r_vole<-round(r_vole, 2)
+#r_vole<-c(round(r_min, 2), round(r_max, 2), 3.0, 6.0)
+```
+Because the calculated r-values for voles is for a 10 week period, and the predator model is in a time step of seasons, we have to convert the r-value to a seasonal r. To provide some context, annual r-values are also calculated.
+```{r}
+r_vole<-r_vole*1.2
+r_vole
+
+r_annual<-r_vole*4
+
 ```
 
 
@@ -135,14 +143,14 @@ for(i in 1:length(n.init.df)){
 
 for(i in 1:length(n.init.df)){
   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
-  #print(plots)
-  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="F:/GopherProject/GophersVolesOwls/Figures/Vole/adjustedY/K=1000")
+  print(plots)
+  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="F:/GopherProject/GophersVolesOwls/Figures/Vole/adjustedY/K=1000")
 }
 
 for(i in 1:length(n.init.df)){
   plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
-  #print(plots_bw)
-  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="F:/GopherProject/GophersVolesOwls/Figures/Vole/BW/adjustedY/K=1000")
+  print(plots_bw)
+  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="F:/GopherProject/GophersVolesOwls/Figures/Vole/BW/adjustedY/K=1000")
 }
 
 ```
