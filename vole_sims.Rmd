@@ -47,6 +47,7 @@ r_vole<-round(r_vole, 2)
 Because the calculated r-values for voles is for a 10 week period, and the predator model is in a time step of seasons, we have to convert the r-value to a seasonal r. To provide some context, annual r-values are also calculated.
 ```{r}
 r_annual<-r_vole*5
+r_annual
 
 r_vole<-r_annual/4
 r_vole
@@ -143,14 +144,14 @@ for(i in 1:length(n.init.df)){
 
 for(i in 1:length(n.init.df)){
   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
-  print(plots)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="F:/GopherProject/GophersVolesOwls/Figures/Vole/adjustedY/K=1000")
+  #print(plots)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="d:/GopherProject/GophersVolesOwls/Figures/Vole/color/0928Figs/K=1000")
 }
 
 for(i in 1:length(n.init.df)){
   plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
-  print(plots_bw)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="F:/GopherProject/GophersVolesOwls/Figures/Vole/BW/adjustedY/K=1000")
+  #print(plots_bw)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/BW/0928Figs/K=1000")
 }
 
 ```
@@ -159,6 +160,7 @@ for(i in 1:length(n.init.df)){
 #Simulations, K=500
 Suppose we want to investigate what happens when the carrying capacity is lower, K=500
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
+r[1]=0
 K_prey=500
 parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
 
@@ -185,17 +187,18 @@ for(i in 1:length(n.init.df)){
 for(i in 1:length(n.init.df)){
   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
   #print(plots)
-  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="F:/GopherProject/GophersVolesOwls/Figures/Vole/adjustedY/K=500")
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/color/0928Figs/K=500")
 }
 
 for(i in 1:length(n.init.df)){
   plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
-  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="F:/GopherProject/GophersVolesOwls/Figures/Vole/BW/adjustedY/K=500")
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/BW/0928Figs/K=500")
 }
 ```
 
 #Simulations, K=100
 Changing K to 100
+*remember, r[1]=0
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
 K_prey=100
 parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
@@ -223,16 +226,17 @@ for(i in 1:length(n.init.df)){
 for(i in 1:length(n.init.df)){
   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
   #print(plots)
-  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="F:/GopherProject/GophersVolesOwls/Figures/Vole/adjustedY/K=100")
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/color/0928Figs/K=100")
 }
 
 for(i in 1:length(n.init.df)){
   plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
-  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="F:/GopherProject/GophersVolesOwls/Figures/Vole/BW/adjustedY/K=100")
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/BW/0928Figs/K=100")
 }
 ```
 
 #Simulations, K=50
+*again, remember r[1]=0
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
 K_prey=50
 parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
@@ -260,12 +264,12 @@ for(i in 1:length(n.init.df)){
 for(i in 1:length(n.init.df)){
   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
   #print(plots)
-  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="F:/GopherProject/GophersVolesOwls/Figures/Vole/adjustedY/K=50")
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/color/0928Figs/K=50")
 }
 
 for(i in 1:length(n.init.df)){
   plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
-  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="F:/GopherProject/GophersVolesOwls/Figures/Vole/BW/adjustedY/K=50")
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/BW/0928Figs/K=50")
 }
 
 ```
