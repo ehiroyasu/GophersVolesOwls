@@ -20,18 +20,18 @@ library(owls)
 From the literature review (Sarah this is the average data from the model summary data), we constructed minimum, average, and maximum vole stage structured matrices. It is important to note that survival measurements are from M. townsendii and fertility measurements were from M. californicus because no studies on either species contained both measurements. 
 ```{r, echo=FALSE}
 stages = c("Juvenile", "Adult")
-vole_min<-matrix(data=c(0, 3.45*0.023, 0.20, 0.023),  
+vole_min<-matrix(data=c(3.45*0.20, 3.45*0.023, 0.20, 0.023),  
                    nrow=2, ncol=2, byrow=TRUE,
                    dimnames=list(stages,stages))
 vole_min
 
 
-vole_avg<-matrix(data=c(0, 5.02*0.35, 0.28, 0.35),
+vole_avg<-matrix(data=c((5.02*0.28), (5.02*0.35), 0.28, 0.35),
                    nrow=2, ncol=2, byrow=TRUE,
                    dimnames=list(stages,stages))
 vole_avg
 
-vole_max<-matrix(data=c(0, 6.56*0.51, 0.41, 0.51),  
+vole_max<-matrix(data=c(0.41*6.56, 6.56*0.51, 0.41, 0.51),  
                     nrow=2, ncol=2, byrow=TRUE,
                     dimnames=list(stages,stages))
 vole_max
@@ -46,10 +46,10 @@ r_vole<-round(r_vole, 2)
 ```
 Because the calculated r-values for voles is for a 10 week period, and the predator model is in a time step of seasons, we have to convert the r-value to a seasonal r. To provide some context, annual r-values are also calculated.
 ```{r}
-r_vole<-r_vole*1.2
-r_vole
+r_annual<-r_vole*5
 
-r_annual<-r_vole*4
+r_vole<-r_annual/4
+r_vole
 
 ```
 
