@@ -79,4 +79,18 @@ P_split<-split(eq, P)
 for(i in 1:length(P_split)){
   print(plot_eq(df=P_split[[i]], P=P, i=i))
 }
+
+##not quite
+ggplot(eq, aes(x = r, y = Eq, group=N, color=as.factor(P))) + geom_point(size = 0.5)
+
+#Not quite...
+ggplot(P_split[[1]], aes(x=r, y=Eq, group=N, color=N)) + geom_point(size=0.5)
+
+#this is closer to what I'm looking for
+ggplot(P_split[[1]], aes(x = D, y = Eq, group=N, color=as.factor(r))) + geom_point(size = 0.5)
+
+#maybe this?
+r0.5<-subset(P_split[[1]], r==0.5)
+r0.5<-subset(r0.5, K_prey==1000)
+ggplot(r0.5, aes(x=D, y=Eq, group=N, color=N)) + geom_point(size=0.5)
 ```
