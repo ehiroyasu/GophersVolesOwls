@@ -92,5 +92,11 @@ ggplot(P_split[[1]], aes(x = D, y = Eq, group=N, color=as.factor(r))) + geom_poi
 #maybe this?
 r0.5<-subset(P_split[[1]], r==0.5)
 r0.5<-subset(r0.5, K_prey==1000)
-ggplot(r0.5, aes(x=D, y=Eq, group=N, color=N)) + geom_point(size=0.5)
+ggplot(r0.5, aes(x=D, y=Eq, group=N, color=N)) + geom_point() + ggtitle("Bifurcation Plot of N* vs D, r=0.5, P=0.2, K=1000")
 ```
+
+```{r, echo=FALSE}
+bifplot(P_split, K_prey, i=1)
+
+```
+
