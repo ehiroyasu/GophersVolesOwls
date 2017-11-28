@@ -4,7 +4,7 @@
 \alias{plot_n_bw}
 \title{plot_n_bw}
 \usage{
-plot_n_bw(df, r, N, K_prey, i)
+plot_n_bw(df, r, N, K_prey, i, j)
 }
 \arguments{
 \item{df}{is the dataframe to feed into ggplot2, it is the subsetted dataframe from the df_sim function in the 'owls' package.}
