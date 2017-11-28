@@ -70,7 +70,7 @@ P=c(0.2, 0.4, 0.6, 1.0, 2.0)
 Using the quadratic formula, we can calculate the equilibrium densities of the prey population. N1 is the solution to $N_{eq}=\frac{(K_{prey}-D) + \sqrt{(K_{prey}-D)^2 + 4 \frac{K_{prey}}{r} (1-k_{max} P)}}{2}$. N2 is the solution to $N_{eq}=\frac{(K_{prey}-D) - \sqrt{(K_{prey}-D)^2 + 4 \frac{K_{prey}}{r} (1-k_{max} P)}}{2}$
 
 
-```{r, echo=FALSE, fig.align="left"}
+```{r, echo=FALSE, fig.align="left", warning=FALSE}
 eq<-N_eq(P, r, K_prey, D, k_max)
 
 P_split<-split(eq, P)
@@ -90,17 +90,18 @@ for(i in 1:length(P_split)){
 #ggplot(P_split[[1]], aes(x = D, y = Eq, group=N, color=as.factor(r))) + geom_point(size = 0.5)
 
 #maybe this?
-r0.5<-subset(P_split[[1]], r==0.5)
-r0.5<-subset(r0.5, K_prey==1000)
-ggplot(r0.5, aes(x=D, y=Eq, group=N, color=N)) + geom_point() + ggtitle("Bifurcation Plot of N* vs D, r=0.5, P=0.2, K=1000")
+#r0.5<-subset(P_split[[1]], r==0.5)
+#r0.5<-subset(r0.5, K_prey==1000)
+#ggplot(r0.5, aes(x=D, y=Eq, group=N, color=N)) + geom_point() + ggtitle("Bifurcation Plot of N* vs D, r=0.5, P=0.2, K=1000")
 ```
 
 Plotting the relationship between N* and D
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 for (j in 1:length(P_split)){
   foo<-bifplot(P_split, K_prey, i=j)
-  ggsave(paste("P=",P[j], ".png"), foo, device="png", 
-         path="D:/GopherProject/GophersVolesOwls/Figures/DKPlots")
+  print(foo)
+  #ggsave(paste("P=",P[j], ".png"), foo, device="png", 
+  #       path="D:/GopherProject/GophersVolesOwls/Figures/DKPlots")
 }
 
 
