@@ -17,14 +17,15 @@
 plot_n_bw<-function(df, r, N, K_prey, i, j){
 
   ggplot(data=df, aes(x=time, y=N, group=as.factor(P), linetype=as.factor(P))) + 
-    geom_line(size=1.3) +theme_bw()+ scale_linetype_manual(values=c(1,3,4,5), name="Predator Density")+
-    ggtitle(paste("N=", unique(N)[i], ", K=", K_prey)) + 
-      theme(plot.title=element_text(size=12)) + 
-    theme(legend.background=element_rect(fill="gray90", size=1, colour=1),legend.direction="vertical")+ 
-    #scale_colour_grey(end=0.7, guide=FALSE) +
+    geom_line(size=1.3) +theme_bw()+ 
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
+    scale_linetype_manual(values=c(1,3,4), name="Predator Density")+
+    ggtitle(paste("N=", unique(N)[i], ", K=", K_prey)) + theme(plot.title=element_text(size=12, family="sans")) + 
+    theme(legend.background=element_rect(fill="gray90", size=0.5, colour=1),legend.direction="vertical")+ 
+    scale_colour_grey(end=0.7, guide=FALSE) +
     facet_grid(.~r, labeller=label_both) + 
-    geom_hline(yintercept=K_prey, linetype="dashed", size=2.0) +
-    stat_ecdf(n = 500) + scale_y_continuous(expand = c(0, 0), limits = c(0, K_prey+5))
+    geom_hline(yintercept=K_prey, linetype="dashed", size=1.0) +
+    stat_ecdf(n = 500) + scale_y_continuous(expand = c(0, 0), limits = c(0, K_prey+10))
 }
 
 

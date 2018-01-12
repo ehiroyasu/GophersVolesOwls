@@ -21,3 +21,4 @@ Uses ggplot2 package to plot the bifurcation plot of N* vs D.
 \author{
 Elizabeth Hiroyasu
 }
+
