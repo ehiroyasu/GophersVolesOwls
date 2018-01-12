@@ -103,19 +103,14 @@ parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
 
 
 #State variables:
-N=c(1000, 1000, 1000, 1000, 
-    500, 500, 500, 500,
-    100, 100, 100, 100,
-    50, 50, 50, 50,
-    10, 10, 10, 10, 
-    2,2,2,2)
+N=c(K_prey, K_prey, K_prey, 
+    0.5*K_prey, 0.5*K_prey, 0.5*K_prey, 
+    2,2,2)
 
-P=c(0.2, 0.6, 1.0, 2.0, 
-    0.2, 0.6, 1.0, 2.0,
-    0.2, 0.6, 1.0, 2.0,
-    0.2, 0.6, 1.0, 2.0,
-    0.2, 0.6, 1.0, 2.0,
-    0.2, 0.6, 1.0, 2.0)
+P=c(0.2, 0.6, 1.0, 
+    0.2, 0.6, 1.0,
+    0.2, 0.6, 1.0)
+
 state<-cbind(N, P)
 times<- seq(0, 20, by=1)
 ```
@@ -157,14 +152,18 @@ for(i in 1:length(n.init.df)){
 }
 
 
-
+plots_bw<-NULL
 for(i in 1:length(n.init.df)){
-  plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
+  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
   #print(plots_bw)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/BW/1005Figs/K=1000")
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".pdf"), plots_bw[[i]], device="pdf",
+         path="F:/GopherProject/GophersVolesOwls/Figures/Vole/BW/111Figs")
 }
 
-
+all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
+                        legend="right", ncol=1, nrow=3)
+ggsave("K=1000 Plots.pdf", all_plots_bw, device="pdf",
+       path="F:/GopherProject/GophersVolesOwls/Figures/Vole/BW/111Figs")
 ```
 
 
@@ -200,10 +199,18 @@ for(i in 1:length(n.init.df)){
   #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/color/1005Figs/K=500")
 }
 
+plots_bw<-NULL
 for(i in 1:length(n.init.df)){
-  plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/BW/1005Figs/K=500")
+  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
+  print(plots_bw)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".pdf"), plots_bw[[i]], device="pdf",
+         path="F:/GopherProject/GophersVolesOwls/Figures/Vole/BW/111Figs")
 }
+
+all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
+                        legend="right", ncol=1, nrow=3)
+ggsave("K=500 Plots.pdf", all_plots_bw, device="pdf",
+       path="F:/GopherProject/GophersVolesOwls/Figures/Vole/BW/111Figs")
 ```
 
 #Simulations, K=100
@@ -235,14 +242,22 @@ for(i in 1:length(n.init.df)){
 
 for(i in 1:length(n.init.df)){
   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
-  print(plots)
+  #print(plots)
   #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/color/1005Figs/K=100")
 }
 
+plots_bw<-NULL
 for(i in 1:length(n.init.df)){
-  plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/BW/1005Figs/K=100")
+  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
+  #print(plots_bw)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".pdf"), plots_bw[[i]], device="pdf",
+         path="F:/GopherProject/GophersVolesOwls/Figures/Vole/BW/111Figs")
 }
+
+all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
+                        legend="right", ncol=1, nrow=3)
+ggsave("K=100 Plots.pdf", all_plots_bw, device="pdf",
+       path="F:/GopherProject/GophersVolesOwls/Figures/Vole/BW/111Figs")
 ```
 
 #Simulations, K=50
@@ -272,13 +287,21 @@ for(i in 1:length(n.init.df)){
 
 for(i in 1:length(n.init.df)){
   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
-  print(plots)
+  #print(plots)
   #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/color/1005Figs/K=50")
 }
 
+plots_bw<-NULL
 for(i in 1:length(n.init.df)){
-  plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/BW/1005Figs/K=50")
+  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
+  #print(plots_bw)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".pdf"), plots_bw[[i]], device="pdf",
+         path="F:/GopherProject/GophersVolesOwls/Figures/Vole/BW/111Figs")
 }
+
+all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
+                        legend="right", ncol=1, nrow=3)
+ggsave("K=50 Plots.pdf", all_plots_bw, device="pdf",
+       path="F:/GopherProject/GophersVolesOwls/Figures/Vole/BW/111Figs")
 
 ```
