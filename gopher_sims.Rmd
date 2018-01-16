@@ -97,19 +97,13 @@ parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
 
 
 #State variables:
-N=c(175, 175, 175, 175,
-    100, 100, 100, 100,
-    50, 50, 50, 50,
-    25, 25, 25, 25,
-    10, 10, 10, 10,
-    2, 2, 2, 2)
+N=c(K_prey, K_prey, K_prey,
+    0.5*K_prey, 0.5*K_prey, 0.5*K_prey,
+    2,2,2)
 
-P=c(0.2, 0.6, 1.0, 2.0, 
-    0.2, 0.6, 1.0, 2.0,
-    0.2, 0.6, 1.0, 2.0,
-    0.2, 0.6, 1.0, 2.0,
-    0.2, 0.6, 1.0, 2.0, 
-    0.2, 0.6, 1.0, 2.0)
+P=c(0.2, 0.6, 1.0, 
+    0.2, 0.6, 1.0,
+    0.2, 0.6, 1.0)
 state<-cbind(N, P)
 times<- seq(0, 20, by=1)
 ```
@@ -141,19 +135,31 @@ for(i in 1:length(n.init.df)){
       print(kable(n.final[[i]], caption=paste("N init=", unique(N)[i]), row.names = FALSE))
 }
 
+for(i in 1:length(n.final)){
+  n.final[[i]]$N.init<-unique(N)[i]
+}
+gopher.table<-bind_rows(n.final)
+
 for(i in 1:length(n.init.df)){
   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
-  print(plots)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Gopher/color/1005Figs/K=175")
+  #print(plots)
+  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="../Figures/Gopher/color/1005Figs/K=175")
 }
+```
 
-
-
+Plotting in black and white:
+```{r, echo=FALSE}
+plots_bw<-NULL
 for(i in 1:length(n.init.df)){
-  plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/1005Figs/K=175")
+  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".pdf"), plots_bw[[i]], device="pdf", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/116Figures")
 }
 
+all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
+                        legend="right", ncol=1, nrow=3)
+all_plots_bw
+
+ggsave("K=175 Plots.pdf", all_plots_bw, device="pdf", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/116Figures")
 ```
 
 
@@ -182,19 +188,28 @@ for(i in 1:length(n.init.df)){
       print(kable(n.final[[i]], caption=paste("N init=", unique(N)[i]), row.names = FALSE))
 }
 
+for(i in 1:length(n.final)){
+  n.final[[i]]$N.init<-unique(N)[i]
+}
+n.final<-bind_rows(n.final)
+gopher.table<-rbind(gopher.table,n.final)
+
 for(i in 1:length(n.init.df)){
   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
-  print(plots)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Gopher/color/1005Figs/K=100")
+  #print(plots)
+  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="../Figures/Gopher/color/1005Figs/K=100")
 }
 
 for(i in 1:length(n.init.df)){
-  plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/1005Figs/K=100")
+  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".pdf"), plots_bw[[i]], device="pdf", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/116Figures")
 }
 
-#looking at percent change
-#percent_plot(sim=n.init.sim, r)
+all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
+                        legend="right", ncol=1, nrow=3)
+all_plots_bw
+
+ggsave("K=100 Plots.pdf", all_plots_bw, device="pdf", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/116Figures")
 ```
 
 #Simulations, K=50
@@ -223,18 +238,29 @@ for(i in 1:length(n.init.df)){
       print(kable(n.final[[i]], caption=paste("N init=", unique(N)[i]), row.names = FALSE))
 }
 
+for(i in 1:length(n.final)){
+  n.final[[i]]$N.init<-unique(N)[i]
+}
+n.final<-bind_rows(n.final)
+gopher.table<-rbind(gopher.table,n.final)
+
 for(i in 1:length(n.init.df)){
   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
-  print(plots)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Gopher/color/1005Figs/K=50")
+  #print(plots)
+  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="../Figures/Gopher/color/1005Figs/K=50")
 }
 
 for(i in 1:length(n.init.df)){
-  plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/1005Figs/K=50")
+  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".pdf"), plots_bw[[i]], device="pdf", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/116Figures")
 }
-#looking at percent change
-#percent_plot(sim=n.init.sim, r)
+
+all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
+                        legend="right", ncol=1, nrow=3)
+all_plots_bw
+
+ggsave("K=50 Plots.pdf", all_plots_bw, device="pdf", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/116Figures")
+
 ```
 
 #Simulations, K=25
@@ -262,29 +288,36 @@ for(i in 1:length(n.init.df)){
       print(kable(n.final[[i]], caption=paste("N init=", unique(N)[i]), row.names = FALSE))
 }
 
+for(i in 1:length(n.final)){
+  n.final[[i]]$N.init<-unique(N)[i]
+}
+n.final<-bind_rows(n.final)
+gopher.table<-rbind(gopher.table,n.final)
+
 for(i in 1:length(n.init.df)){
   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
-  print(plots)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Gopher/color/1005Figs/K=25")
+  #print(plots)
+  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="../Figures/Gopher/color/1005Figs/K=25")
 }
 
 for(i in 1:length(n.init.df)){
-  plots_bw<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots_bw, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/1005Figs/K=25")
+  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
+  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".pdf"), plots_bw[[i]], device="pdf", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/116Figures")
 }
 
-#looking at percent change
-# percent_plot(sim=n.init.sim, r)
-# 
-# n175rmin<-n.init.sim[[1]][[1]]
-# p1<-NULL
-# for(i in 1:dim(n175rmin)[3]){
-#   if(n175rmin[,2,i]<1){
-#     p1<-(n175rmin[1,3,i])
-#   }
-# }
+all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
+                        legend="right", ncol=1, nrow=3)
+all_plots_bw
+
+ggsave("K=25 Plots.pdf", all_plots_bw, device="pdf", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/116Figures")
 ```
 
 These model simulations show that at the two lowest barn owl densities (0.2 and 0.4/ha), the pocket gopher population is never driven to zero, no matter what the growth rate of the gopher population or carrying capacity. At the lowest barn owl density (0.2 barn owls/ha), the pocket gopher populations are able to grow to carrying capacity. On the opposite end of the spectrum, at the two highest barn owl densities (0.95 and 2/ha) the pocket gopher population is drive to extinction. At the highest barn owl density (2barn owls/ha), this is usually achieved by the middle of the second year.  It is important to note that these simulation exercises do not include prey switching, so barn owls may not be able to drive pocket gopher populations extinct, but instead switch prey species when they become harder to find.
 
 The simulations also show that the presence of barn owls, no matter what the initial density and the initial density, growth rate, and carrying capacity, prevent the prey population from reaching carrying capacity. Depending on the growth rate and initial density, the presence of barn owls can cause the equilibrium pocket gopher population size to be much lower than carrying capacity. Therefore if the carrying capacity of the landscape is low, then barn owls may be effective at driving down pocket gopher populations to a manageable level.
+
+```{r, echo=FALSE}
+gopher.table<-gopher.table[,c("N.init", "N", "P", "r", "K")]
+#Saving the table with all of the tabulated final results.
+write.csv(gopher.table, "F:/GopherProject/GophersVolesOwls/GopherTable.csv", row.names=FALSE)
+```
