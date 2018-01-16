@@ -156,8 +156,12 @@ for(i in 1:length(n.init.df)){
   #ggarrange(plots, labels = c("A", "B", "C", "D", "E", "F"), ncol=2, nrow=3)
   #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/color/1005Figs/K=1000")
 }
+#color_plots<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, legend="right", ncol=1, nrow=3)
+#color_plots
+```
 
-
+In black and white:
+```{r, echo=FALSE}
 plots_bw<-NULL
 for(i in 1:length(n.init.df)){
   plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
@@ -168,6 +172,7 @@ for(i in 1:length(n.init.df)){
 
 all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
                         legend="right", ncol=1, nrow=3)
+all_plots_bw
 #ggsave("K=1000 Plots.pdf", all_plots_bw, device="pdf",
 #       path="F:/GopherProject/GophersVolesOwls/Figures/Vole/BW/111Figs")
 ```
@@ -221,6 +226,7 @@ for(i in 1:length(n.init.df)){
 
 all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
                         legend="right", ncol=1, nrow=3)
+all_plots_bw
 #ggsave("K=500 Plots.pdf", all_plots_bw, device="pdf",
 #       path="F:/GopherProject/GophersVolesOwls/Figures/Vole/BW/111Figs")
 ```
@@ -274,6 +280,8 @@ for(i in 1:length(n.init.df)){
 
 all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
                         legend="right", ncol=1, nrow=3)
+
+all_plots_bw
 #ggsave("K=100 Plots.pdf", all_plots_bw, device="pdf",
 #       path="F:/GopherProject/GophersVolesOwls/Figures/Vole/BW/111Figs")
 ```
@@ -325,15 +333,18 @@ for(i in 1:length(n.init.df)){
 
 all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
                         legend="right", ncol=1, nrow=3)
+
+all_plots_bw
 #ggsave("K=50 Plots.pdf", all_plots_bw, device="pdf",
 #       path="F:/GopherProject/GophersVolesOwls/Figures/Vole/BW/111Figs")
 
 ```
 
 
-Saving the table will all of the tabulated final results.
+
 ```{r, echo=FALSE}
 vole.table<-vole.table[,c("N.init", "N", "P", "r", "K")]
-write.csv(vole.table, "../GophersVolesOwls/VoleTable.csv", row.names=FALSE)
+#Saving the table with all of the tabulated final results.
+#write.csv(vole.table, "../GophersVolesOwls/VoleTable.csv", row.names=FALSE)
 ```
 
