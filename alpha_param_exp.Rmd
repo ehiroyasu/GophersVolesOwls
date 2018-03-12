@@ -1,0 +1,65 @@
+---
+title: "alpha analysis"
+author: "Elizabeth Hiroyasu"
+date: "March 8, 2018"
+output: html_document
+---
+In order to estimate the alpha parameter for the model, we simulate the model over different values of alpha to see which yields a type II functional response
+
+```{r setup}
+setwd("../GophersVolesOwls")
+library(devtools)
+library(roxygen2)
+load_all("owls")
+library(owls)
+```
+
+Setting up the state variables and varying the alpha parameter
+```{r}
+#State variables
+state<-c(N = 87.5, P = 0.6)
+times<- seq(0, 20, by = 1)
+
+#Parameters
+alpha<-seq(0.01, 10, by=0.5)
+beta = 1.01e-3
+delta=0.01
+K_prey=175
+k_max=378
+h=1/k_max
+D=1/(alpha*h)
+r=0.28
+
+parameters<-list(length(alpha))
+for (i in 1:length(alpha)){
+  parameters[[i]] <- c(r, K_prey, k_max, D[i])
+}
+```
+
+Looping over these values
+```{r}
+out_alpha_sim<-vector("list", length(alpha))
+names(out_alpha_sim)=alpha
+
+for(i in 1:length(parameters)){
+  out_alpha_sim[[i]]<- ode(y=state, times = times, func = pred_prey, parms = c(r=r, K_prey=K_prey, k_max=k_max, D=D[i]))
+}
+```
+note that D is the term that is varying here because D=1/alpha*h
+
+Plotting N versus time, grouped by alpha
+```{r}
+alpha_sim<-ldply(out_alpha_sim, data.frame)
+NvT<-ggplot(data=alpha_sim[,-4], aes(x=time, y=N, group=as.factor(.id), color=as.factor(.id)))+geom_line() +
+  labs(title="N vs time", x="time", y="N") + scale_color_discrete(name="alpha")
+NvT
+```
+
+Plotting alpha value vs. N at time 10
+```{r, echo=FALSE}
+NAlpha<-subset(alpha_sim, time==max(times))
+ggplot(data=NAlpha[,-4], aes(x=.id, y=N)) + geom_point() + labs(title="alpha vs N at t final", x="alpha", y="N")
+```
+
+This suggests that coexistence can occur between alpha=0.01 and alpha=1.0
+
