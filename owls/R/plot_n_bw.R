@@ -7,6 +7,7 @@
 #'@param r is the r values specified in the parameters, because this function subsets by r value.
 #'@param N is a vector of initial prey density values, in this function it is used in the title to indicate the starting value plotted
 #'@param K_prey is the carrying capacity of the prey population.
+#'@param alpha is the attack rate of the predator
 #'@param i is the iterator used to cycle through the initial N values to be pasted into the title.
 #'
 #'@author Elizabeth Hiroyasu
@@ -14,13 +15,13 @@
 #'
 
 
-plot_n_bw<-function(df, r, N, K_prey, i, j){
+plot_n_bw<-function(df, r, N, K_prey, alpha, i, j){
 
   ggplot(data=df, aes(x=time, y=N, group=as.factor(P), linetype=as.factor(P))) + 
     geom_line(size=1.3) +theme_bw()+ 
     theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))+
     scale_linetype_manual(values=c(1,3,4), name="Predator Density")+
-    ggtitle(paste("N=", unique(N)[i], ", K=", K_prey)) + theme(plot.title=element_text(size=12, family="sans")) + 
+    ggtitle(paste("N=", unique(N)[i], ", K=", K_prey, ", alpha = ", alpha)) + theme(plot.title=element_text(size=12, family="sans")) + 
     theme(legend.background=element_rect(fill="gray90", size=0.5, colour=1),legend.direction="vertical")+ 
     scale_colour_grey(end=0.7, guide=FALSE) +
     facet_grid(.~r, labeller=label_both) + 
