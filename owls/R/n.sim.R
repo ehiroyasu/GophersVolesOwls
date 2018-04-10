@@ -19,6 +19,8 @@ n.sim<-function(sim, N, P, r){
   for(i in 1:length(unique(N))){
     bar[[i]]<-lsplit(sim, n.split[[i]], r)
   }
-
+  
+  names(bar)<-unique(N)
+  
   return(bar)
 }
