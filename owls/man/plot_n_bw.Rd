@@ -4,7 +4,7 @@
 \alias{plot_n_bw}
 \title{plot_n_bw}
 \usage{
-plot_n_bw(df, r, N, K_prey, i, j)
+plot_n_bw(df, r, N, K_prey, alpha, i, j)
 }
 \arguments{
 \item{df}{is the dataframe to feed into ggplot2, it is the subsetted dataframe from the df_sim function in the 'owls' package.}
@@ -14,6 +14,8 @@ plot_n_bw(df, r, N, K_prey, i, j)
 \item{N}{is a vector of initial prey density values, in this function it is used in the title to indicate the starting value plotted}
 
 \item{K_prey}{is the carrying capacity of the prey population.}
+
+\item{alpha}{is the attack rate of the predator}
 
 \item{i}{is the iterator used to cycle through the initial N values to be pasted into the title.}
 }
