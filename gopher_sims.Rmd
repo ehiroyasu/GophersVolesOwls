@@ -157,6 +157,11 @@ alpha<-0.9
 D<-1/(alpha*h)
 parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
 
+N=c(K_prey, K_prey, K_prey,
+    0.5*K_prey, 0.5*K_prey, 0.5*K_prey,
+    2,2,2)
+state<-cbind(N, P)
+
 test_sim<-predprey_sim(times=times, state=state, r=r)
 sim.df<-df_sim(sim=test_sim, r=r)
 
@@ -195,6 +200,10 @@ alpha<-0.009
 D<-1/(alpha*h)
 parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
 
+N=c(K_prey, K_prey, K_prey,
+    0.5*K_prey, 0.5*K_prey, 0.5*K_prey,
+    2,2,2)
+state<-cbind(N, P)
 
 test_sim<-predprey_sim(times=times, state=state, r=r)
 sim.df<-df_sim(sim=test_sim, r=r)
@@ -232,10 +241,14 @@ The simulations also show that the presence of barn owls, no matter what the ini
 K=175, alpha=0.9
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
 K_prey=175
-alpha<-0.9
+alpha<-0.009
 D<-1/(alpha*h)
 parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
 
+N=c(K_prey, K_prey, K_prey,
+    0.5*K_prey, 0.5*K_prey, 0.5*K_prey,
+    2,2,2)
+state<-cbind(N, P)
 
 test_sim<-predprey_sim(times=times, state=state, r=r)
 sim.df<-df_sim(sim=test_sim, r=r)
@@ -264,6 +277,10 @@ alpha<-0.009
 D<-1/(alpha*h)
 parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
 
+N=c(K_prey, K_prey, K_prey,
+    0.5*K_prey, 0.5*K_prey, 0.5*K_prey,
+    2,2,2)
+state<-cbind(N, P)
 
 test_sim<-predprey_sim(times=times, state=state, r=r)
 sim.df<-df_sim(sim=test_sim, r=r)
@@ -291,6 +308,10 @@ alpha<-0.9
 D<-1/(alpha*h)
 parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
 
+N=c(K_prey, K_prey, K_prey,
+    0.5*K_prey, 0.5*K_prey, 0.5*K_prey,
+    2,2,2)
+state<-cbind(N, P)
 
 test_sim<-predprey_sim(times=times, state=state, r=r)
 sim.df<-df_sim(sim=test_sim, r=r)
@@ -314,7 +335,7 @@ all_plots_bw
 
 ```{r, echo=FALSE}
 #Saving the table with all of the tabulated final results.
-#gopher.table<-gopher.table[,c("N.init", "N", "P", "r", "K", "alpha")]
-#write.csv(gopher.table, "F:/GopherProject/GophersVolesOwls/Data/processed/GopherTable041918.csv", row.names=FALSE)
+gopher.table<-gopher.table[,c("N.init", "N", "P", "r", "K", "alpha")]
+write.csv(gopher.table, "D:/GopherProject/GophersVolesOwls/Data/processed/GopherTable042318.csv", row.names=FALSE)
 ```
 
