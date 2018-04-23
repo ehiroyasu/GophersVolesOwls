@@ -85,14 +85,14 @@ P = starting population of predator
 For this model, time is in terms of season (3 months), so each time interval is represented by a season and four seasons are equivalent to one year.
 ```{r}
 #Parameters
-alpha=0.924
-beta = 1.01e-3
-delta=0.01
-K_prey=175
-k_max=378
-h=1/k_max
-D=1/(alpha*h)
-r=r_gopher
+alpha<-3
+beta <- 1.01e-3
+delta <- 0.01
+K_prey <- 175
+k_max <- 378
+h <- 1/k_max
+D <- 1/(alpha*h)
+r <- r_gopher
 parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
 
 
@@ -110,39 +110,26 @@ times<- seq(0, 20, by=1)
 
 
 
-#Simulations, K=175
+#Simulations, max K and alpha
 We can then run simulations for these various lists of r values while varying predator density.
 ```{r, echo=FALSE}
 test_sim<-predprey_sim(times=times, state=state, r=r)
 sim.df<-df_sim(sim=test_sim, r=r)
+
+n.init.sim<-n.sim(test_sim, N, P, r)
+
+n.init.df<-lapply(n.init.sim, df_sim, r)
+n.init.df<-lapply(n.init.df, ldply)
+
+n.final<-n.table(n.init.df, times, K_prey, N, alpha)
+gopher.table<-n.final
 ```
 
 Then, plotting the prey density over time by each N.
 ```{r, echo=FALSE, warning=FALSE, fig.align="left", results="asis"}
-n.init.sim<-n.sim(test_sim, N, P, r)
-names(n.init.sim)<-unique(N) 
-
-n.init.df<-NULL
-for(i in 1:length(n.init.sim)){
-  n.init.df[[i]]<-df_sim(n.init.sim[[i]], r)
-  n.init.df[[i]]<-ldply(n.init.df[[i]])
-}
-
-n.final<-NULL
 for(i in 1:length(n.init.df)){
-      n.final[[i]]<-subset(n.init.df[[i]], time==max(times))
-      n.final[[i]]$K<-K_prey
-      print(kable(n.final[[i]], caption=paste("N init=", unique(N)[i]), row.names = FALSE))
-}
-
-for(i in 1:length(n.final)){
-  n.final[[i]]$N.init<-unique(N)[i]
-}
-gopher.table<-bind_rows(n.final)
-
-for(i in 1:length(n.init.df)){
-  plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
-  #print(plots)
+  plots<-(plot_n(n.init.df[[i]], r, N, K_prey, alpha, i))
+  print(plots)
   #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="../Figures/Gopher/color/1005Figs/K=175")
 }
 ```
@@ -151,173 +138,183 @@ Plotting in black and white:
 ```{r, echo=FALSE}
 plots_bw<-NULL
 for(i in 1:length(n.init.df)){
-  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
-  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".pdf"), plots_bw[[i]], device="pdf", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/116Figures")
+  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, alpha, i)
+  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".pdf"), plots_bw[[i]], device="pdf", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/116Figures")
 }
 
 all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
                         legend="right", ncol=1, nrow=3)
 all_plots_bw
 
-ggsave("K=175 Plots.pdf", all_plots_bw, device="pdf", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/116Figures")
+#ggsave("K=175 Plots.pdf", all_plots_bw, device="pdf", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/116Figures")
 ```
 
 
-#Simulations, K=100
-Suppose we want to investigate what happens when the carrying capacity is lower, K=100
+#Med Simulations, K=100 alpha=0.9
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
 K_prey=100
+alpha<-0.9
+D<-1/(alpha*h)
 parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
 
 test_sim<-predprey_sim(times=times, state=state, r=r)
 sim.df<-df_sim(sim=test_sim, r=r)
 
 n.init.sim<-n.sim(test_sim, N, P, r)
-names(n.init.sim)<-unique(N) 
 
-n.init.df<-NULL
-for(i in 1:length(n.init.sim)){
-  n.init.df[[i]]<-df_sim(n.init.sim[[i]], r)
-  n.init.df[[i]]<-ldply(n.init.df[[i]])
-}
+n.init.df<-lapply(n.init.sim, df_sim, r)
+n.init.df<-lapply(n.init.df, ldply)
 
-n.final<-NULL
-for(i in 1:length(n.init.df)){
-      n.final[[i]]<-subset(n.init.df[[i]], time==max(times))
-      n.final[[i]]$K<-K_prey
-      print(kable(n.final[[i]], caption=paste("N init=", unique(N)[i]), row.names = FALSE))
-}
+#n.final<-n.table(n.init.df, times, K_prey, N, alpha)
+#gopher.table<-rbind(gopher.table, n.final)
 
-for(i in 1:length(n.final)){
-  n.final[[i]]$N.init<-unique(N)[i]
-}
-n.final<-bind_rows(n.final)
-gopher.table<-rbind(gopher.table,n.final)
+# for(i in 1:length(n.init.df)){
+#   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, alpha, i))
+#   #print(plots)
+#   #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="../Figures/Gopher/color/1005Figs/K=100")
+# }
 
 for(i in 1:length(n.init.df)){
-  plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
-  #print(plots)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="../Figures/Gopher/color/1005Figs/K=100")
-}
-
-for(i in 1:length(n.init.df)){
-  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
-  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".pdf"), plots_bw[[i]], device="pdf", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/116Figures")
+  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, alpha, i)
+  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".pdf"), plots_bw[[i]], device="pdf", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/116Figures")
 }
 
 all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
                         legend="right", ncol=1, nrow=3)
 all_plots_bw
 
-ggsave("K=100 Plots.pdf", all_plots_bw, device="pdf", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/116Figures")
+#ggsave("K=100 Plots.pdf", all_plots_bw, device="pdf", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/116Figures")
 ```
 
-#Simulations, K=50
-Changing K to 50
-**doesn't work if r is negative
-```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
-K_prey=50
-parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
 
-test_sim<-predprey_sim(times=times, state=state, r=r)
-sim.df<-df_sim(sim=test_sim, r=r)
 
-n.init.sim<-n.sim(test_sim, N, P, r)
-names(n.init.sim)<-unique(N) 
-
-n.init.df<-NULL
-for(i in 1:length(n.init.sim)){
-  n.init.df[[i]]<-df_sim(n.init.sim[[i]], r)
-  n.init.df[[i]]<-ldply(n.init.df[[i]])
-}
-
-n.final<-NULL
-for(i in 1:length(n.init.df)){
-      n.final[[i]]<-subset(n.init.df[[i]], time==max(times))
-      n.final[[i]]$K<-K_prey
-      print(kable(n.final[[i]], caption=paste("N init=", unique(N)[i]), row.names = FALSE))
-}
-
-for(i in 1:length(n.final)){
-  n.final[[i]]$N.init<-unique(N)[i]
-}
-n.final<-bind_rows(n.final)
-gopher.table<-rbind(gopher.table,n.final)
-
-for(i in 1:length(n.init.df)){
-  plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
-  #print(plots)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="../Figures/Gopher/color/1005Figs/K=50")
-}
-
-for(i in 1:length(n.init.df)){
-  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
-  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".pdf"), plots_bw[[i]], device="pdf", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/116Figures")
-}
-
-all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
-                        legend="right", ncol=1, nrow=3)
-all_plots_bw
-
-ggsave("K=50 Plots.pdf", all_plots_bw, device="pdf", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/116Figures")
-
-```
-
-#Simulations, K=25
-*doesn't work if r is negative
+#Low Simulations, K=25 alpha=0.009
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
 K_prey=25
+alpha<-0.009
+D<-1/(alpha*h)
 parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
+
 
 test_sim<-predprey_sim(times=times, state=state, r=r)
 sim.df<-df_sim(sim=test_sim, r=r)
-
 n.init.sim<-n.sim(test_sim, N, P, r)
-names(n.init.sim)<-unique(N) 
 
-n.init.df<-NULL
-for(i in 1:length(n.init.sim)){
-  n.init.df[[i]]<-df_sim(n.init.sim[[i]], r)
-  n.init.df[[i]]<-ldply(n.init.df[[i]])
-}
+n.init.df<-lapply(n.init.sim, df_sim, r)
+n.init.df<-lapply(n.init.df, ldply)
 
-n.final<-NULL
-for(i in 1:length(n.init.df)){
-      n.final[[i]]<-subset(n.init.df[[i]], time==max(times))
-      n.final[[i]]$K<-K_prey
-      print(kable(n.final[[i]], caption=paste("N init=", unique(N)[i]), row.names = FALSE))
-}
-
-for(i in 1:length(n.final)){
-  n.final[[i]]$N.init<-unique(N)[i]
-}
-n.final<-bind_rows(n.final)
-gopher.table<-rbind(gopher.table,n.final)
+#n.final<-n.table(n.init.df, times, K_prey, N, alpha)
+#gopher.table<-rbind(gopher.table, n.final)
 
 for(i in 1:length(n.init.df)){
-  plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
+  plots<-(plot_n(n.init.df[[i]], r, N, K_prey, alpha, i))
   #print(plots)
   #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="../Figures/Gopher/color/1005Figs/K=25")
 }
 
 for(i in 1:length(n.init.df)){
-  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, i)
-  ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".pdf"), plots_bw[[i]], device="pdf", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/116Figures")
+  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, alpha, i)
+  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".pdf"), plots_bw[[i]], device="pdf", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/116Figures")
 }
 
 all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
                         legend="right", ncol=1, nrow=3)
 all_plots_bw
-
-ggsave("K=25 Plots.pdf", all_plots_bw, device="pdf", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/116Figures")
 ```
 
 These model simulations show that at the two lowest barn owl densities (0.2 and 0.4/ha), the pocket gopher population is never driven to zero, no matter what the growth rate of the gopher population or carrying capacity. At the lowest barn owl density (0.2 barn owls/ha), the pocket gopher populations are able to grow to carrying capacity. On the opposite end of the spectrum, at the two highest barn owl densities (0.95 and 2/ha) the pocket gopher population is drive to extinction. At the highest barn owl density (2barn owls/ha), this is usually achieved by the middle of the second year.  It is important to note that these simulation exercises do not include prey switching, so barn owls may not be able to drive pocket gopher populations extinct, but instead switch prey species when they become harder to find.
 
 The simulations also show that the presence of barn owls, no matter what the initial density and the initial density, growth rate, and carrying capacity, prevent the prey population from reaching carrying capacity. Depending on the growth rate and initial density, the presence of barn owls can cause the equilibrium pocket gopher population size to be much lower than carrying capacity. Therefore if the carrying capacity of the landscape is low, then barn owls may be effective at driving down pocket gopher populations to a manageable level.
 
-```{r, echo=FALSE}
-gopher.table<-gopher.table[,c("N.init", "N", "P", "r", "K")]
-#Saving the table with all of the tabulated final results.
-write.csv(gopher.table, "F:/GopherProject/GophersVolesOwls/GopherTable.csv", row.names=FALSE)
+
+
+##Supplemental simulation runs
+K=175, alpha=0.9
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
+K_prey=175
+alpha<-0.9
+D<-1/(alpha*h)
+parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
+
+
+test_sim<-predprey_sim(times=times, state=state, r=r)
+sim.df<-df_sim(sim=test_sim, r=r)
+n.init.sim<-n.sim(test_sim, N, P, r)
+
+n.init.df<-lapply(n.init.sim, df_sim, r)
+n.init.df<-lapply(n.init.df, ldply)
+
+#n.final<-n.table(n.init.df, times, K_prey, N, alpha)
+#gopher.table<-rbind(gopher.table, n.final)
+
+for(i in 1:length(n.init.df)){
+  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, alpha, i)
+}
+
+all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
+                        legend="right", ncol=1, nrow=3)
+all_plots_bw
 ```
+
+
+K=100
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
+K_prey=100
+alpha<-0.009
+D<-1/(alpha*h)
+parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
+
+
+test_sim<-predprey_sim(times=times, state=state, r=r)
+sim.df<-df_sim(sim=test_sim, r=r)
+n.init.sim<-n.sim(test_sim, N, P, r)
+
+n.init.df<-lapply(n.init.sim, df_sim, r)
+n.init.df<-lapply(n.init.df, ldply)
+
+#n.final<-n.table(n.init.df, times, K_prey, N, alpha)
+#gopher.table<-rbind(gopher.table, n.final)
+
+for(i in 1:length(n.init.df)){
+  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, alpha, i)
+}
+
+all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
+                        legend="right", ncol=1, nrow=3)
+all_plots_bw
+```
+
+K=25
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
+K_prey=25
+alpha<-0.9
+D<-1/(alpha*h)
+parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
+
+
+test_sim<-predprey_sim(times=times, state=state, r=r)
+sim.df<-df_sim(sim=test_sim, r=r)
+n.init.sim<-n.sim(test_sim, N, P, r)
+
+n.init.df<-lapply(n.init.sim, df_sim, r)
+n.init.df<-lapply(n.init.df, ldply)
+
+#n.final<-n.table(n.init.df, times, K_prey, N, alpha)
+#gopher.table<-rbind(gopher.table, n.final)
+
+for(i in 1:length(n.init.df)){
+  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, alpha, i)
+}
+
+all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
+                        legend="right", ncol=1, nrow=3)
+all_plots_bw
+```
+
+
+```{r, echo=FALSE}
+#Saving the table with all of the tabulated final results.
+#gopher.table<-gopher.table[,c("N.init", "N", "P", "r", "K", "alpha")]
+#write.csv(gopher.table, "F:/GopherProject/GophersVolesOwls/Data/processed/GopherTable041918.csv", row.names=FALSE)
+```
+
