@@ -1,0 +1,76 @@
+---
+title: "Prey Control"
+output: html_notebook
+editor_options: 
+  chunk_output_type: inline
+---
+##Extinction of gopher populations
+```{r setup, message=FALSE}
+library(tidyverse)
+gopher_df<-data.frame(read_csv('./Data/processed/GopherTable042318.csv'))
+vole_df<-data.frame(read_csv('./Data/processed/VoleTable042318.csv'))
+```
+
+
+Suppose we're interested in how often the prey populations drop below two individuals
+```{r}
+count(gopher_df, N<2)
+count(vole_df, N<2)
+```
+Across all possible scenarios, the population of gophers is reduced to less then two individuals 134 times out of 243 scenario result - over 50% of the time. The population of voles is reduced to less than two individuals 177 times out of 243 resulting in extinction over 70% of the time.
+
+For gophers we can investigate the relationship between alpha, r, and prey extinction.
+```{r}
+gopher_sum_alpha<- gopher_df %>%
+    group_by(alpha, r) %>%
+    mutate(ext = N<2) %>%
+    summarise(mean_gopher=mean(ext))
+
+ggplot(gopher_sum_alpha, aes(as.factor(alpha), mean_gopher))+
+  geom_bar(stat='identity')+
+  facet_grid(.~r) +
+  labs(title="Percentage of simulations when gophers go extinct", 
+       x="Alpha", y="Percent of simulation runs N<2 individuals")
+```
+
+We can also investigate the relationship between predator density, r, and prey extinction.
+```{r}
+gopher_sum_P<- gopher_df %>%
+    group_by(P, r) %>%
+    mutate(ext = N<2) %>%
+    summarise(mean_gopher=mean(ext))
+
+ggplot(gopher_sum_P, aes(as.factor(P), mean_gopher))+
+  geom_bar(stat='identity')+
+  facet_grid(.~r) +
+  labs(title="Percentage of simulations when gophers go extinct", 
+       x="Predator Density", y="Percent of simulation runs N<2 individuals")
+```
+
+We can do the same for voles.
+```{r}
+vole_sum_alpha<- vole_df %>%
+    group_by(alpha, r) %>%
+    mutate(ext = N<2) %>%
+    summarise(mean_vole=mean(ext))
+
+ggplot(vole_sum_alpha, aes(as.factor(alpha), mean_vole))+
+  geom_bar(stat='identity')+
+  facet_grid(.~r) +
+  labs(title="Percentage of simulations when voles go extinct", 
+       x="Alpha", y="Percent of simulation runs N<2 individuals")
+
+vole_sum_P<- vole_df %>%
+    group_by(P, r) %>%
+    mutate(ext = N<2) %>%
+    summarise(mean_vole=mean(ext))
+
+ggplot(vole_sum_P, aes(as.factor(P), mean_vole))+
+  geom_bar(stat='identity')+
+  facet_grid(.~r) +
+  labs(title="Percentage of simulations when voles go extinct", 
+       x="Predator Density", y="Percent of simulation runs N<2 individuals")
+```
+
+
+
