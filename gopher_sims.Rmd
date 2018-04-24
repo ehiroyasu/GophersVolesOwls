@@ -86,14 +86,12 @@ For this model, time is in terms of season (3 months), so each time interval is 
 ```{r}
 #Parameters
 alpha<-3
-beta <- 1.01e-3
-delta <- 0.01
 K_prey <- 175
 k_max <- 378
 h <- 1/k_max
 D <- 1/(alpha*h)
 r <- r_gopher
-parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
+parameters <- c(r, alpha, K_prey, k_max, D)
 
 
 #State variables:
@@ -335,7 +333,7 @@ all_plots_bw
 
 ```{r, echo=FALSE}
 #Saving the table with all of the tabulated final results.
-gopher.table<-gopher.table[,c("N.init", "N", "P", "r", "K", "alpha")]
-write.csv(gopher.table, "D:/GopherProject/GophersVolesOwls/Data/processed/GopherTable042318.csv", row.names=FALSE)
+#gopher.table<-gopher.table[,c("N.init", "N", "P", "r", "K", "alpha")]
+#write.csv(gopher.table, "D:/GopherProject/GophersVolesOwls/Data/processed/GopherTable042318.csv", row.names=FALSE)
 ```
 
