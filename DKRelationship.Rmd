@@ -17,12 +17,17 @@ library(owls)
 
 ##The relationship between parameter D and Carrying Capacity
 
-We explored the feasibility of using barn owls (Tyto alba) as a biocontrol for rodent pest species in an agricultural setting. The use of simple Lotka-Volterra predator-prey models reveals a relationship between the half-saturation constant (D) and carrying capacity (K_prey). The differential equations for the Lotka-Volterra predator-prey model is as follows:
-\[\frac{dprey}{dt}=rN(1-\frac{N}{K_{prey}})-\frac{k_{max}N}{N+D}P\]
-\[\frac{dpredator}{dt}= \beta PN - \delta P\]
+We explored the feasibility of using barn owls (_Tyto alba_) as a biocontrol for rodent pest species in an agricultural setting. The use of simple Lotka-Volterra predator-prey models reveals a relationship between the half-saturation constant (D) and carrying capacity (K_prey). The differential equations for the Lotka-Volterra predator-prey model is as follows:
+\[\frac{dN}{dt}=rN(1-\frac{N}{K_{prey}})-\frac{k_{max}N}{N+D}P\]
+\[\frac{dP}{dt}= 0]
 
-When solving for the equilibrium value of N, we obtain the following solution:
-\[N_{eq}=\frac{(K_{prey}-D) \pm \sqrt{(K_{prey}-D)^2 + 4 \frac{K_{prey}}{r} (rD-k_{max} P)}}{2}\]
+Rescaling the prey equation and conducting parameter reduction we find the following
+\[\frac{dN^1}{dt^1}=N^1(1-N^1)-\frac{P^1N^1}{N^1+D^1}\]
+
+Therefore the model has a steady state at (0,0)
+
+#When solving for the equilibrium value of N, we obtain the following solution:
+#\[N_{eq}=\frac{(1-D^1) \pm \sqrt{(D^1-1)^2 + 4(P^1-D^1)}}{2}\]
 
 #Parameters
 
@@ -53,12 +58,10 @@ For this model, time is in terms of season (3 months), so each time interval is 
 ```{r}
 #Parameters
 #alpha=0.924
-beta = 0.00054
-delta=0.01
-K_prey=c(1000, 750, 500)
+#K_prey=750
 k_max=655
 #h=1/k_max
-D=seq(0, 500, by=10)#c(50, 70, 100, 250, 500) #where D is specified, however can be calculated as 1/alpha*h
+D=seq(0, 5, by=0.001)#c(50, 70, 100, 250, 500) #where D is specified, however can be calculated as 1/alpha*h
 r=c(0.5, 1, 1.5, 2)
 
 #State variables:
@@ -67,43 +70,14 @@ P=c(0.2, 0.4, 0.6, 1.0, 2.0)
 ```
 
 #Equilibrium simulations
-Using the quadratic formula, we can calculate the equilibrium densities of the prey population. N1 is the solution to $N_{eq}=\frac{(K_{prey}-D) + \sqrt{(K_{prey}-D)^2 + 4 \frac{K_{prey}}{r} (1-k_{max} P)}}{2}$. N2 is the solution to $N_{eq}=\frac{(K_{prey}-D) - \sqrt{(K_{prey}-D)^2 + 4 \frac{K_{prey}}{r} (1-k_{max} P)}}{2}$
-
-
-```{r, echo=FALSE, fig.align="left", warning=FALSE}
-eq<-N_eq(P, r, K_prey, D, k_max)
-
-P_split<-split(eq, P)
-#plot_eq(P_split[[1]], P, i=1)
-
-for(i in 1:length(P_split)){
-  print(plot_eq(df=P_split[[i]], P=P, i=i))
-}
-
-##not quite
-#ggplot(eq, aes(x = r, y = Eq, group=N, color=as.factor(P))) + geom_point(size = 0.5)
-
-#Not quite...
-#ggplot(P_split[[1]], aes(x=r, y=Eq, group=N, color=N)) + geom_point(size=0.5)
-
-#this is closer to what I'm looking for
-#ggplot(P_split[[1]], aes(x = D, y = Eq, group=N, color=as.factor(r))) + geom_point(size = 0.5)
-
-#maybe this?
-#r0.5<-subset(P_split[[1]], r==0.5)
-#r0.5<-subset(r0.5, K_prey==1000)
-#ggplot(r0.5, aes(x=D, y=Eq, group=N, color=N)) + geom_point() + ggtitle("Bifurcation Plot of N* vs D, r=0.5, P=0.2, K=1000")
-```
+Using the quadratic formula, we can calculate the equilibrium densities of the prey population. N1 is the solution to $N_{eq}=\frac{-(D^1-1) + \sqrt{(D^1-1)^2 + 4(P^1-D^1))}}{2}$. N2 is the solution to $N_{eq}=\frac{-(D^1-1) - \sqrt{(D^1-1)^2 + 4(P^1-D^1))}}{2}$
 
 Plotting the relationship between N* and D
-```{r, echo=FALSE, warning=FALSE}
-for (j in 1:length(P_split)){
-  foo<-bifplot(P_split, K_prey, i=j)
-  print(foo)
-  #ggsave(paste("P=",P[j], ".png"), foo, device="png", 
-  #       path="D:/GopherProject/GophersVolesOwls/Figures/DKPlots")
-}
-
-
+```{r, echo=FALSE, fig.align="left", warning=FALSE}
+eq.df<-N_eq(P, D)
+plot_eq(df=eq.df, P)
 ```
+This suggests that as the predator density increases, the steady state population decreases. Suggesting that predator density can be adjusted to hold the equilibrium prey density to below zero.
+
+
 
