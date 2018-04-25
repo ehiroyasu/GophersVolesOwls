@@ -11,17 +11,17 @@ D#'plot_eq
 #'
 #'
 
-plot_eq<-function(df, P, i){
+plot_eq<-function(df, P){
   ggplot()+
-    geom_line(data=df, aes(D, Eq, linetype=(N), color=(K_prey)),size=1.1)+
-    labs(title=paste("Equilibrium prey density, Predator Density=", P[i]), x="D (Individuals/ha)",
-         y="Equilibrium Prey Density (Individuals/ha")+
+    geom_line(data=df, aes(D, eq, linetype=(N)), size=1.1)+
+    labs(title="Relationship between equilibrium prey density and D",
+         x="D (Individuals/ha)", y="Equilibrium Prey Density (Individuals/ha)")+
     theme(plot.title=element_text(size=12))+
     scale_linetype_discrete(name="Equilibria")+
-    scale_colour_discrete(name="Prey Carrying \nCapacity")+
+    ylim(-1,1)+
     theme(legend.background=element_rect(fill="gray90", size=0.5, linetype="solid", colour=1), 
           legend.direction="vertical") +
-    facet_grid(.~r)
+    facet_grid(.~P)
   
 }
 
