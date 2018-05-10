@@ -9,10 +9,7 @@ Depends:
     R (>= 3.3.1),
     cowplot,
     deSolve,
-    plyr,
-    dplyr,
-    ggplot2,
-    grid,
+    tidyverse
     gridExtra,
     popbio,
     reshape,
