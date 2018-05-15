@@ -20,7 +20,7 @@ library(owls)
 From the literature review (Sarah this is the average data from the model summary data), we constructed minimum, average, and maximum vole stage structured matrices. It is important to note that survival measurements are from M. townsendii and fertility measurements were from M. californicus because no studies on either species contained both measurements. 
 ```{r, echo=FALSE}
 stages = c("Juvenile", "Adult")
-vole_min<-matrix(data=c(3.45*0.20, 3.45*0.023, 0.20, 0.023),  
+vole_min<-matrix(data=c(3.45*0.20, 3.45*0.023, 0.20, 0.02),  
                    nrow=2, ncol=2, byrow=TRUE,
                    dimnames=list(stages,stages))
 vole_min
@@ -70,7 +70,7 @@ r = growth rate of prey pop (voles/season) This value is extracted from the popu
 
 K_prey = carrying capacity of prey (voles)
 
-alpha = attack rate of predator (or capture efficiency; the larger alpha is, the more the per capita growth rate of the prey population is depressed by the addition of a single predator) (units=1/season) The attack rate was calculated from Derting and Cranford (1989). They found that, on average, it takes 1.1 attacks/vole, and the probability of capture was 0.84 for microtus adults (number of successful predator attacks/total number of attacks).
+alphaP = attack rate of predator (or capture efficiency; the larger alpha is, the more the per capita growth rate of the prey population is depressed by the addition of a single predator) (units=1/season) The attack rate was calculated from Derting and Cranford (1989). They found that, on average, it takes 1.1 attacks/vole, and the probability of capture was 0.84 for microtus adults (number of successful predator attacks/total number of attacks).
 
 h = handling time The amount of time it takes an owl to kill and eat a single vole (1/k_max) (season/vole)
 
@@ -80,7 +80,7 @@ delta = death rate of predator (#predator/season)
 
 k_max = maximum feeding rate the most gophers an owl can eat in a single time unit (voles/season). Calculated from empirical data.
 
-D = half saturation constant (1/(alpha*handling time)) The abundance of prey at which the feeding rate is half maximal (gopher)
+D = half saturation constant (1/(alphaP*handling time)) The abundance of prey at which the feeding rate is half maximal (gopher)
 
 State variables:
 N = starting population of prey 
@@ -90,13 +90,13 @@ P = starting population of predator
 For this model, time is in terms of season (3 months), so each time interval is represented by a season and four seasons are equivalent to one year.
 ```{r}
 #Parameters
-alpha=3.0
+alphaP=3.0
 K_prey=1000
 k_max=654
 h=1/k_max
-D=1/(alpha*h)
+D=1/(alphaP*h)
 r=r_vole
-parameters <- c(r, alpha, K_prey, k_max, D)
+parameters <- c(r, alphaP, K_prey, k_max, D)
 
 #State variables:
 N=c(K_prey, K_prey, K_prey, 
@@ -113,7 +113,7 @@ times<- seq(0, 20, by=1)
 
 
 
-#High Simulations, K=1000, alpha= 3
+#High Simulations, K=1000, alphaP= 3
 We can then run simulations for these various lists of r values while varying predator density.
 ```{r, echo=FALSE}
 test_sim<-predprey_sim(times=times, state=state, r=r)
@@ -123,47 +123,23 @@ sim.df<-df_sim(sim=test_sim, r=r)
 Then, plotting the prey density over time by each N.
 ```{r, echo=FALSE, warning=FALSE, fig.align="left", results="asis"}
 n.init.sim<-n.sim(test_sim, N, P, r)
-
 n.init.df<-lapply(n.init.sim, df_sim, r)
 n.init.df<-lapply(n.init.df, ldply)
 
-n.final<-n.table(n.init.df, times, K_prey, N, alpha)
-vole.table<-bind_rows(n.final)
+vole.df<-n.table(n.init.df, times, K_prey, N, alphaP)
+vole.table<-vole.df
 
-# for(i in 1:length(n.init.df)){
-#   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
-#   #print(plots)
-#   #ggarrange(plots, labels = c("A", "B", "C", "D", "E", "F"), ncol=2, nrow=3)
-#   #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/color/1005Figs/K=1000")
-# }
-# #color_plots<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, legend="right", ncol=1, nrow=3)
-# #color_plots
-```
-
-In black and white:
-```{r, echo=FALSE}
-plots_bw<-NULL
-for(i in 1:length(n.init.df)){
-  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, alpha, i)
-  #print(plots_bw)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".pdf"), plots_bw[[i]], device="pdf",
-  #       path="F:/GopherProject/GophersVolesOwls/Figures/Vole/BW/111Figs")
-}
-
-all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
-                        legend="right", ncol=1, nrow=3)
-all_plots_bw
-#ggsave("K=1000 Plots.pdf", all_plots_bw, device="pdf",
-#       path="F:/GopherProject/GophersVolesOwls/Figures/Vole/BW/111Figs")
+plots_bw<-plot_n_bw(df=vole.df, r=r, N0=N0, K_prey=K_prey, alphaP=alphaP)
+print(plots_bw)
 ```
 
 
-#Medium Simulations, K=500, alpha=0.9
+#Medium Simulations, K=500, alphaP=0.9
 Suppose we want to investigate what happens when the carrying capacity is lower, K=500
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
 K_prey=500
-alpha=0.9
-parameters <- c(r, alpha, K_prey, k_max, D)
+alphaP=0.9
+parameters <- c(r, alphaP, K_prey, k_max, D)
 
 N=c(K_prey, K_prey, K_prey, 
     0.5*K_prey, 0.5*K_prey, 0.5*K_prey, 
@@ -178,35 +154,18 @@ n.init.sim<-n.sim(test_sim, N, P, r)
 n.init.df<-lapply(n.init.sim, df_sim, r)
 n.init.df<-lapply(n.init.df, ldply)
 
-#n.final<-n.table(n.init.df, times, K_prey, N, alpha)
-#vole.table<-rbind(vole.table, n.final)
+vole.df<-n.table(n.init.df, times, K_prey, N, alphaP)
+vole.table<-rbind(vole.table, vole.df)
 
-#for(i in 1:length(n.init.df)){
-#  plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
-  #print(plots)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/color/1005Figs/K=500")
-#}
-
-plots_bw<-NULL
-for(i in 1:length(n.init.df)){
-  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, alpha, i)
-  #print(plots_bw)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".pdf"), plots_bw[[i]], device="pdf",
-  #       path="F:/GopherProject/GophersVolesOwls/Figures/Vole/BW/111Figs")
-}
-
-all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
-                        legend="right", ncol=1, nrow=3)
-all_plots_bw
-#ggsave("K=500 Plots.pdf", all_plots_bw, device="pdf",
-#       path="F:/GopherProject/GophersVolesOwls/Figures/Vole/BW/111Figs")
+plots_bw<-plot_n_bw(df=vole.df, r=r, N0=N0, K_prey=K_prey, alphaP=alphaP)
+#print(plots_bw)
 ```
 
-#Low Simulations, K=50 alpha= 0.009
+#Low Simulations, K=50 alphaP= 0.009
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
 K_prey=50
-alpha=0.009
-parameters <- c(r, alpha, K_prey, k_max, D)
+alphaP=0.009
+parameters <- c(r, alphaP, K_prey, k_max, D)
 
 N=c(K_prey, K_prey, K_prey, 
     0.5*K_prey, 0.5*K_prey, 0.5*K_prey, 
@@ -221,31 +180,18 @@ n.init.sim<-n.sim(test_sim, N, P, r)
 n.init.df<-lapply(n.init.sim, df_sim, r)
 n.init.df<-lapply(n.init.df, ldply)
 
-#n.final<-n.table(n.init.df, times, K_prey, N, alpha)
-#vole.table<-rbind(vole.table, n.final)
+vole.df<-n.table(n.init.df, times, K_prey, N, alphaP)
+vole.table<-rbind(vole.table, vole.df)
 
-# for(i in 1:length(n.init.df)){
-#   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, i))
-#   #print(plots)
-#   #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="D:/GopherProject/GophersVolesOwls/Figures/Vole/color/1005Figs/K=100")
-# }
-
-plots_bw<-NULL
-for(i in 1:length(n.init.df)){
-  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, alpha, i)
-}
-
-all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
-                        legend="right", ncol=1, nrow=3)
-
-all_plots_bw
+plots_bw<-plot_n_bw(df=vole.df, r=r, N0=N0, K_prey=K_prey, alphaP=alphaP)
+print(plots_bw)
 ```
 
 #Supplemental Simulations, K=1000
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
 K_prey=1000
-alpha=0.009
-parameters <- c(r, alpha, K_prey, k_max, D)
+alphaP=0.9
+parameters <- c(r, alphaP, K_prey, k_max, D)
 
 N=c(K_prey, K_prey, K_prey, 
     0.5*K_prey, 0.5*K_prey, 0.5*K_prey, 
@@ -260,24 +206,18 @@ n.init.sim<-n.sim(test_sim, N, P, r)
 n.init.df<-lapply(n.init.sim, df_sim, r)
 n.init.df<-lapply(n.init.df, ldply)
 
-#n.final<-n.table(n.init.df, times, K_prey, N, alpha)
-#vole.table<-rbind(vole.table, n.final)
+vole.df<-n.table(n.init.df, times, K_prey, N, alphaP)
+vole.table<-rbind(vole.table, vole.df)
 
-plots_bw<-NULL
-for(i in 1:length(n.init.df)){
-  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, alpha, i)
-}
-
-all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
-                        legend="right", ncol=1, nrow=3)
-all_plots_bw
+plots_bw<-plot_n_bw(df=vole.df, r=r, N0=N0, K_prey=K_prey, alphaP=alphaP)
+print(plots_bw)
 ```
 
 #Supplemental Simulations, K=500
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
 K_prey=500
-alpha=0.009
-parameters <- c(r, alpha, K_prey, k_max, D)
+alphaP=3.0
+parameters <- c(r, alphaP, K_prey, k_max, D)
 
 N=c(K_prey, K_prey, K_prey, 
     0.5*K_prey, 0.5*K_prey, 0.5*K_prey, 
@@ -292,24 +232,18 @@ n.init.sim<-n.sim(test_sim, N, P, r)
 n.init.df<-lapply(n.init.sim, df_sim, r)
 n.init.df<-lapply(n.init.df, ldply)
 
-#n.final<-n.table(n.init.df, times, K_prey, N, alpha)
-#vole.table<-rbind(vole.table, n.final)
+vole.df<-n.table(n.init.df, times, K_prey, N, alphaP)
+vole.table<-rbind(vole.table, vole.df)
 
-plots_bw<-NULL
-for(i in 1:length(n.init.df)){
-  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, alpha, i)
-}
-
-all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
-                        legend="right", ncol=1, nrow=3)
-all_plots_bw
+plots_bw<-plot_n_bw(df=vole.df, r=r, N0=N0, K_prey=K_prey, alphaP=alphaP)
+print(plots_bw)
 ```
 
 #Supplemental Simulations, K=50
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
 K_prey=50
-alpha=3.0
-parameters <- c(r, alpha, K_prey, k_max, D)
+alphaP=0.9
+parameters <- c(r, alphaP, K_prey, k_max, D)
 
 N=c(K_prey, K_prey, K_prey, 
     0.5*K_prey, 0.5*K_prey, 0.5*K_prey, 
@@ -324,22 +258,16 @@ n.init.sim<-n.sim(test_sim, N, P, r)
 n.init.df<-lapply(n.init.sim, df_sim, r)
 n.init.df<-lapply(n.init.df, ldply)
 
-#n.final<-n.table(n.init.df, times, K_prey, N, alpha)
-#vole.table<-rbind(vole.table, n.final)
+vole.df<-n.table(n.init.df, times, K_prey, N, alphaP)
+vole.table<-rbind(vole.table, vole.df)
 
-plots_bw<-NULL
-for(i in 1:length(n.init.df)){
-  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, alpha, i)
-}
-
-all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
-                        legend="right", ncol=1, nrow=3)
-all_plots_bw
+plots_bw<-plot_n_bw(df=vole.df, r=r, N0=N0, K_prey=K_prey, alphaP=alphaP)
+print(plots_bw)
 ```
 
 ```{r, echo=FALSE}
-# vole.table<-vole.table[,c("N.init", "N", "P", "r", "K", "alpha")]
+# vole.table<-vole.table[,c("N.init", "N", "P", "r", "K", "alphaP")]
 # #Saving the table with all of the tabulated final results.
-# write.csv(vole.table, "F:/GopherProject/GophersVolesOwls/Data/processed/VoleTable042318.csv", row.names=FALSE)
+#write.csv(vole.table, "E:/GopherProject/GophersVolesOwls/Data/processed/VoleTable051518.csv", row.names=FALSE)
 ```
 
