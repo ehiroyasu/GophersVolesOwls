@@ -4,16 +4,16 @@
 \alias{bifplot}
 \title{bifplot}
 \usage{
-bifplot(P_split, K_prey, i)
+bifplot(P_split, i)
 }
 \arguments{
 \item{P_split}{is a list where each element is the dataframe for a different predator density.
 The dataframe in each element contains a column for predator density, r, K_prey, equilibrium N, and a 
 factor specifying N1 or N2 for equilibrium N.}
 
-\item{K_prey}{is the carrying capacity of the prey population.}
-
 \item{i}{is to specify the list element number to subset the P_split list by predator density.}
+
+\item{K_prey}{is the carrying capacity of the prey population.}
 }
 \description{
 Uses ggplot2 package to plot the bifurcation plot of N* vs D.
@@ -21,4 +21,3 @@ Uses ggplot2 package to plot the bifurcation plot of N* vs D.
 \author{
 Elizabeth Hiroyasu
 }
-

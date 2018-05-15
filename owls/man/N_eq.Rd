@@ -4,13 +4,12 @@
 \alias{N_eq}
 \title{Equilibrium N value}
 \usage{
-N_eq(P, r, K_prey, D, k_max)
+N_eq(P, D)
 }
 \arguments{
-\item{state}{is the state variables N for the prey population and P for the predator population; measured in individuals per ha.}
+\item{P}{is the scaled predator density (individuals/ha), here P represents (kP)/K_prey}
 
-\item{parameters}{is a vector of parameters including r (population growth rate), alpha (attack rate), beta (assimilation efficiency of the predator),
-delta (death rate of the predator), K_prey (carrying capacity of the prey population), k_max (max feeding rate of the predator), and D (half saturation constant)}
+\item{D}{is the scaled half saturation constant (individuals/ha), here D represents (K_prey)/(alpha*h)}
 }
 \description{
 Uses the Lotka-Volterra predator-prey differential equations with a type III functional response
@@ -19,4 +18,3 @@ to calculate populations of both predator and prey populations over a period of 
 \author{
 Elizabeth Hiroyasu
 }
-

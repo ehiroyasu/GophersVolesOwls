@@ -4,7 +4,7 @@
 \alias{n.table}
 \title{n.table}
 \usage{
-n.table(df, times, K_prey, N, alpha)
+n.table(df, times, K_prey, N, alphaP)
 }
 \arguments{
 \item{df}{is the output from the function df_sim}
@@ -20,4 +20,3 @@ n.table(df, times, K_prey, N, alpha)
 \description{
 Creates a table of the ode output by initial abundance values.
 }
-

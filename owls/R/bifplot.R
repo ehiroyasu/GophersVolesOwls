@@ -14,11 +14,11 @@
 #'
 
 
-bifplot<-function(P_split, K_prey, i){
+bifplot<-function(P_split, i){
   SubP<-P_split[[i]]
   
-  ggplot(SubP, aes(x=D, y=Eq, group=N, color=N)) + 
+  ggplot(SubP, aes(x=D, y=eq, group=N, color=N)) + 
     geom_point(size=1) + 
-    ggtitle(paste("Bifurcation Plot of N* vs D, P=", SubP$P[1]))+
-    facet_grid(r~K_prey, labeller=label_both)
+    ggtitle(paste("Bifurcation Plot of N* vs D, P=", SubP$P[1]))#+
+    #facet_grid(r~K_prey, labeller=label_both)
 }

@@ -4,7 +4,7 @@
 \alias{plot_eq}
 \title{plot_eq}
 \usage{
-plot_eq(df, P, i)
+plot_eq(df, P)
 }
 \arguments{
 \item{df}{is a dataframe that contains variables P, r, D, K_prey, N, and Eq. Eq is the equilibrium N1 or N2 variable}
@@ -20,4 +20,3 @@ and df_sim functions.
 \author{
 Elizabeth Hiroyasu
 }
-

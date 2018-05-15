@@ -15,4 +15,3 @@ Converts the output output list from the predprey_sim function into simulation d
 \author{
 Elizabeth Hiroyasu
 }
-
