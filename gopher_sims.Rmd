@@ -16,36 +16,80 @@ library(owls)
 ```
 
 ##Population growth rates
-From literature review, we have constructed estimates of the minimum, maximum, and average population matrices of gopher populations. We can use these population matrices to calculate the instantenous growth rate of the population, or the r-value.
+From literature review, we have constructed estimates of the minimum, maximum, and average population matrices of gopher populations. We can use these population matrices to calculate the instantenous growth rate of the population, or the r-value. Because it is unclear how early gophers become sexually mature, we are using two different post-breeding census models to determin the min, mean, and max growth rate.
+
+#Six Month Maturity
 ```{r, echo=FALSE}
-stages = c("Juvenile", "SubAdult", "Adult")
-gopher_min<-matrix(data=c(0, 0, 1.69*.075, 0.5, 0, 0, 0, 0.66, 0.75),  
-                   nrow=3, ncol=3, byrow=TRUE,
+stages = c("Newborn", "Juvenile", "SubAdult", "Adult")
+gopher6_min<-matrix(data=c(0, 0.6*0.5, 1.69*.66,1.69*0.75, 0.5, 0, 0, 0, 0, 0.50, 0, 0, 0, 0, 
+                          0.66, 0.75),  
+                   nrow=4, ncol=4, byrow=TRUE,
                    dimnames=list(stages,stages))
-gopher_min
+gopher6_min
 
 
-gopher_avg<-matrix(data=c(0, 0, 2.97*0.80, 0.5, 0, 0, 0, 0.77, 0.80),  
-                   nrow=3, ncol=3, byrow=TRUE,
+gopher6_avg<-matrix(data=c(0, 0.63*0.50, 2.97*0.76, 2.97*0.8, 0.5, 0, 0, 0, 0, 0.50, 0, 0, 0, 0,                           0.77, 0.80),  
+                   nrow=4, ncol=4, byrow=TRUE,
                    dimnames=list(stages,stages))
-gopher_avg
+gopher6_avg
 
-gopher_max<-matrix(data=c(0, 0, 4.46*0.83, 0.5, 0, 0, 0, 0.87, 0.83),  
-                    nrow=3, ncol=3, byrow=TRUE,
+gopher6_max<-matrix(data=c(0, 0.67*0.50, 4.46*0.83, 4.46*0.83, 0.5, 0, 0, 0, 0, 0.50, 0, 0, 0, 
+                           0, 0.83, 0.83),  
+                    nrow=4, ncol=4, byrow=TRUE,
                     dimnames=list(stages,stages))
-gopher_max
+gopher6_max
 
-r_min<-log(lambda(gopher_min))
-if(r_min<0){
-  r_min=0.01
+r6_min<-log(lambda(gopher6_min))
+if(r6_min<0){
+  r6_min=0.01
 }
 
-r_avg<-log(lambda(gopher_avg))
-r_max<-log(lambda(gopher_max))
+r6_avg<-log(lambda(gopher6_avg))
+r6_max<-log(lambda(gopher6_max))
 
-r_gopher<-c(r_min, r_avg, r_max)
-r_gopher<-round(r_gopher, 2)
+r6_gopher<-c(r6_min, r6_avg, r6_max)
+r6_gopher<-round(r6_gopher, 2)
+r6_gopher
 ```
+
+#Nine Month Maturity
+```{r, echo=FALSE}
+gopher9_min<-matrix(data=c(0, 0, 1.69*.66, 1.69*0.75, 0.5, 0, 0, 0, 0, 0.50, 0, 0, 0, 0, 0.66, 
+                           0.75),  
+                   nrow=4, ncol=4, byrow=TRUE,
+                   dimnames=list(stages,stages))
+gopher9_min
+
+gopher9_avg<-matrix(data=c(0, 0, 2.97*0.77, 2.97*0.80, 0.5, 0, 0, 0, 0, 0.50, 0, 0, 0, 0, 0.77, 
+                           0.80),  
+                   nrow=4, ncol=4, byrow=TRUE,
+                   dimnames=list(stages,stages))
+gopher9_avg
+
+gopher9_max<-matrix(data=c(0, 0, 4.46*0.83, 4.46*0.83, 0.5, 0, 0, 0, 0, 0.50, 0, 0, 0, 0, 0.83, 
+                           0.83),  
+                    nrow=4, ncol=4, byrow=TRUE,
+                    dimnames=list(stages,stages))
+gopher9_max
+
+r9_min<-log(lambda(gopher9_min))
+if(r9_min<0){
+  r9_min=0.01
+}
+
+r9_avg<-log(lambda(gopher9_avg))
+r9_max<-log(lambda(gopher9_max))
+
+r9_gopher<-c(r9_min, r9_avg, r9_max)
+r9_gopher<-round(r9_gopher, 2)
+r9_gopher
+```
+Across these six growth rates, we'll use the minimum and maximum from the six for our min and max growth rates and the mean of the average values for the mean gopher growth rate.
+```{r, echo=FALSE}
+r_gopher<-c(r6_gopher, r9_gopher)
+r_gopher<-c(min(r_gopher), ((0.2+0.18)/2), max(r_gopher))
+```
+
 
 For clarity, we can calculate the annual growth rate:
 ```{r, echo=FALSE}
@@ -65,7 +109,7 @@ r = growth rate of prey pop (gophers/season) This value is extracted from the po
 
 K_prey = carrying capacity of prey (gophers)
 
-alpha = attack rate of predator (or capture efficiency; the larger alpha is, the more the per capita growth rate of the prey population is depressed by the addition of a single predator) (units=1/season) The attack rate was calculated from Derting and Crawford (1989). They found that, on average, it takes 1.1 attacks/vole - for this analysis, we assume the attack rate is the same for gophers as for voles. If there are 11 successful attacks per night the average number observed in observations recorded in Bunn et al (1982), then there should be 12.1 total attacks per night. If there is one foraging event per night, and 90 foraging events per season, then we expect 1089 attacks per season. However, this is if there are a significant amount of gophers across the landscape (scaling up from the Derting and Crawford densities, we get over 3000 voles/ha, an unreasonable number). Therefore, we would expect attack rate to decrease with density of the prey population. In sensitivity analysis if the attack rate is less than three, there is coexistence between gopher and owl populations.
+alphaP = attack rate of predator (or capture efficiency; the larger alphaP is, the more the per capita growth rate of the prey population is depressed by the addition of a single predator) (units=1/season) The attack rate was calculated from Derting and Crawford (1989). They found that, on average, it takes 1.1 attacks/vole - for this analysis, we assume the attack rate is the same for gophers as for voles. If there are 11 successful attacks per night the average number observed in observations recorded in Bunn et al (1982), then there should be 12.1 total attacks per night. If there is one foraging event per night, and 90 foraging events per season, then we expect 1089 attacks per season. However, this is if there are a significant amount of gophers across the landscape (scaling up from the Derting and Crawford densities, we get over 3000 voles/ha, an unreasonable number). Therefore, we would expect attack rate to decrease with density of the prey population. In sensitivity analysis if the attack rate is less than three, there is coexistence between gopher and owl populations.
 
 h = handling time The amount of time it takes an owl to kill and eat a single gopher (season/gopher) (1/k_max)
 
@@ -75,23 +119,22 @@ delta = death rate of predator (#predator/season)
 
 k_max = maximum feeding rate the most gophers an owl can eat in a single time unit (gophers/season)
 
-D = half saturation constant (1/(alpha*handling time)) The abundance of prey at which the feeding rate is half maximal (gopher)
+D = half saturation constant (1/(alphaP*handling time)) The abundance of prey at which the feeding rate is half maximal (gopher)
 
 State variables:
 N = starting population of prey 
 P = starting population of predator
 
-
 For this model, time is in terms of season (3 months), so each time interval is represented by a season and four seasons are equivalent to one year.
 ```{r}
 #Parameters
-alpha<-3
+alphaP<-3
 K_prey <- 175
 k_max <- 378
 h <- 1/k_max
-D <- 1/(alpha*h)
+D <- 1/(alphaP*h)
 r <- r_gopher
-parameters <- c(r, alpha, K_prey, k_max, D)
+parameters <- c(r, alphaP, K_prey, k_max, D)
 
 
 #State variables:
@@ -106,9 +149,7 @@ state<-cbind(N, P)
 times<- seq(0, 20, by=1)
 ```
 
-
-
-#Simulations, max K and alpha
+#Simulations, max K and alphaP
 We can then run simulations for these various lists of r values while varying predator density.
 ```{r, echo=FALSE}
 test_sim<-predprey_sim(times=times, state=state, r=r)
@@ -119,41 +160,26 @@ n.init.sim<-n.sim(test_sim, N, P, r)
 n.init.df<-lapply(n.init.sim, df_sim, r)
 n.init.df<-lapply(n.init.df, ldply)
 
-n.final<-n.table(n.init.df, times, K_prey, N, alpha)
-gopher.table<-n.final
+gopher.df<-n.table(n.init.df, times, K_prey, N, alphaP)
+gopher.table<-gopher.df
 ```
 
 Then, plotting the prey density over time by each N.
 ```{r, echo=FALSE, warning=FALSE, fig.align="left", results="asis"}
-for(i in 1:length(n.init.df)){
-  plots<-(plot_n(n.init.df[[i]], r, N, K_prey, alpha, i))
-  print(plots)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="../Figures/Gopher/color/1005Figs/K=175")
-}
-```
+plots_color<-plot_n(df=gopher.df, r=r, N0=N0, K_prey=K_prey, alphaP=alphaP)
 
-Plotting in black and white:
-```{r, echo=FALSE}
-plots_bw<-NULL
-for(i in 1:length(n.init.df)){
-  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, alpha, i)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".pdf"), plots_bw[[i]], device="pdf", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/116Figures")
-}
-
-all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
-                        legend="right", ncol=1, nrow=3)
-all_plots_bw
-
+#in black and white
+plots_bw<-plot_n_bw(df=gopher.df, r=r, N0=N0, K_prey=K_prey, alphaP=alphaP)
+plots_bw
 #ggsave("K=175 Plots.pdf", all_plots_bw, device="pdf", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/116Figures")
 ```
 
-
-#Med Simulations, K=100 alpha=0.9
+#Med Simulations, K=100 alphaP=0.9
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
 K_prey=100
-alpha<-0.9
-D<-1/(alpha*h)
-parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
+alphaP<-0.9
+D<-1/(alphaP*h)
+parameters <- c(r, alphaP, K_prey, k_max, D)
 
 N=c(K_prey, K_prey, K_prey,
     0.5*K_prey, 0.5*K_prey, 0.5*K_prey,
@@ -168,35 +194,19 @@ n.init.sim<-n.sim(test_sim, N, P, r)
 n.init.df<-lapply(n.init.sim, df_sim, r)
 n.init.df<-lapply(n.init.df, ldply)
 
-#n.final<-n.table(n.init.df, times, K_prey, N, alpha)
-#gopher.table<-rbind(gopher.table, n.final)
+gopher.df<-n.table(n.init.df, times, K_prey, N, alphaP)
+gopher.table<-rbind(gopher.table, gopher.df)
 
-# for(i in 1:length(n.init.df)){
-#   plots<-(plot_n(n.init.df[[i]], r, N, K_prey, alpha, i))
-#   #print(plots)
-#   #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="../Figures/Gopher/color/1005Figs/K=100")
-# }
-
-for(i in 1:length(n.init.df)){
-  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, alpha, i)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".pdf"), plots_bw[[i]], device="pdf", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/116Figures")
-}
-
-all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
-                        legend="right", ncol=1, nrow=3)
-all_plots_bw
-
-#ggsave("K=100 Plots.pdf", all_plots_bw, device="pdf", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/116Figures")
+plots_bw<-plot_n_bw(df=gopher.df, r=r, N0=N0, K_prey=K_prey, alphaP=alphaP)
+plots_bw
 ```
 
-
-
-#Low Simulations, K=25 alpha=0.009
+#Low Simulations, K=25 alphaP=0.009
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
 K_prey=25
-alpha<-0.009
-D<-1/(alpha*h)
-parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
+alphaP<-0.009
+D<-1/(alphaP*h)
+parameters <- c(r, alphaP, K_prey, k_max, D)
 
 N=c(K_prey, K_prey, K_prey,
     0.5*K_prey, 0.5*K_prey, 0.5*K_prey,
@@ -210,23 +220,11 @@ n.init.sim<-n.sim(test_sim, N, P, r)
 n.init.df<-lapply(n.init.sim, df_sim, r)
 n.init.df<-lapply(n.init.df, ldply)
 
-#n.final<-n.table(n.init.df, times, K_prey, N, alpha)
-#gopher.table<-rbind(gopher.table, n.final)
+gopher.df<-n.table(n.init.df, times, K_prey, N, alphaP)
+gopher.table<-rbind(gopher.table, gopher.df)
 
-for(i in 1:length(n.init.df)){
-  plots<-(plot_n(n.init.df[[i]], r, N, K_prey, alpha, i))
-  #print(plots)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".png"), plots, device="png", path="../Figures/Gopher/color/1005Figs/K=25")
-}
-
-for(i in 1:length(n.init.df)){
-  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, alpha, i)
-  #ggsave(paste("N=", unique(N)[i], ", K=", K_prey, ".pdf"), plots_bw[[i]], device="pdf", path="F:/GopherProject/GophersVolesOwls/Figures/Gopher/BW/116Figures")
-}
-
-all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
-                        legend="right", ncol=1, nrow=3)
-all_plots_bw
+plots_bw<-plot_n_bw(df=gopher.df, r=r, N0=N0, K_prey=K_prey, alphaP=alphaP)
+plots_bw
 ```
 
 These model simulations show that at the two lowest barn owl densities (0.2 and 0.4/ha), the pocket gopher population is never driven to zero, no matter what the growth rate of the gopher population or carrying capacity. At the lowest barn owl density (0.2 barn owls/ha), the pocket gopher populations are able to grow to carrying capacity. On the opposite end of the spectrum, at the two highest barn owl densities (0.95 and 2/ha) the pocket gopher population is drive to extinction. At the highest barn owl density (2barn owls/ha), this is usually achieved by the middle of the second year.  It is important to note that these simulation exercises do not include prey switching, so barn owls may not be able to drive pocket gopher populations extinct, but instead switch prey species when they become harder to find.
@@ -234,14 +232,13 @@ These model simulations show that at the two lowest barn owl densities (0.2 and 
 The simulations also show that the presence of barn owls, no matter what the initial density and the initial density, growth rate, and carrying capacity, prevent the prey population from reaching carrying capacity. Depending on the growth rate and initial density, the presence of barn owls can cause the equilibrium pocket gopher population size to be much lower than carrying capacity. Therefore if the carrying capacity of the landscape is low, then barn owls may be effective at driving down pocket gopher populations to a manageable level.
 
 
-
 ##Supplemental simulation runs
-K=175, alpha=0.9
+K=175, alphaP=0.9
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
 K_prey=175
-alpha<-0.009
-D<-1/(alpha*h)
-parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
+alphaP<-0.9
+D<-1/(alphaP*h)
+parameters <- c(r, alphaP, K_prey, k_max, D)
 
 N=c(K_prey, K_prey, K_prey,
     0.5*K_prey, 0.5*K_prey, 0.5*K_prey,
@@ -255,25 +252,20 @@ n.init.sim<-n.sim(test_sim, N, P, r)
 n.init.df<-lapply(n.init.sim, df_sim, r)
 n.init.df<-lapply(n.init.df, ldply)
 
-#n.final<-n.table(n.init.df, times, K_prey, N, alpha)
-#gopher.table<-rbind(gopher.table, n.final)
+gopher.df<-n.table(n.init.df, times, K_prey, N, alphaP)
+gopher.table<-rbind(gopher.table, gopher.df)
 
-for(i in 1:length(n.init.df)){
-  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, alpha, i)
-}
-
-all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
-                        legend="right", ncol=1, nrow=3)
-all_plots_bw
+plots_bw<-plot_n_bw(df=gopher.df, r=r, N0=N0, K_prey=K_prey, alphaP=alphaP)
+plots_bw
 ```
 
 
 K=100
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
 K_prey=100
-alpha<-0.009
-D<-1/(alpha*h)
-parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
+alphaP<-3.0
+D<-1/(alphaP*h)
+parameters <- c(r, alphaP, K_prey, k_max, D)
 
 N=c(K_prey, K_prey, K_prey,
     0.5*K_prey, 0.5*K_prey, 0.5*K_prey,
@@ -287,24 +279,19 @@ n.init.sim<-n.sim(test_sim, N, P, r)
 n.init.df<-lapply(n.init.sim, df_sim, r)
 n.init.df<-lapply(n.init.df, ldply)
 
-#n.final<-n.table(n.init.df, times, K_prey, N, alpha)
-#gopher.table<-rbind(gopher.table, n.final)
+gopher.df<-n.table(n.init.df, times, K_prey, N, alphaP)
+gopher.table<-rbind(gopher.table, gopher.df)
 
-for(i in 1:length(n.init.df)){
-  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, alpha, i)
-}
-
-all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
-                        legend="right", ncol=1, nrow=3)
-all_plots_bw
+plots_bw<-plot_n_bw(df=gopher.df, r=r, N0=N0, K_prey=K_prey, alphaP=alphaP)
+plots_bw
 ```
 
 K=25
 ```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
 K_prey=25
-alpha<-0.9
-D<-1/(alpha*h)
-parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
+alphaP<-3.0
+D<-1/(alphaP*h)
+parameters <- c(r, alphaP, K_prey, k_max, D)
 
 N=c(K_prey, K_prey, K_prey,
     0.5*K_prey, 0.5*K_prey, 0.5*K_prey,
@@ -318,22 +305,17 @@ n.init.sim<-n.sim(test_sim, N, P, r)
 n.init.df<-lapply(n.init.sim, df_sim, r)
 n.init.df<-lapply(n.init.df, ldply)
 
-#n.final<-n.table(n.init.df, times, K_prey, N, alpha)
-#gopher.table<-rbind(gopher.table, n.final)
+gopher.df<-n.table(n.init.df, times, K_prey, N, alphaP)
+gopher.table<-rbind(gopher.table, gopher.df)
 
-for(i in 1:length(n.init.df)){
-  plots_bw[[i]]<-plot_n_bw(n.init.df[[i]], r, N, K_prey, alpha, i)
-}
-
-all_plots_bw<-ggarrange(plots_bw[[1]],plots_bw[[2]], plots_bw[[3]], labels=c("A", "B", "C"), common.legend=TRUE, 
-                        legend="right", ncol=1, nrow=3)
-all_plots_bw
+plots_bw<-plot_n_bw(df=gopher.df, r=r, N0=N0, K_prey=K_prey, alphaP=alphaP)
+plots_bw
 ```
 
 
 ```{r, echo=FALSE}
 #Saving the table with all of the tabulated final results.
-#gopher.table<-gopher.table[,c("N.init", "N", "P", "r", "K", "alpha")]
-#write.csv(gopher.table, "D:/GopherProject/GophersVolesOwls/Data/processed/GopherTable042318.csv", row.names=FALSE)
+#gopher.table<-gopher.table[,c("N.init", "N", "P", "r", "K", "alphaP")]
+#write.csv(gopher.table, "E:/GopherProject/GophersVolesOwls/Data/processed/GopherTable051518.csv", row.names=FALSE)
 ```
 
