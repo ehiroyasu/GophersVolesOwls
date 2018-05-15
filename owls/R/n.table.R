@@ -10,22 +10,17 @@
 
 
 
-n.table<-function(df, times, K_prey, N, alpha){
+n.table<-function(df, times, K_prey, N, alphaP){
   
-  n.final<-NULL
-  for(i in 1:length(df)){
-    n.final[[i]]<-subset(df[[i]], time==max(times))
-    n.final[[i]]$K<-K_prey
-    n.final[[i]]$alpha<-alpha
-    print(kable(n.final[[i]], caption=paste("N init=", unique(N)[i]), row.names = FALSE))
-  }
+  n.df<-bind_rows(df, .id="N0")
+  n.df$N0<-as.numeric(n.df$N0)
+  n.df$K<-K_prey
+  n.df$alphaP<-alphaP
   
-  for(i in 1:length(n.final)){
-    n.final[[i]]$N.init<-unique(N)[i]
-  }
+  n.final<-subset(n.df, time==max(times))
+  print(kable(n.final, caption="Final Gopher Abundance", row.names = FALSE))
   
-  n.table<-bind_rows(n.final)
-  
-  return(n.table)
+
+  return(n.df)
 }
 
