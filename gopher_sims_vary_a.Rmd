@@ -1,0 +1,297 @@
+---
+title: "gopher_sim_vary_a"
+author: "Elizabeth Hiroyasu"
+date: "March 14, 2018"
+output:
+  pdf_document: default
+  html_document: default
+---
+To look at the sensitivity of the prey population to the model parameters, we can run the model for a variety of different parameters and look how the curve changes. For this simulation, we will set a variety of r values for population runs.
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+setwd("../GophersVolesOwls")
+library(devtools)
+library(roxygen2)
+load_all("owls")
+library(owls)
+```
+
+##Population growth rates
+From literature review, we have constructed estimates of the minimum, maximum, and average population matrices of gopher populations. We can use these population matrices to calculate the instantenous growth rate of the population, or the r-value.
+```{r, echo=FALSE}
+stages = c("Juvenile", "SubAdult", "Adult")
+gopher_min<-matrix(data=c(0, 0, 1.69*.075, 0.5, 0, 0, 0, 0.66, 0.75),  
+                   nrow=3, ncol=3, byrow=TRUE,
+                   dimnames=list(stages,stages))
+gopher_min
+
+
+gopher_avg<-matrix(data=c(0, 0, 2.97*0.80, 0.5, 0, 0, 0, 0.77, 0.80),  
+                   nrow=3, ncol=3, byrow=TRUE,
+                   dimnames=list(stages,stages))
+gopher_avg
+
+gopher_max<-matrix(data=c(0, 0, 4.46*0.83, 0.5, 0, 0, 0, 0.87, 0.83),  
+                    nrow=3, ncol=3, byrow=TRUE,
+                    dimnames=list(stages,stages))
+gopher_max
+
+r_min<-log(lambda(gopher_min))
+if(r_min<0){
+  r_min=0.01
+}
+
+r_avg<-log(lambda(gopher_avg))
+r_max<-log(lambda(gopher_max))
+
+r_gopher<-c(r_min, r_avg, r_max)
+r_gopher<-round(r_gopher, 2)
+```
+
+For clarity, we can calculate the annual growth rate:
+```{r, echo=FALSE}
+gopher_annual<-r_gopher*4
+gopher_annual
+```
+
+
+##Parameters
+We can use the pred_prey function created in our owls r-package, then use an ode solver to solve the derivatives. We will use a type two functional response to model the behavior of the prey population. A type two functional response is the simplest model to use in the wake of low data. The response will capture typical more realistic predator-prey relations. The differental equations are below:
+
+\[\frac{dprey}{dt}=rN(1-\frac{N}{K_{prey}})-\frac{k_{max}N}{N+D}P\]
+\[\frac{dpredator}{dt}= \beta PN - \delta P\]
+
+One of the things we discovered in our previous simulations (see gopher_sims.Rmd), is that the equilibrium prey population is sensitive to the alpha parameter. In alpha_param_exp.Rmd, I found that an alpha from very close to zero to just above 0.5 resulted in coexistence, while alpha<0.5 results in the population going to carrying capacity with very little control. Meanwhile, alpha close to or above 1 results in extinction of the prey population. This suggests that field studies that identify this parameter will be very important to understanding the predator-prey dynamics of biocontrols.
+
+The model requires multiple parameters:
+r = growth rate of prey pop (gophers/season) This value is extracted from the population matrices using the popbio package to calculate lambda, then r=ln(lambda)
+
+K_prey = carrying capacity of prey (gophers)
+
+alpha = varied in the simulation
+
+h = handling time The amount of time it takes an owl to kill and eat a single gopher (season/gopher) (1/k_max)
+
+beta= assimilation efficiency (efficiency of turning gophers into per capita growth) This number is calculated from field data and represents the fractional value of one gopher to an owl producing 4.33 chicks.
+
+delta = death rate of predator (#predator/season)
+
+k_max = maximum feeding rate the most gophers an owl can eat in a single time unit (gophers/season)
+
+D = half saturation constant (1/(alpha*handling time)) The abundance of prey at which the feeding rate is half maximal (gopher)
+
+State variables:
+N = starting population of prey 
+P = starting population of predator
+
+
+For this model, time is in terms of season (3 months), so each time interval is represented by a season and four seasons are equivalent to one year.
+```{r}
+#Parameters
+alpha=0.001
+beta = 1.01e-3
+delta=0.01
+K_prey=175
+k_max=378
+h=1/k_max
+D=1/(alpha*h)
+r=r_gopher
+parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
+
+
+#State variables:
+N=c(K_prey, K_prey, K_prey,
+    0.5*K_prey, 0.5*K_prey, 0.5*K_prey,
+    2,2,2)
+
+P=c(0.2, 0.6, 1.0, 
+    0.2, 0.6, 1.0,
+    0.2, 0.6, 1.0)
+state<-cbind(N, P)
+times<- seq(0, 20, by=1)
+```
+
+
+#Simulations, alpha=0.001
+We can then run simulations for these various lists of r values while varying predator density.
+```{r, echo=FALSE}
+test_sim<-predprey_sim(times=times, state=state, r=r)
+sim.df<-df_sim(sim=test_sim, r=r)
+```
+
+Then, plotting the prey density over time by each N.
+```{r, echo=FALSE, warning=FALSE, fig.align="left", results="asis"}
+n.init.sim<-n.sim(test_sim, N, P, r)
+names(n.init.sim)<-unique(N) 
+
+n.init.df<-NULL
+for(i in 1:length(n.init.sim)){
+  n.init.df[[i]]<-df_sim(n.init.sim[[i]], r)
+  n.init.df[[i]]<-ldply(n.init.df[[i]])
+}
+
+n.final<-NULL
+for(i in 1:length(n.init.df)){
+      n.final[[i]]<-subset(n.init.df[[i]], time==max(times))
+      n.final[[i]]$K<-K_prey
+      print(kable(n.final[[i]], caption=paste("N init=", unique(N)[i]), row.names = FALSE))
+}
+
+for(i in 1:length(n.final)){
+  n.final[[i]]$N.init<-unique(N)[i]
+}
+gopher.table<-bind_rows(n.final)
+
+for(i in 1:length(n.init.df)){
+  plots<-(plot_n(n.init.df[[i]], r, N, alpha, i))
+  print(plots)
+}
+```
+
+#Simulations, alpha=0.01
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
+alpha=0.01
+D<-1/(alpha*h)
+parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
+
+test_sim<-predprey_sim(times=times, state=state, r=r)
+sim.df<-df_sim(sim=test_sim, r=r)
+
+n.init.sim<-n.sim(test_sim, N, P, r)
+names(n.init.sim)<-unique(N) 
+
+n.init.df<-NULL
+for(i in 1:length(n.init.sim)){
+  n.init.df[[i]]<-df_sim(n.init.sim[[i]], r)
+  n.init.df[[i]]<-ldply(n.init.df[[i]])
+}
+
+n.final<-NULL
+for(i in 1:length(n.init.df)){
+      n.final[[i]]<-subset(n.init.df[[i]], time==max(times))
+      n.final[[i]]$K<-K_prey
+      print(kable(n.final[[i]], caption=paste("N init=", unique(N)[i]), row.names = FALSE))
+}
+
+for(i in 1:length(n.final)){
+  n.final[[i]]$N.init<-unique(N)[i]
+}
+n.final<-bind_rows(n.final)
+gopher.table<-rbind(gopher.table,n.final)
+
+for(i in 1:length(n.init.df)){
+  plots<-(plot_n(n.init.df[[i]], r, N, alpha, i))
+  print(plots)
+}
+```
+
+#Simulations, alpha=0.1
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
+alpha=0.1
+D<-1/(alpha*h)
+parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
+
+test_sim<-predprey_sim(times=times, state=state, r=r)
+sim.df<-df_sim(sim=test_sim, r=r)
+
+n.init.sim<-n.sim(test_sim, N, P, r)
+names(n.init.sim)<-unique(N) 
+
+n.init.df<-NULL
+for(i in 1:length(n.init.sim)){
+  n.init.df[[i]]<-df_sim(n.init.sim[[i]], r)
+  n.init.df[[i]]<-ldply(n.init.df[[i]])
+}
+
+n.final<-NULL
+for(i in 1:length(n.init.df)){
+      n.final[[i]]<-subset(n.init.df[[i]], time==max(times))
+      n.final[[i]]$K<-K_prey
+      print(kable(n.final[[i]], caption=paste("N init=", unique(N)[i]), row.names = FALSE))
+}
+
+for(i in 1:length(n.final)){
+  n.final[[i]]$N.init<-unique(N)[i]
+}
+n.final<-bind_rows(n.final)
+gopher.table<-rbind(gopher.table,n.final)
+
+for(i in 1:length(n.init.df)){
+  plots<-(plot_n(n.init.df[[i]], r, N, alpha, i))
+  print(plots)
+}
+```
+
+#Simulations, alpha=1
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
+alpha=1
+D<-1/(alpha*h)
+parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
+
+test_sim<-predprey_sim(times=times, state=state, r=r)
+sim.df<-df_sim(sim=test_sim, r=r)
+
+n.init.sim<-n.sim(test_sim, N, P, r)
+names(n.init.sim)<-unique(N) 
+
+n.init.df<-NULL
+for(i in 1:length(n.init.sim)){
+  n.init.df[[i]]<-df_sim(n.init.sim[[i]], r)
+  n.init.df[[i]]<-ldply(n.init.df[[i]])
+}
+
+n.final<-NULL
+for(i in 1:length(n.init.df)){
+      n.final[[i]]<-subset(n.init.df[[i]], time==max(times))
+      n.final[[i]]$K<-K_prey
+      print(kable(n.final[[i]], caption=paste("N init=", unique(N)[i]), row.names = FALSE))
+}
+
+for(i in 1:length(n.final)){
+  n.final[[i]]$N.init<-unique(N)[i]
+}
+n.final<-bind_rows(n.final)
+gopher.table<-rbind(gopher.table,n.final)
+
+for(i in 1:length(n.init.df)){
+  plots<-(plot_n(n.init.df[[i]], r, N, alpha, i))
+  print(plots)
+}
+```
+
+#Simulations, alpha=5
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
+alpha=5
+D<-1/(alpha*h)
+parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
+
+test_sim<-predprey_sim(times=times, state=state, r=r)
+sim.df<-df_sim(sim=test_sim, r=r)
+
+n.init.sim<-n.sim(test_sim, N, P, r)
+names(n.init.sim)<-unique(N) 
+
+n.init.df<-NULL
+for(i in 1:length(n.init.sim)){
+  n.init.df[[i]]<-df_sim(n.init.sim[[i]], r)
+  n.init.df[[i]]<-ldply(n.init.df[[i]])
+}
+
+n.final<-NULL
+for(i in 1:length(n.init.df)){
+      n.final[[i]]<-subset(n.init.df[[i]], time==max(times))
+      n.final[[i]]$K<-K_prey
+      print(kable(n.final[[i]], caption=paste("N init=", unique(N)[i]), row.names = FALSE))
+}
+
+for(i in 1:length(n.final)){
+  n.final[[i]]$N.init<-unique(N)[i]
+}
+n.final<-bind_rows(n.final)
+gopher.table<-rbind(gopher.table,n.final)
+
+for(i in 1:length(n.init.df)){
+  plots<-(plot_n(n.init.df[[i]], r, N, alpha, i))
+  print(plots)
+}
+```
