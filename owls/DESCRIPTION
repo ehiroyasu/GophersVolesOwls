@@ -16,7 +16,8 @@ Depends:
     reshape,
     xtable,
     knitr,
-    ggpubr
+    ggpubr,
+    scales
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
