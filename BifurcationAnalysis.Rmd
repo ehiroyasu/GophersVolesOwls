@@ -1,0 +1,66 @@
+---
+title: "Equilibrium Analysis"
+output:
+  pdf_document: default
+  html_notebook: default
+editor_options:
+  chunk_output_type: inline
+---
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+setwd("../GophersVolesOwls")
+library(devtools)
+library(roxygen2)
+load_all("owls")
+library(owls)
+```
+
+To study how we can expect the dynamics of the prey population to change in relation to the two parameters, we conducted a bifurcation analysis. This analysis allowed us to identify local equilibria and their stability as well as points where the system could transition between stability and instability. This allows us to determine points where the prey population transitions from coexistence to extinction or vice versa.
+
+We explored the feasibility of using barn owls (_Tyto alba_) as a biocontrol for rodent pest species in an agricultural setting. The use of simple Lotka-Volterra predator-prey models reveals a relationship between the half-saturation constant (D) and carrying capacity (K_prey). The differential equations for the Lotka-Volterra predator-prey model is as follows:
+\[\frac{dN}{dt}=rN(1-\frac{N}{K_{prey}})-\frac{k_{max}N}{N+D}P\]
+\[\frac{dP}{dt}= 0\]
+
+Rescaling the prey equation and conducting parameter reduction we find the following
+\[\frac{dN'}{dt'}=N'(1-N')-\frac{P'N'}{N'+D'}\]
+
+Therefore the model has a steady state at (0,0)
+
+When solving for the equilibrium value of N, we obtain the following solution:
+\[N_{eq}=\frac{(1-D') \pm \sqrt{(D'-1)^2 + 4(P'-D')}}{2}\]
+
+```{r}
+D=seq(0, 5, by=0.1)#c(50, 70, 100, 250, 500) #where D is specified, however can be calculated as 1/alpha*h
+N0=c(1000, 1000, 1000, 1000, 1000)
+P=seq(0.2, 2.0, by=0.2)
+```
+
+#Equilibrium simulations
+Using the quadratic formula, we can calculate the equilibrium densities of the prey population. N1 is the solution to $N_{eq}=\frac{-(D'-1) + \sqrt{(D'-1)^2 + 4(P'-D'))}}{2}$. N2 is the solution to $N_{eq}=\frac{-(D'-1) - \sqrt{(D'-1)^2 + 4(P'-D'))}}{2}$
+
+```{r, echo=FALSE}
+eq.df<-N_eq(P, D)
+```
+
+Saddle Node Bifurcations
+P vs. N
+```{r, echo=FALSE, fig.align="left", warning=FALSE}
+ggplot(data=eq.df, aes(P, eq, linetype=(N)))+
+  geom_line()
+```
+
+D vs. N
+```{r, echo=FALSE, fig.align="left", warning=FALSE}
+ggplot(data=eq.df, aes(D, eq, linetype=(N)))+
+  geom_line()
+```
+
+
+#P vs.D
+#```{r, echo=FALSE, fig.align="left", warning=FALSE}
+#ggplot(data=eq.df, aes(P, D, linetype=(N)))+
+#  geom_point()
+#```
+
+
+
