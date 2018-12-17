@@ -1,5 +1,5 @@
 ---
-title: "Relationship between D and K"
+title: "Relationship between D and N"
 author: "Elizabeth Hiroyasu"
 date: "May 17, 2017"
 output:
@@ -15,8 +15,6 @@ load_all("owls")
 library(owls)
 ```
 
-##The relationship between parameter D and Carrying Capacity
-
 We explored the feasibility of using barn owls (_Tyto alba_) as a biocontrol for rodent pest species in an agricultural setting. The use of simple Lotka-Volterra predator-prey models reveals a relationship between the half-saturation constant (D) and carrying capacity (K_prey). The differential equations for the Lotka-Volterra predator-prey model is as follows:
 \[\frac{dN}{dt}=rN(1-\frac{N}{K_{prey}})-\frac{k_{max}N}{N+D}P\]
 \[\frac{dP}{dt}= 0\]
@@ -27,7 +25,7 @@ Rescaling the prey equation and conducting parameter reduction we find the follo
 Therefore the model has a steady state at (0,0)
 
 #When solving for the equilibrium value of N, we obtain the following solution:
-#\[N_{eq}=\frac{(1-D^1) \pm \sqrt{(D^1-1)^2 + 4(P^1-D^1)}}{2}\]
+\[N_{eq}=\frac{(1-D^1) \pm \sqrt{(D^1-1)^2 + 4(P^1-D^1)}}{2}\]
 
 #Parameters
 
@@ -92,6 +90,11 @@ for(i in 1:length(Dprime)){
 
 df<-cbind(Pprime_pos, Pprime_neg, Dprime)
 
+plot(Pprime_neg~Dprime, data=df, ylim=c(-2,5))
+abline(a=0, b=1)
+
+plot(Pprime_pos~Dprime, data=df, ylim=c(-0.5, 0.5))
+lines(Pprime_neg~Dprime)
 ```
 
 
