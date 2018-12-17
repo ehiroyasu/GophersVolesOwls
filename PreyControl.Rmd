@@ -36,7 +36,7 @@ gopher_sum_alpha<- gopher_final %>%
     summarise(mean_gopher=mean(ext))
 
 ggplot(gopher_sum_alpha, aes(as.factor(alphaP), mean_gopher))+
-  geom_bar(stat='identity')+
+  geom_bar(stat='identity')+ ylim(0,1)+
   facet_grid(.~r, labeller=label_both) +
   labs(title="Proportion of simulations when gophers go extinct", 
        x="Attack Rate", y="Proportion of simulation runs N<2 individuals")
@@ -50,7 +50,7 @@ gopher_sum_P<- gopher_final %>%
     summarise(mean_gopher=mean(ext))
 
 ggplot(gopher_sum_P, aes(as.factor(P), mean_gopher))+
-  geom_bar(stat='identity')+
+  geom_bar(stat='identity')+ ylim(0,1)+
   facet_grid(.~r, labeller = label_both) +
   labs(title="Proportion of simulations when gophers go extinct", 
        x="Predator Density", y="Proportion of simulation runs N<2 individuals")
@@ -58,24 +58,27 @@ ggplot(gopher_sum_P, aes(as.factor(P), mean_gopher))+
 
 We can do the same for voles.
 ```{r}
-vole_sum_alpha<- vole_df %>%
+vole_sum_alpha<- vole_final %>%
     group_by(alphaP, r) %>%
     mutate(ext = N<2) %>%
     summarise(mean_vole=mean(ext))
 
+range(filter(vole_final, r==0.70)$N)
+mean(filter(vole_final, r==0.70)$N)
+
 ggplot(vole_sum_alpha, aes(as.factor(alphaP), mean_vole))+
-  geom_bar(stat='identity')+
+  geom_bar(stat='identity')+ ylim(0,1)+
   facet_grid(.~r) +
   labs(title="Proportion of simulations when voles go extinct", 
        x="Attack Rate", y="Proportion of simulation runs N<2 individuals")
 
-vole_sum_P<- vole_df %>%
+vole_sum_P<- vole_final %>%
     group_by(P, r) %>%
     mutate(ext = N<2) %>%
     summarise(mean_vole=mean(ext))
 
 ggplot(vole_sum_P, aes(as.factor(P), mean_vole))+
-  geom_bar(stat='identity')+
+  geom_bar(stat='identity')+ ylim(0, 1)+
   facet_grid(.~r) +
   labs(title="Proportion of simulations when voles go extinct", 
        x="Predator Density", y="Proportion of simulation runs N<2 individuals")
