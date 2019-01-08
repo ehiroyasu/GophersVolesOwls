@@ -21,6 +21,38 @@ We explored the feasibility of using barn owls (_Tyto alba_) as a biocontrol for
 \[\frac{dN}{dt}=rN(1-\frac{N}{K_{prey}})-\frac{k_{max}N}{N+D}P\]
 \[\frac{dP}{dt}= 0\]
 
+When examining the equilibrium value of N, we see there are three areas of interest.
+```{r}
+##calculated average vole growth rate
+r_vole=c(0.01, 0.704, 1.2)
+
+#Parameters
+alpha=0.01
+beta = 5.85e-4
+delta=0.01
+K_prey=1000
+k_max=654
+h=1/k_max
+D=1/(alpha*h)
+r=r_vole
+parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
+P<-seq(0.1,2, by=0.1)
+
+nstar_func<-function(parameters, P){
+  Nstar <- ((K_prey-D)+sqrt(((D-K_prey)^2)-(4*((k_max*K_prey*P)/r) - D*K_prey)))/2
+  return(Nstar)
+}
+
+Nstar_df<-P
+Nstar<-t(sapply(P, nstar_func, parameters=parameters))
+Nstar_df<-cbind(Nstar_df, Nstar)
+colnames(Nstar_df)<-c("P", r)
+
+
+
+```
+
+
 Rescaling the prey equation and conducting parameter reduction we find the following
 \[\frac{dN'}{dt'}=N'(1-N')-\frac{P'N'}{N'+D'}\]
 
