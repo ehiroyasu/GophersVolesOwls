@@ -60,6 +60,7 @@ ggplot(Nstar_df) +
 ```
 
 
+##Rescaled equilibrium solutions
 Rescaling the prey equation and conducting parameter reduction we find the following
 \[\frac{dN'}{dt'}=N'(1-N')-\frac{P'N'}{N'+D'}\]
 
@@ -69,37 +70,53 @@ When solving for the equilibrium value of N, we obtain the following solution:
 \[N_{eq}=\frac{(1-D') \pm \sqrt{(D'-1)^2 + 4(P'-D')}}{2}\]
 
 ```{r}
-D=seq(0, 5, by=0.1)#c(50, 70, 100, 250, 500) #where D is specified, however can be calculated as 1/alpha*h
-N0=c(1000, 1000, 1000, 1000, 1000)
-P=seq(0.2, 2.0, by=0.2)
+nprime_func<-function(Pprime, Dprime){
+  Nprime_plus <- data.frame(((1-Dprime)+sqrt(((Dprime-1)^2)-(4*(Pprime-Dprime))))/2)
+  Nprime_minus <-data.frame(((1-Dprime)-sqrt(((Dprime-1)^2)-(4*(Pprime-Dprime))))/2)
+  Nprime_star<-data.frame(Nprime_plus, Nprime_minus)
+  names(Nprime_star)<-c("Nprime_plus", "Nprime_minus")
+  return(Nprime_star)
+}
 ```
 
-#Equilibrium simulations
-Using the quadratic formula, we can calculate the equilibrium densities of the prey population. N1 is the solution to $N_{eq}=\frac{-(D'-1) + \sqrt{(D'-1)^2 + 4(P'-D'))}}{2}$. N2 is the solution to $N_{eq}=\frac{-(D'-1) - \sqrt{(D'-1)^2 + 4(P'-D'))}}{2}$
+We can then look at how the equilibrium changes as a function of varying P
+```{r}
+Pprime<-seq(0, 1, by=0.01)
+Dprime<-0.5
 
-```{r, echo=FALSE}
-eq.df<-N_eq(P, D)
+NPeq<-data.frame(Pprime, nprime_func(Pprime, Dprime))
+
+ggplot(NPeq) + 
+  geom_line(aes(Pprime, Nprime_plus)) + 
+  geom_line(aes(Pprime, Nprime_minus), linetype="dashed") +
+  geom_hline(yintercept=0, linetype="dashed", color="red") +
+  scale_x_continuous(expand= c(0,0)) + 
+  labs(title="N'* as a function of predator density (D=0.5)", x="Predator density", y="N'*") #+
+  #draw_label("I", 0.4, 0.5, hjust=0, vjust=0)+
+  #annotate("rect", xmin=0, xmax=1, ymin=-Inf, ymax=Inf, fill="forestgreen", alpha=0.2) +
+  #draw_label("II", 1.5, 0.5, hjust=0, vjust=0) +
+  #annotate("rect", xmin=1, xmax=2, ymin=-Inf, ymax=Inf, fill="lightblue",alpha=0.2) 
 ```
 
-Saddle Node Bifurcations
-P vs. N
-```{r, echo=FALSE, fig.align="left", warning=FALSE}
-ggplot(data=eq.df, aes(P, eq, linetype=(N)))+
-  geom_line()
+
+Or we can examine how the equilibrium changes as a function of varying D
+```{r}
+Dprime<-seq(0, 1, by=0.01)
+Pprime=0.5
+
+NDeq<-data.frame(Dprime, nprime_func(Pprime, Dprime))
+
+ggplot(NDeq) + 
+  geom_line(aes(Dprime, Nprime_plus)) + 
+  geom_line(aes(Dprime, Nprime_minus), linetype="dashed") +
+  geom_hline(yintercept=0, linetype="dashed", color="red") +
+  scale_x_continuous(expand= c(0,0)) + 
+  labs(title="N'* as a function of predator density (P=0.5)", x="D", y="N'*")
 ```
 
-D vs. N
-```{r, echo=FALSE, fig.align="left", warning=FALSE}
-ggplot(data=eq.df, aes(D, eq, linetype=(N)))+
-  geom_line()
+```{r}
+ggplot()+
+  geom_line(data=NPeq, aes(Nprime_plus, Pprime)) +
+  geom_line(data=NDeq, aes(Nprime_plus, Dprime))
 ```
-
-
-#P vs.D
-#```{r, echo=FALSE, fig.align="left", warning=FALSE}
-#ggplot(data=eq.df, aes(P, D, linetype=(N)))+
-#  geom_point()
-#```
-
-
 
