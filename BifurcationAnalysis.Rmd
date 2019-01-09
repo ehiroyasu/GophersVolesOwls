@@ -38,17 +38,31 @@ r=r_vole
 parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
 P<-seq(0.1,2, by=0.1)
 
-nstar_func<-function(parameters, P){
+nstar_func_plus<-function(parameters, P){
   Nstar <- ((K_prey-D)+sqrt(((D-K_prey)^2)-(4*((k_max*K_prey*P)/r) - D*K_prey)))/2
   return(Nstar)
 }
 
-Nstar_df<-P
-Nstar<-t(sapply(P, nstar_func, parameters=parameters))
-Nstar_df<-cbind(Nstar_df, Nstar)
+Nstar<-t(sapply(P, nstar_func_plus, parameters=parameters))
+Nstar_df<-data.frame(P, Nstar)
 colnames(Nstar_df)<-c("P", r)
 
+#putting the dataframe into tidy format
+Nstar_df<-gather(Nstar_df, rvalue, Nstarval, "0.01":"1.2", factor_key=TRUE)
+ggplot(Nstar_df, aes(P, Nstarval, linetype=rvalue)) + geom_line() + ylim(0, 300)
 
+nstar_func_minus<- nstar_func_plus<-function(parameters, P){
+  Nstar <- ((K_prey-D)-sqrt(((D-K_prey)^2)-(4*((k_max*K_prey*P)/r) - D*K_prey)))/2
+  return(Nstar)
+}
+
+Nstarminus<-t(sapply(P, nstar_func_minus, parameters=parameters))
+Nstar_dfminus<-data.frame(P, Nstarminus)
+colnames(Nstar_dfminus)<-c("P", r)
+
+#putting the dataframe into tidy format
+Nstar_dfminus<-gather(Nstar_dfminus, rvalue, Nstarval, "0.01":"1.2", factor_key=TRUE)
+ggplot(Nstar_dfminus, aes(P, Nstarval, linetype=rvalue)) + geom_line()
 
 ```
 
