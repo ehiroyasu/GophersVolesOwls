@@ -23,47 +23,40 @@ We explored the feasibility of using barn owls (_Tyto alba_) as a biocontrol for
 
 When examining the equilibrium value of N, we see there are three areas of interest.
 ```{r}
-##calculated average vole growth rate
-r_vole=c(0.01, 0.704, 1.2)
-
 #Parameters
-alpha=0.01
-beta = 5.85e-4
-delta=0.01
+alpha=0.05
 K_prey=1000
-k_max=654
+k_max=100
 h=1/k_max
-D=1/(alpha*h)
-r=r_vole
-parameters <- c(r, alpha, beta, delta, K_prey, k_max, D)
-P<-seq(0.1,2, by=0.1)
+D=500#1/(alpha*h)
+r=0.7 #avg vole growth rate
+parameters <- c(r, alpha, K_prey, k_max, D)
+P<-seq(0.1,2, by=0.01)
 
-nstar_func_plus<-function(parameters, P){
-  Nstar <- ((K_prey-D)+sqrt(((D-K_prey)^2)-(4*((k_max*K_prey*P)/r) - D*K_prey)))/2
+nstar_func<-function(parameters, P){
+  Nstar_plus <- data.frame(((K_prey-D)+sqrt(((D-K_prey)^2)-(4*((k_max*K_prey*P)/r) - 
+                                                              D*K_prey)))/2)
+  Nstar_minus <-data.frame(((K_prey-D)-sqrt(((D-K_prey)^2)-(4*((k_max*K_prey*P)/r) - 
+                                                            D*K_prey)))/2)
+  Nstar<-data.frame(Nstar_plus, Nstar_minus)
+  names(Nstar)<-c("Nstar_plus", "Nstar_minus")
   return(Nstar)
 }
 
-Nstar<-t(sapply(P, nstar_func_plus, parameters=parameters))
+Nstar<-nstar_func(parameters, P)
 Nstar_df<-data.frame(P, Nstar)
-colnames(Nstar_df)<-c("P", r)
 
-#putting the dataframe into tidy format
-Nstar_df<-gather(Nstar_df, rvalue, Nstarval, "0.01":"1.2", factor_key=TRUE)
-ggplot(Nstar_df, aes(P, Nstarval, linetype=rvalue)) + geom_line() + ylim(0, 300)
-
-nstar_func_minus<- nstar_func_plus<-function(parameters, P){
-  Nstar <- ((K_prey-D)-sqrt(((D-K_prey)^2)-(4*((k_max*K_prey*P)/r) - D*K_prey)))/2
-  return(Nstar)
-}
-
-Nstarminus<-t(sapply(P, nstar_func_minus, parameters=parameters))
-Nstar_dfminus<-data.frame(P, Nstarminus)
-colnames(Nstar_dfminus)<-c("P", r)
-
-#putting the dataframe into tidy format
-Nstar_dfminus<-gather(Nstar_dfminus, rvalue, Nstarval, "0.01":"1.2", factor_key=TRUE)
-ggplot(Nstar_dfminus, aes(P, Nstarval, linetype=rvalue)) + geom_line()
-
+ggplot(Nstar_df) + 
+  geom_line(aes(P, Nstar_plus)) + 
+  geom_line(aes(P, Nstar_minus), linetype="dashed") +
+  geom_hline(yintercept=0, linetype="dashed", color="red") +
+  scale_x_continuous(expand= c(0,0)) + 
+  labs(title="N* as a function of predator density", x="Predator density", y="N*") +
+  annotate("rect", xmin=0.875, xmax=1.315, ymin=-Inf, ymax=Inf, fill="lightblue",alpha=0.2) +
+  draw_label("I", 0.4, 250, hjust=0, vjust=0)+
+  annotate("rect", xmin=0, xmax=0.875, ymin=-Inf, ymax=Inf, fill="forestgreen", alpha=0.2) +
+  draw_label("II", 1.1, 250, hjust=0, vjust=0) + draw_label("III", 1.75, 250, hjust=0, 
+                                                            vjust=0)
 ```
 
 
