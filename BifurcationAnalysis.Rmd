@@ -91,8 +91,8 @@ ggplot(NPeq) +
   geom_line(aes(Pprime, Nprime_minus), linetype="dashed") +
   geom_hline(yintercept=0, linetype="dashed", color="red") +
   scale_x_continuous(expand= c(0,0)) + 
-  labs(title="N'* as a function of predator density (D=0.5)", x="Predator density", y="N'*") #+
-  #draw_label("I", 0.4, 0.5, hjust=0, vjust=0)+
+  labs(title="N'* as a function of predator density (D=0.5)", x="Predator density", y="N'*") #to add labels, use the following code
+  #+ draw_label("I", 0.4, 0.5, hjust=0, vjust=0)+
   #annotate("rect", xmin=0, xmax=1, ymin=-Inf, ymax=Inf, fill="forestgreen", alpha=0.2) +
   #draw_label("II", 1.5, 0.5, hjust=0, vjust=0) +
   #annotate("rect", xmin=1, xmax=2, ymin=-Inf, ymax=Inf, fill="lightblue",alpha=0.2) 
@@ -111,12 +111,31 @@ ggplot(NDeq) +
   geom_line(aes(Dprime, Nprime_minus), linetype="dashed") +
   geom_hline(yintercept=0, linetype="dashed", color="red") +
   scale_x_continuous(expand= c(0,0)) + 
-  labs(title="N'* as a function of predator density (P=0.5)", x="D", y="N'*")
+  labs(title="N'* as a function of D (P=0.5)", x="D", y="N'*")
 ```
 
 ```{r}
-ggplot()+
-  geom_line(data=NPeq, aes(Nprime_plus, Pprime)) +
-  geom_line(data=NDeq, aes(Nprime_plus, Dprime))
+
+Dprime<-seq(-10, 10, by=0.1)
+
+P_func<-function(Dprime){
+  P<-data.frame((0.25*((Dprime-1)^2))+Dprime)
+  P.df<-data.frame(P, Dprime)
+  names(P.df)<-c("P", "Dprime")
+  
+  return(P.df)
+}
+
+P.df<-P_func(Dprime)
+
+ggplot(P.df)+
+  geom_line(aes(Dprime, P)) +
+  geom_abline(intercept=0, slope=1, linetype="dashed") + 
+  labs(title="Predator density as a function of D", x="D", y="P") +
+  scale_y_continuous(expand=c(0,0)) + geom_vline(xintercept=0) +
+  geom_hline(yintercept=0) + coord_cartesian(xlim=c(-3,3), ylim=c(-3,3))+
+  theme_minimal()
+  
+
 ```
 
