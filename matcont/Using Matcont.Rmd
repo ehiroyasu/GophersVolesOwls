@@ -1,0 +1,58 @@
+---
+title: "Bifurcation analysis with matcont"
+author: "Bruce Kendall"
+date: "6/21/2019"
+output: html_document
+---
+
+The least user-unfriendly of the bifurcation packages seems to be **matcont**, which is an implementation within Matlab. It can be downloaded from https://sourceforge.net/projects/matcont/. It should be unpacked into a folder in a user directory, as we will need to do the computation *within* the matcont directory (there might be some way to add it to matlab's search path, but the standard practice with matlab seems to be to mix user code and downloaded code all in the same place---one of the reasons matlab is not open-science-friendly).
+
+There's a user manual that is not helpful to beginners (pdf version available at http://www.staff.science.uu.nl/~kouzn101/NBA/ManualJan2018.pdf). A somewhat more useful tutorial is at http://wwwhome.math.utwente.nl/~meijerhge/MT_JR_slow.pdf. In particular, I learned a lot by working through the example in section 3 (skipping the step of entering the rather complex model; it already exists---named "JR_slow" and can be loaded using **Select > System > Load/Edit/Delete Systems** in the *Matcont GUI* window). One thing I found is that the menu commands in the tutorial were not exactly as described in the manual, but I was able to find all of them eventually. Perhaps on Windows there is a better correspondence, in which case you should use the tutorial as a guide rather than my comments below.
+
+You'll also need to have Matlab installed. If you don't already have it, you can get it from https://www.mathworks.com/academia/tah-portal/university-california-santa-barbara-40469638.html. You'll need to log in with your UCSB NetID, and then create (if you don't already have one) a matlab account as well; this is what you'll need at the end of the installation process to verify your license. If away from UCSB you might need to go through the proxy server; but perhaps the UCSB netid overcomes that.
+
+So... start up Matlab, and navigate to the MatCont7p1 folder (the last three letters may differ if you ended up with a different version of matcont). Type `matcont` in the command window, which pops up one or more windows.. I got one warning message in the console that I ignored.
+
+# Type II model
+We start with the model that we've already analyzed. Create a new system using (*Matcont GUI*):**Select | System | New** (I'm using the same menu notation as the tutorial---see p. 3). Fill it out as follows:
+
+![](figs/SysDef_OV2.png)
+
+Hit "OK".
+
+## Simulate the model to find an equilibrium numerically
+
+Click (*Matcont GUI*):**Type|Initial point|Point** to initialize the computation of a trajectory starting from a point. We want to be sure of finding the nontrivial equilibrium, so in the *Starter* window set $P < D < 1$ and a positive value for N. I used $N = 1$, $P = 0.5$, and $D = 0.6$.
+
+To get graphical output, click (*Matcont GUI*):**Window/Output|Graphic|2Dplot**. This opens a *Plot2D* window and (perhaps) a *Layout* window. If the latter does not appear, open it using (*Plot2D*):**MatCont|Layout**. Put "Time" on the abcissa and "Coordinates" on the ordinate. Set time to range from 0 to 15:
+![](figs/N_t_layout.png)
+Hit OK (if you leave this window open then other menus don't work properly).
+
+In the *Integrator* window set "Interval" to 15. Then click  (*Matcont GUI*):**Compute|Forward**. It looks pretty close to convergence:
+![](figs/time_series_OV2.png)
+
+## Continuation of the equilibrium
+We now "continue" the equilibrium to see how its value and stability vary as we change one of the parameters. 
+
+First, click "View Result" in the *Control* window (if you've already closed that window, re-run the forward computation). Transfer the final value of N to the *Starter* window by double-clicking on "Last Point" in the *Data Browser*. Set the analysis type using (*Matcont GUI*):**Type|Initial point|Equilibrium**. Click the radio button next to P.
+
+In the Plot2D window, change the layout to put Parameter P on the Abcissa:
+![](figs/N_P_layout_OV2.png)
+Get rid of the old curve with (*Plot2D*):**MatCont|Clear**
+Then click  (*Matcont GUI*):**Compute|Forward**. Counterintuitively, this follows *decreasing* values of P, tracing the equilibrium back to zero:
+![](figs/N_P_1_OV2.png)
+Now for the interesting bit. Click (*Matcont GUI*):**Compute|Backward**. When the *Control* says "Paused, Limit point", hit "Resume". Do it again at the "branch point":
+![](figs/N_P_2_OV2.png)
+Click "View Result" in *Control* to see the values at the two bifurcations.
+
+Finally, add the zero equilibrium by setting N to zero in *Starter* and again computing forward and backward (you may want to hit "Stop" once it gets beyond the range of the graph; I'm not sure how far it will go):
+![](figs/N_P_3_OV2.png)
+Thus we see that BP ("Branching Point") is what we have been calling the transcritical bifurcation, and LP ("Limit Point") is the saddle-node bifurcation.
+
+## Next steps
+1. Continue the bifurcations in P-D space (following section 4 of the tutorial)
+2. Figure out how to get the stability information out of the sytem
+3. Figure out how to export the curves for plotting in R (or else figure out how to format the matlab plots)
+4. Extend the analysis to the type-III model
+
+2 and 3 might require entering commands in the console rather than using the gui.
