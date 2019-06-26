@@ -49,10 +49,20 @@ Finally, add the zero equilibrium by setting N to zero in *Starter* and again co
 ![](figs/N_P_3_OV2.png)
 Thus we see that BP ("Branching Point") is what we have been calling the transcritical bifurcation, and LP ("Limit Point") is the saddle-node bifurcation.
 
-## Next steps
+## Getting data and information out
+From a particular curve's "View result" window, we can do two useful things:
+
+1. Click the "View CurveData" button. This allows us to see the eigenvalue at each point on the curve---recall for that this one-dimensional model, negative eigenvalues represent stable equilibria and positive eigenvalues represent unstable equilibria.
+2. Click the "Export" button to export all of the curve's data to a Matlab object accessible from the console. From there, with a little bit of work, it should be possible to export a csv file that allows plotting with a different program (such as R).
+
+## Continuation of the bifurcation through $P$--$D$ space
+Get back to the results screen that shows the LP and BP of the non-trivial equilibrium (this might require re-running some of the previous analysis---I haven't yet worked out how to reload a curve after moving on). Double-click the LP value to load it into the *Starter*. Also in the *Starter*, select the radio button for D.
+
+Select (*Matcont GUI*):**Type|Initial point|Limit Point**. Create a new 2D plotting window, and set the axes to be P and D; I set the limits to range from 0 to 2.
+
+(*Matcont GUI*):**Compute|Forward** shows the bifurcation curve running towards smaller values of P and D; stop it when it goes off the edge of the graph. Computing backwards goes in the opposite direction, but it gets stuck as it approaches the pitchfork bifurcation at (1, 1).
+
+# Next steps
 1. Continue the bifurcations in P-D space (following section 4 of the tutorial)
-2. Figure out how to get the stability information out of the sytem
-3. Figure out how to export the curves for plotting in R (or else figure out how to format the matlab plots)
 4. Extend the analysis to the type-III model
 
-2 and 3 might require entering commands in the console rather than using the gui.
