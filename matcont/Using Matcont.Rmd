@@ -55,12 +55,28 @@ From a particular curve's "View result" window, we can do two useful things:
 1. Click the "View CurveData" button. This allows us to see the eigenvalue at each point on the curve---recall for that this one-dimensional model, negative eigenvalues represent stable equilibria and positive eigenvalues represent unstable equilibria.
 2. Click the "Export" button to export all of the curve's data to a Matlab object accessible from the console. From there, with a little bit of work, it should be possible to export a csv file that allows plotting with a different program (such as R).
 
+Note that, when in the *Data Browser* window, we can get to other previously calculated quantities by clicking on the buttons on the top of the window. For example, clicking on "Diagram; diagram" shows a list of all the previously calculated curves; double-clicking one of those takes us to the details of that curve, from which we can, for instance, send a data point to the *Starter* or examine and export the curve data as above.
+
+From here we can also rename (which may be helpful!) and delete individual curves (e.g., if we end up running the same curve twice).
+
+Going up another level (to "System") only seems to give one option "diagram"; I'm not sure what is going on here.
+
 ## Continuation of the bifurcation through $P$--$D$ space
 Get back to the results screen that shows the LP and BP of the non-trivial equilibrium (this might require re-running some of the previous analysis---I haven't yet worked out how to reload a curve after moving on). Double-click the LP value to load it into the *Starter*. Also in the *Starter*, select the radio button for D.
 
 Select (*Matcont GUI*):**Type|Initial point|Limit Point**. Create a new 2D plotting window, and set the axes to be P and D; I set the limits to range from 0 to 2.
 
 (*Matcont GUI*):**Compute|Forward** shows the bifurcation curve running towards smaller values of P and D; stop it when it goes off the edge of the graph. Computing backwards goes in the opposite direction, but it gets stuck as it approaches the pitchfork bifurcation at (1, 1).
+
+This can be overcome by increasing the "MinStepsize" in *Continuer*. Setting it to 0.01 seems to work well; it then reaches a "CP" (cusp point) at (1,1) and then gives the option to continue; the resulting curve looks like this:
+![](figs/D_P_SN_OV2.png)
+
+Now we can try to add the transcritical bifurcation curve. In the *Data Browser*, find the curve that corresponds to the trivial equibrium going through the BP, open that, select the BP, and double-click to send it to the *Starter*.
+![](figs/DB1_OV2.png)
+
+Select (*Matcont GUI*):**Type|Initial point|Branch point**. In the *Starter*, ensure that the radio buttons are selected for both P and D.
+
+Whoops! It appears that the software doesn't allow a Branch Point to be continued across two parameter values!?!?!?
 
 # Next steps
 1. Continue the bifurcations in P-D space (following section 4 of the tutorial)
