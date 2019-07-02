@@ -78,7 +78,26 @@ Select (*Matcont GUI*):**Type|Initial point|Branch point**. In the *Starter*, en
 
 Whoops! It appears that the software doesn't allow a Branch Point to be continued across two parameter values!?!?!?
 
-# Next steps
-1. Continue the bifurcations in P-D space (following section 4 of the tutorial)
-4. Extend the analysis to the type-III model
+# Type III model
+The model is given by
+\begin{equation}
+\frac{dN}{dt}=N\left(1-N\right)-P\frac{N^{q+1}}{N^{q+1}+D^{q+1}}.
+\end{equation}
 
+Differentiating the RHS with respect to $N$ and evaluating at $N=0$ reveals that the trivial equilibrium is always unstable if $q>0$. Yet, when $q$ is close to zero, the dynamics should be similar to the type-II model.
+
+We set up the model in MatCont as `OwlVole_III`, set $P = 0.5$, $D = 0.6$, and $q = 0.01$. We find the largest equilibrium by integrating from an initial $N = 1$, and then continue the equilibrium through values of $P$. The result is as follows:
+![](figs/N_P_1_OV3.png)
+So instead of intersecting the zero equilibrium and creating a transcritical bifurcation, there is a second SN bifurcation, and for values of $P$ to the right of that bifurcation there is a stable equilibrium that's just a little bit larger than zero. For values of $P$ between the two SN bifurcations, there are two stable equilibria, just like there are for the type II model between the TC and SN bifurcations.
+
+We can now continue both of these bifurcations in $N$--$P$ space:
+![](figs/P_D_1_OV3.png)
+The cusp is where the two LP's intersect; between the two curves is the area of bistability. Notice that here, where $q=0.01$, the cusp has moved away from (1,1) (the value for the type-II model).
+
+Below the region of bistability, the only stable equilibrium is "large;" above it (large $P$) it is close to zero. To the right of the cusp, there is no bistability, but the one equilibrium transitions continuously from large to small as $P$ increases. Close to the cusp, that transition can be quite steep; here it is for $D=0.8$:
+![](figs/N_P_2_OV3.png)
+Presumably, the transition becomes less steep as we move away from the cusp point. We could visualize this by superimposing contours of the equlibrium value on the bifurcation plot.
+
+In principle, we should be able to follow the cusp point through 3-D parameter space. But, just as the GUI would not allow a 2D analysis of the BP, it will not allow a 3D analysis of the CP. Maybe with the command line?
+
+In the meantime, we can make similar plots for different values of $q$. Extrapolating from the two cases visualized so far ($q=0$ and $q=0.01$), it seems that increasing $q$ will shrink the region of bistability (although it's not clear quite how to interpret $D$ here). For a large enough value of $q$ (indicating that the predator strongly prefers alternate prey when N is small), there may be no bistability at all! Then the management question is just how large P needs to be to acheive a desired level of control.
