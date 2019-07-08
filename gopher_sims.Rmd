@@ -152,7 +152,7 @@ times<- seq(0, 20, by=1)
 #Simulations, max K and alphaP
 We can then run simulations for these various lists of r values while varying predator density.
 ```{r, echo=FALSE}
-test_sim<-predprey_sim(times=times, state=state, r=r)
+test_sim<-predprey_sim(times=times, state=state, r=r, pred_func = pred_prey)
 sim.df<-df_sim(sim=test_sim, r=r)
 
 n.init.sim<-n.sim(test_sim, N, P, r)
