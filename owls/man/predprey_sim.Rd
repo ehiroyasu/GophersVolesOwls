@@ -4,7 +4,7 @@
 \alias{predprey_sim}
 \title{Predator Prey Simulation Function}
 \usage{
-predprey_sim(times, state, r)
+predprey_sim(times, state, r, pred_func)
 }
 \arguments{
 \item{times}{is a numerical sequence of time steps, this should be the same as the t parameter in the pred_prey function}

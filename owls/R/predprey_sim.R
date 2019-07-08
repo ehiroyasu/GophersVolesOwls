@@ -11,15 +11,12 @@
 #'@author Elizabeth Hiroyasu
 #'
 
-
-
-
-predprey_sim<-function(times, state, r){
+predprey_sim<-function(times, state, r, pred_func){
   sim<-rep(list(array(data=NA, dim=c(length(times), 3, dim(state)[1]))), length(r))
 
   for(i in 1:(dim(state))[1]){
     for (k in 1:(length(r))){
-      sim[[k]][,,i]<- as.matrix(ode(y=state[i,], times = times, func = pred_prey, 
+      sim[[k]][,,i]<- as.matrix(ode(y=state[i,], times = times, func = pred_func, 
                                     parms = c(r = r[k], K_prey, k_max, D)))
       colnames(sim[[k]])<-c("time", "N", "P")
       }
