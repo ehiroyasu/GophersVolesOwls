@@ -2,7 +2,7 @@
 % Please edit documentation in R/pred_prey.R
 \name{pred_prey}
 \alias{pred_prey}
-\title{Type III Lotka Volterra Function}
+\title{Type II Lotka Volterra Function}
 \usage{
 pred_prey(t, state, parameters)
 }

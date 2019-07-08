@@ -1,4 +1,4 @@
-#'Type III Lotka Volterra Function
+#'Type II Lotka Volterra Function
 #'
 #'Uses the Lotka-Volterra predator-prey differential equations with a type III functional response
 #'to calculate populations of both predator and prey populations over a period of time.
