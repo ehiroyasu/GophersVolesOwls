@@ -1,0 +1,111 @@
+---
+title: "Type III Simulations"
+author: "Elizabeth Hiroyasu"
+date: "7/8/2019"
+output:
+  pdf_document: default
+  html_document: default
+---
+Simulating gopher and vole control using a Type III functional response.
+
+```{r setup, include=FALSE}
+setwd("../GophersVolesOwls")
+library(devtools)
+library(roxygen2)
+load_all("owls")
+library(owls)
+```
+
+## Gophers
+We will use the same seasonal growth rates of gopher and voles. Growth rates were calculated from reconstructed life tables for each species. For gophers, because it is unclear if they reproduce on a six or nine month time scale, the minimum, mean, and max were calculated for both possible time steps. The minimum and max from the pooled six and nine month growth rates were taken as minimums and maximums and the mean of the two calculated mean growth rates was used as the mean.
+
+```{r}
+r_gopher <- c(0.02, 0.19, 0.32)
+
+#Parameters
+alphaP<-0.9
+K_prey <- 175
+k_max <- 378
+h <- 1/k_max
+D <- 1/(alphaP*h)
+r <- r_gopher
+q <- 1
+parameters <- c(r = r_gopher, alphaP = 0.9, K_prey = 175, k_max = 378, D = 1/(alphaP*h), q=1)
+
+#State variables:
+N=c(K_prey, K_prey, K_prey,
+    0.5*K_prey, 0.5*K_prey, 0.5*K_prey,
+    2,2,2)
+
+P=c(0.2, 0.6, 1.0, 
+    0.2, 0.6, 1.0,
+    0.2, 0.6, 1.0)
+state<-cbind(N, P)
+times<- seq(0, 20, by=1)
+
+
+pred_preyT3 <- function(t, state, parameters){
+  with(as.list(c(state, parameters)), {
+    #type III Functional response
+    dprey=(r*N*(1 - (N/K_prey)))-((k_max*N^(q+1))/(N^(q+1) + D^(q+1)))*P #with density dependence
+    dpredator=0 #constant number of predators
+
+    #return rate of change
+    list(c(dprey, dpredator))
+    
+  })
+}
+```
+
+## Gopher Simulations
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
+test_sim<-predprey_sim(times=times, state=state, r=r, pred_func = pred_preyT3)
+sim.df<-df_sim(sim=test_sim, r=r)
+
+n.init.sim<-n.sim(test_sim, N, P, r)
+n.init.df<-lapply(n.init.sim, df_sim, r)
+n.init.df<-lapply(n.init.df, ldply)
+gopher.df<-n.table(n.init.df, times, K_prey, N, alphaP)
+plot_n(df=gopher.df, r=r, N0=N0, K_prey=K_prey, alphaP=alphaP)
+```
+
+
+## Vole Parameters
+From the literature review (Sarah this is the average data from the model summary data), we constructed minimum, average, and maximum vole stage structured matrices. It is important to note that survival measurements are from M. townsendii and fertility measurements were from M. californicus because no studies on either species contained both measurements. We took the minimum, maximum, and mean calculated growth rates.
+```{r}
+r_vole <- c(0.01, 0.70, 1.45)
+#Parameters
+alphaP=0.9
+K_prey=1000
+k_max=654
+h=1/k_max
+D=1/(alphaP*h)
+r=r_vole
+q=1
+parameters <- c(r, alphaP, K_prey, k_max, D, q)
+
+#State variables:
+N=c(K_prey, K_prey, K_prey, 
+    0.5*K_prey, 0.5*K_prey, 0.5*K_prey, 
+    2,2,2)
+
+P=c(0.2, 0.6, 1.0, 
+    0.2, 0.6, 1.0,
+    0.2, 0.6, 1.0)
+
+state<-cbind(N, P)
+times<- seq(0, 20, by=1)
+```
+
+## Vole Simulations
+```{r, echo=FALSE, warning=FALSE, message=FALSE, fig.align="left", results="asis"}
+test_sim<-predprey_sim(times=times, state=state, r=r, pred_func = pred_preyT3)
+sim.df<-df_sim(sim=test_sim, r=r)
+
+n.init.sim<-n.sim(test_sim, N, P, r)
+n.init.df<-lapply(n.init.sim, df_sim, r)
+n.init.df<-lapply(n.init.df, ldply)
+vole.df<-n.table(n.init.df, times, K_prey, N, alphaP)
+plot_n(df=vole.df, r=r, N0=N0, K_prey=K_prey, alphaP=alphaP)
+```
+
