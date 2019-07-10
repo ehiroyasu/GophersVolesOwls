@@ -21,7 +21,7 @@ pred_preyT3 <- function(t, state, parameters){
     dpredator=0 #constant number of predators
 
     #return rate of change
-    list(c(dprey, dpredator))
+    return(list(c(dprey, dpredator)))
     
   })
 }
