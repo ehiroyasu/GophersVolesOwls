@@ -3,7 +3,6 @@
 .RData
 *.txt
 *.html
-
 # Sync only model-specific files from MatCont
 # Requires that a factory-fresh installation of MatCont be first installed in
 #   ~/MatCont7p1
@@ -16,3 +15,4 @@ MatCont7p1/Systems/*
 !MatCont7p1/Systems/OwlVole_II.*
 !MatCont7p1/Systems/OwlVole_III
 !MatCont7p1/Systems/OwlVole_III.*
+gopher_sims_files
