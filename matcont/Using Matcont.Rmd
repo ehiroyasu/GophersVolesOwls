@@ -101,3 +101,12 @@ Presumably, the transition becomes less steep as we move away from the cusp poin
 In principle, we should be able to follow the cusp point through 3-D parameter space. But, just as the GUI would not allow a 2D analysis of the BP, it will not allow a 3D analysis of the CP. Maybe with the command line?
 
 In the meantime, we can make similar plots for different values of $q$. Extrapolating from the two cases visualized so far ($q=0$ and $q=0.01$), it seems that increasing $q$ will shrink the region of bistability (although it's not clear quite how to interpret $D$ here). For a large enough value of $q$ (indicating that the predator strongly prefers alternate prey when N is small), there may be no bistability at all! Then the management question is just how large P needs to be to acheive a desired level of control.
+
+#####################################################
+EHH 07/11/19
+
+Varying $0.01<=q<=2$, $N$ seems to stabilize around the same point ($~N=0.59$): 
+![](figs/Nt_varyq.png)
+
+Using this as the equilibrium $N$, and calculating the equilibrium P for a variety of q's, there are two limit points when $q=0.01$ and when $q=0.02$ for values greater than $q=0.02$, there are no longer limit points:
+![](figs/PNvaryq.png)
