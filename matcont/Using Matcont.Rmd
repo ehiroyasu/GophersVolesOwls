@@ -110,3 +110,21 @@ Varying $0.01<=q<=2$, $N$ seems to stabilize around the same point ($~N=0.59$):
 
 Using this as the equilibrium $N$, and calculating the equilibrium P for a variety of q's, there are two limit points when $q=0.01$ and when $q=0.02$ for values greater than $q=0.02$, there are no longer limit points:
 ![](figs/PNvaryq.png)
+
+#####################################################
+EHH 08/08/19
+
+It seems that D much be much less than P (by about an order of magnitude) to see areas of bistability. For example, when $P=0.5$ and $D=0.6$, the equilibrium N is 0.584 (where $q=1$) there is no bistable region.
+![](figs/P0.5_D0.6.png)
+
+In contrast, when $P=0.5$ and $D=0.05$, there are two limit points ($Neq=0.005$ and $q=1$)
+![](figs/P0.5_D0.05.png)
+
+The cusp bifurcation in the P-D parameter space
+![](figs/P0.5_D0.05_cp.png)
+
+Increasing q to 3, we find the equilibrium N is much smaller ($Neq=0.02$), but there are still two limit points.
+![](figs/P0.5_D0.05_q3.png)
+
+and the cusp point looks similar to q=1
+![](figs/P0.5_D0.05_q3cp.png)
